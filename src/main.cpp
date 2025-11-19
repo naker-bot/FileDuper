@@ -13055,9 +13055,9 @@ void performScan() {
                 group.hash = hash;
                 group.files = files;
                 
-                // Get file size
+                // Get file size - OPTIMIZATION: Use stat_cached for better performance
                 struct stat st;
-                if (stat(files[0].c_str(), &st) == 0) {
+                if (stat_cached(files[0], &st) == 0) {
                     group.size = st.st_size;
                     appState.duplicateSize += group.size * (files.size() - 1);
                 }
