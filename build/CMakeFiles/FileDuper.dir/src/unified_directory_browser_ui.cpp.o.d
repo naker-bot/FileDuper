@@ -187,4 +187,7 @@ CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o: \
  /usr/include/c++/15.2.1/bits/ostream.tcc \
  /usr/include/c++/15.2.1/bits/istream.tcc \
  /usr/include/c++/15.2.1/bits/sstream.tcc /usr/include/c++/15.2.1/cstring \
- /usr/include/c++/15.2.1/iostream
+ /usr/include/c++/15.2.1/iostream /usr/include/c++/15.2.1/fstream \
+ /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/basic_file.h \
+ /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++io.h \
+ /usr/include/c++/15.2.1/bits/fstream.tcc

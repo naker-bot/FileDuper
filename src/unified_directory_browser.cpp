@@ -3,12 +3,14 @@
  */
 
 #include "unified_directory_browser.h"
+#include "export_discovery.h"
 #include <algorithm>
 #include <iostream>
 #include <filesystem>
 #include <chrono>
 #include <cstring>
 #include <cstdint>
+#include <ctime>
 
 namespace fs = std::filesystem;
 
@@ -117,14 +119,88 @@ bool UnifiedDirectoryBrowser::loadNfsDirectory(const std::string& path) {
 bool UnifiedDirectoryBrowser::loadNfsServer(const std::string& host,
                                            const std::string& path) {
     std::cout << "⏳ Loading NFS server directory: " << host << ":" << path << std::endl;
-    // TODO: Implement NFS server listing via libnfs
+    
+    // If path is empty, list available NFS exports from server
+    if (path.empty() || path == "/") {
+        state.entries.clear();
+        
+        // Query NFS exports from server
+        std::vector<ExportInfo> exports = NFSExportDiscovery::listNFSExports(host);
+        
+        if (exports.empty()) {
+            std::cout << "⚠️  No NFS exports found or server not accessible" << std::endl;
+            return false;
+        }
+        
+        // Convert exports to directory entries
+        for (const auto& exp : exports) {
+            UnifiedDirEntry entry;
+            entry.name = exp.path;  // /export/data
+            entry.fullPath = std::string("nfs://") + host + exp.path;
+            entry.source = "NFS Server";
+            entry.sourceHost = host;
+            entry.isDirectory = true;
+            entry.size = 0;  // Would need to query
+            entry.modified = time(nullptr);
+            
+            // Add access level info to name for display
+            if (exp.accessLevel == "ro") {
+                entry.name += " (read-only)";
+            }
+            
+            state.entries.push_back(entry);
+            std::cout << "  ✅ Export: " << exp.path << " [" << exp.accessLevel << "]" << std::endl;
+        }
+        
+        std::cout << "✅ Loaded " << exports.size() << " NFS exports from " << host << std::endl;
+        return true;
+    }
+    
+    // TODO: Mount and list contents of specific export
     return false;
 }
 
 bool UnifiedDirectoryBrowser::loadSmbDirectory(const std::string& host,
                                               const std::string& path) {
-    std::cout << "⏳ Loading SMB directory: " << host << ":" << path << std::endl;
-    // TODO: Implement SMB listing
+    std::cout << "⏳ Loading SMB shares: " << host << std::endl;
+    
+    // If path is empty, list available SMB shares from server
+    if (path.empty() || path == "/") {
+        state.entries.clear();
+        
+        // Query SMB shares from server
+        std::vector<ExportInfo> shares = SMBShareDiscovery::listSMBShares(host);
+        
+        if (shares.empty()) {
+            std::cout << "⚠️  No SMB shares found or server not accessible" << std::endl;
+            return false;
+        }
+        
+        // Convert shares to directory entries
+        for (const auto& share : shares) {
+            UnifiedDirEntry entry;
+            entry.name = share.name;  // Backup, Data, etc.
+            entry.fullPath = std::string("smb://") + host + "/" + share.name;
+            entry.source = "SMB";
+            entry.sourceHost = host;
+            entry.isDirectory = true;
+            entry.size = 0;  // Would need to query
+            entry.modified = time(nullptr);
+            
+            // Add description if available
+            if (!share.description.empty()) {
+                entry.name += " (" + share.description + ")";
+            }
+            
+            state.entries.push_back(entry);
+            std::cout << "  ✅ Share: " << share.name << " [" << share.accessLevel << "]" << std::endl;
+        }
+        
+        std::cout << "✅ Loaded " << shares.size() << " SMB shares from " << host << std::endl;
+        return true;
+    }
+    
+    // TODO: List contents of specific SMB share
     return false;
 }
 

@@ -10,6 +10,8 @@
 #include <ctime>
 #include <cstring>
 #include <iostream>
+#include <fstream>
+#include <cstdio>
 
 const char* UnifiedDirectoryBrowserUI::getSourceIcon(const std::string& source) {
     if (source == "Local") return "📁";
@@ -124,6 +126,9 @@ void UnifiedDirectoryBrowserUI::renderDirectoryTree(UnifiedDirectoryBrowser& bro
     ImGui::Text("📂 Locations");
     ImGui::Separator();
     
+    auto& state = browser.getState();
+    
+    // Local directories
     static bool expandLocal = true;
     if (ImGui::TreeNodeEx("📁 Local", expandLocal ? ImGuiTreeNodeFlags_DefaultOpen : 0)) {
         if (ImGui::Selectable("/home", false)) {
@@ -132,6 +137,85 @@ void UnifiedDirectoryBrowserUI::renderDirectoryTree(UnifiedDirectoryBrowser& bro
         if (ImGui::Selectable("/mnt", false)) {
             browser.loadDirectory("Local", "", "/mnt");
         }
+        if (ImGui::Selectable("/media", false)) {
+            browser.loadDirectory("Local", "", "/media");
+        }
+        ImGui::TreePop();
+    }
+    
+    ImGui::Spacing();
+    
+    // NFS Mounts (local mounted NFS)
+    static bool expandNFSMounts = true;
+    if (ImGui::TreeNodeEx("🌐 NFS Mounts", expandNFSMounts ? ImGuiTreeNodeFlags_DefaultOpen : 0)) {
+        // Auto-discover NFS mounts from /etc/mtab or /proc/mounts
+        std::vector<std::string> nfsMounts;
+        FILE* f = fopen("/proc/mounts", "r");
+        if (f) {
+            char line[512];
+            while (fgets(line, sizeof(line), f)) {
+                if (strstr(line, "nfs") && !strstr(line, "sunrpc")) {
+                    char device[256], mountpoint[256], fstype[64];
+                    if (sscanf(line, "%s %s %s", device, mountpoint, fstype) == 3) {
+                        nfsMounts.push_back(mountpoint);
+                    }
+                }
+            }
+            fclose(f);
+        }
+        
+        if (nfsMounts.empty()) {
+            ImGui::TextDisabled("No NFS mounts found");
+        } else {
+            for (const auto& mount : nfsMounts) {
+                ImGui::PushID(mount.c_str());
+                if (ImGui::Selectable(mount.c_str(), false)) {
+                    browser.loadDirectory("NFS", "", mount);
+                }
+                ImGui::PopID();
+            }
+        }
+        ImGui::TreePop();
+    }
+    
+    ImGui::Spacing();
+    
+    // NFS Servers (remote servers)
+    static bool expandNFSServers = true;
+    if (ImGui::TreeNodeEx("🖥️ NFS Servers", expandNFSServers ? ImGuiTreeNodeFlags_DefaultOpen : 0)) {
+        static char nfsServerInput[256] = "";
+        ImGui::InputTextWithHint("##NFSServer", "192.168.1.100", nfsServerInput, sizeof(nfsServerInput));
+        ImGui::SameLine();
+        
+        if (ImGui::Button("➕ Add", ImVec2(60, 0))) {
+            if (strlen(nfsServerInput) > 0) {
+                std::cout << "🔍 Querying NFS server: " << nfsServerInput << std::endl;
+                // Will trigger NFS export discovery
+            }
+        }
+        
+        // Display discovered NFS servers (placeholder for dynamic content)
+        ImGui::TextDisabled("Enter NFS server IP to discover exports");
+        ImGui::TreePop();
+    }
+    
+    ImGui::Spacing();
+    
+    // SMB Shares
+    static bool expandSMB = true;
+    if (ImGui::TreeNodeEx("🗂️ SMB Shares", expandSMB ? ImGuiTreeNodeFlags_DefaultOpen : 0)) {
+        static char smbServerInput[256] = "";
+        ImGui::InputTextWithHint("##SMBServer", "192.168.1.50", smbServerInput, sizeof(smbServerInput));
+        ImGui::SameLine();
+        
+        if (ImGui::Button("➕ Add##SMB", ImVec2(60, 0))) {
+            if (strlen(smbServerInput) > 0) {
+                std::cout << "🔍 Querying SMB server: " << smbServerInput << std::endl;
+                // Will trigger SMB share discovery
+            }
+        }
+        
+        ImGui::TextDisabled("Enter SMB server IP to discover shares");
         ImGui::TreePop();
     }
 }

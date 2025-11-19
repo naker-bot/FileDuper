@@ -3575,6 +3575,7 @@ CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.o: /home/nex/c++/src/
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h
 
 CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o: /home/nex/c++/src/unified_directory_browser_ui.cpp \
+  /home/nex/c++/include/export_discovery.h \
   /home/nex/c++/include/unified_directory_browser.h \
   /home/nex/c++/include/unified_directory_browser_ui.h \
   /home/nex/c++/lib/imgui/imconfig.h \
@@ -3763,6 +3764,7 @@ CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o: /home/nex/c++/s
   /usr/include/c++/15.2.1/iomanip \
   /usr/include/c++/15.2.1/ios \
   /usr/include/c++/15.2.1/iosfwd \
+  /usr/include/c++/15.2.1/iostream \
   /usr/include/c++/15.2.1/istream \
   /usr/include/c++/15.2.1/locale \
   /usr/include/c++/15.2.1/map \
