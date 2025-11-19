@@ -1,8 +1,0 @@
-#NFS_EXPORT_ROOT:/mnt/nfs_share
-/mnt/nfs_share
-/mnt/nfs_share/sdg
-/mnt/nfs_share/sdf
-/mnt/nfs_share/sde
-/mnt/nfs_share/sdd
-/mnt/nfs_share/sdc
-/mnt/nfs_share/sdb

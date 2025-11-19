@@ -1,8 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"/home/nex/c++/build/cmake_install.cmake",
-		"/home/nex/c++/build/lib/imgui/cmake_install.cmake"
-	],
-	"Parallel" : false
-}

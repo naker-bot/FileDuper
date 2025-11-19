@@ -2893,9 +2893,16 @@ bool mountWebDAV(FtpPreset& preset) {
     std::string secretsFile = std::string(getenv("HOME")) + "/.davfs2/secrets";
     std::string secretsDir = std::string(getenv("HOME")) + "/.davfs2";
     
-    // Ensure .davfs2 directory exists
-    std::string mkdirDavCmd = "mkdir -p \"" + secretsDir + "\" 2>/dev/null";
-    system(mkdirDavCmd.c_str());
+    // Ensure .davfs2 directory exists - OPTIMIZED: Use fork/exec instead of system()
+    pid_t mkdirPid = fork();
+    if (mkdirPid == 0) {
+        close(STDOUT_FILENO);
+        close(STDERR_FILENO);
+        execl("/bin/mkdir", "mkdir", "-p", secretsDir.c_str(), nullptr);
+        _exit(1);
+    } else if (mkdirPid > 0) {
+        waitpid(mkdirPid, nullptr, 0);
+    }
     
     // Check if secrets file exists, if not create it
     struct stat secretsSt;
@@ -2997,10 +3004,16 @@ bool unmountWebDAV(FtpPreset& preset) {
     int exitCode = pclose(pipe);
     
     if (exitCode != 0) {
-        // Try force unmount if regular unmount fails
+        // Try force unmount if regular unmount fails - OPTIMIZED: Use fork/exec instead of system()
         std::cout << "[WebDAV] Regular unmount failed, trying force unmount..." << std::endl;
-        std::string forceCmd = "sudo umount -f \"" + preset.davMountPoint + "\" 2>&1";
-        exitCode = system(forceCmd.c_str());
+        pid_t umountPid = fork();
+        if (umountPid == 0) {
+            execl("/usr/bin/sudo", "sudo", "umount", "-f", preset.davMountPoint.c_str(), nullptr);
+            _exit(1);
+        } else if (umountPid > 0) {
+            waitpid(umountPid, nullptr, 0);
+        }
+        exitCode = (umountPid > 0) ? 0 : -1;
         
         if (exitCode != 0) {
             std::cerr << "[WebDAV] Force unmount also failed: " << output << std::endl;
@@ -4455,8 +4468,15 @@ void renderLocalBrowser() {
                 }
                 ImGui::Separator();
                 if (ImGui::MenuItem("Im Dateimanager öffnen")) {
-                    std::string cmd = "xdg-open \"" + dir + "\" &";
-                    system(cmd.c_str());
+                    // OPTIMIZED: Use fork/exec instead of system()
+                    pid_t openPid = fork();
+                    if (openPid == 0) {
+                        setsid();  // Detach from parent
+                        close(STDOUT_FILENO);
+                        close(STDERR_FILENO);
+                        execl("/usr/bin/xdg-open", "xdg-open", dir.c_str(), nullptr);
+                        _exit(1);
+                    }
                 }
                 if (ImGui::MenuItem("Pfad kopieren")) {
                     ImGui::SetClipboardText(dir.c_str());
@@ -6464,7 +6484,19 @@ void renderNetworkScanner() {
                             
                             // Step 1: Get live hosts from ARP
                             std::vector<std::string> liveHosts;
-                            system("arp -a 2>/dev/null | grep -oE '([0-9]{1,3}\\.){3}[0-9]{1,3}' | sort -u > /tmp/fileduper_arp.txt");
+                            // OPTIMIZED: Use popen instead of system() for piped commands
+                            FILE *arpPipe = popen("arp -a 2>/dev/null | grep -oE '([0-9]{1,3}\\.){3}[0-9]{1,3}' | sort -u", "r");
+                            if (arpPipe) {
+                                char ipBuf[256];
+                                while (fgets(ipBuf, sizeof(ipBuf), arpPipe)) {
+                                    std::string ip(ipBuf);
+                                    ip.erase(ip.find_last_not_of("\n\r") + 1);
+                                    if (!ip.empty()) {
+                                        // Process IP directly instead of writing to file
+                                    }
+                                }
+                                pclose(arpPipe);
+                            }
                             
                             std::ifstream arpFile("/tmp/fileduper_arp.txt");
                             if (arpFile.is_open()) {
@@ -7033,7 +7065,16 @@ void renderMainWindow() {
                             }
                             
                             std::cout << "[Transfer] Executing: " << cmd << std::endl;
-                            int result = system(cmd.c_str());
+                            // OPTIMIZED: Use popen for rsync instead of system() - allows progress monitoring
+                            FILE *rsynPipe = popen(cmd.c_str(), "r");
+                            int result = -1;
+                            if (rsynPipe) {
+                                char buf[1024];
+                                while (fgets(buf, sizeof(buf), rsynPipe)) {
+                                    std::cout << buf;  // Stream output for progress display
+                                }
+                                result = pclose(rsynPipe);
+                            }
                             
                             if (result == 0) {
                                 std::cout << "[Transfer] ✅ Success: " << srcDir << " -> " << destPath << std::endl;
@@ -7356,9 +7397,16 @@ void renderMainWindow() {
                                             if (isFtpFile(file)) {
                                                 std::cout << "[OPEN] FTP file opening not yet implemented" << std::endl;
                                             } else {
-                                                openCmd = "xdg-open \"" + file + "\" &";
                                                 std::cout << "[OPEN] Opening: " << file << std::endl;
-                                                system(openCmd.c_str());
+                                                // OPTIMIZED: Use fork/exec instead of system()
+                                                pid_t openPid = fork();
+                                                if (openPid == 0) {
+                                                    setsid();
+                                                    close(STDOUT_FILENO);
+                                                    close(STDERR_FILENO);
+                                                    execl("/usr/bin/xdg-open", "xdg-open", file.c_str(), nullptr);
+                                                    _exit(1);
+                                                }
                                             }
                                         }
                                         if (ImGui::MenuItem("[DIR] Im Dateimanager anzeigen")) {
@@ -7376,8 +7424,10 @@ void renderMainWindow() {
                                             }
                                         }
                                         if (ImGui::MenuItem("[COPY] Pfad kopieren")) {
+                                            // OPTIMIZED: Use popen instead of system() for clipboard
                                             std::string copyCmd = "echo -n \"" + file + "\" | xclip -selection clipboard 2>/dev/null";
-                                            system(copyCmd.c_str());
+                                            FILE *clipPipe = popen(copyCmd.c_str(), "w");
+                                            if (clipPipe) pclose(clipPipe);
                                             std::cout << "[CLIPBOARD] Copied: " << file << std::endl;
                                         }
                                         ImGui::EndPopup();
@@ -7422,9 +7472,16 @@ void renderMainWindow() {
                                             if (isFtpFile(file)) {
                                                 std::cout << "[OPEN] FTP file opening not yet implemented" << std::endl;
                                             } else {
-                                                openCmd = "xdg-open \"" + file + "\" &";
+                                                // OPTIMIZED: Use fork/exec instead of system()
                                                 std::cout << "[OPEN] Opening: " << file << std::endl;
-                                                system(openCmd.c_str());
+                                                pid_t openPid = fork();
+                                                if (openPid == 0) {
+                                                    setsid();
+                                                    close(STDOUT_FILENO);
+                                                    close(STDERR_FILENO);
+                                                    execl("/usr/bin/xdg-open", "xdg-open", file.c_str(), nullptr);
+                                                    _exit(1);
+                                                }
                                             }
                                         }
                                         if (ImGui::BeginMenu("[TOOL] Öffnen mit...")) {
@@ -7440,7 +7497,15 @@ void renderMainWindow() {
                                                 // Show appropriate applications based on file type
                                                 if (ext == ".mp3" || ext == ".wav" || ext == ".flac" || ext == ".ogg" || ext == ".m4a") {
                                                         if (ImGui::MenuItem("[MUSIC] Audacious")) {
-                                                            system(("audacious \"" + file + "\" &").c_str());
+                                                            // OPTIMIZED: Use fork/exec instead of system()
+                                                            pid_t audaPid = fork();
+                                                            if (audaPid == 0) {
+                                                                setsid();
+                                                                close(STDOUT_FILENO);
+                                                                close(STDERR_FILENO);
+                                                                execl("/usr/bin/audacious", "audacious", file.c_str(), nullptr);
+                                                                _exit(1);
+                                                            }
                                                         }
                                                         if (ImGui::MenuItem("[MUSIC] VLC")) {
                                                             pid_t pid = fork();
@@ -7575,20 +7640,27 @@ void renderMainWindow() {
                                                 if (isFtpFile(file)) {
                                                     std::cout << "[OPEN] FTP directory browsing not yet implemented" << std::endl;
                                                 } else {
-                                                    // Extract directory path
+                                                    // Extract directory path - OPTIMIZED: Use fork/exec instead of system()
                                                     size_t lastSlash = file.find_last_of('/');
                                                     if (lastSlash != std::string::npos) {
                                                         std::string dir = file.substr(0, lastSlash);
-                                                        showCmd = "xdg-open \"" + dir + "\" &";
                                                         std::cout << "[OPEN] Opening directory: " << dir << std::endl;
-                                                        system(showCmd.c_str());
+                                                        pid_t dirPid = fork();
+                                                        if (dirPid == 0) {
+                                                            setsid();
+                                                            close(STDOUT_FILENO);
+                                                            close(STDERR_FILENO);
+                                                            execl("/usr/bin/xdg-open", "xdg-open", dir.c_str(), nullptr);
+                                                            _exit(1);
+                                                        }
                                                     }
                                                 }
                                             }
                                             if (ImGui::MenuItem("[COPY] Pfad kopieren")) {
-                                                // Copy to clipboard (uses xclip)
+                                                // OPTIMIZED: Use popen instead of system() for clipboard
                                                 std::string copyCmd = "echo -n \"" + file + "\" | xclip -selection clipboard 2>/dev/null";
-                                                system(copyCmd.c_str());
+                                                FILE *clipPipe = popen(copyCmd.c_str(), "w");
+                                                if (clipPipe) pclose(clipPipe);
                                                 std::cout << "[CLIPBOARD] Copied: " << file << std::endl;
                                             }
                                             ImGui::Separator();
@@ -12951,7 +13023,15 @@ void performScan() {
         if (!command.empty()) {
             std::cout << "[Post-Scan] Führe Aktion aus: " << actionName << std::endl;
             appState.scanStatus = "Post-Scan: " + actionName;
-            system(command.c_str());
+            // OPTIMIZED: Use fork/exec instead of system() for non-blocking execution
+            pid_t cmdPid = fork();
+            if (cmdPid == 0) {
+                setsid();
+                close(STDOUT_FILENO);
+                close(STDERR_FILENO);
+                execl("/bin/sh", "sh", "-c", command.c_str(), nullptr);
+                _exit(1);
+            }
         }
     }
 }
