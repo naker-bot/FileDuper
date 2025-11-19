@@ -10999,7 +10999,8 @@ void renderSmbMountDialog() {
 void renderHelpDialog() {
     if (!appState.showHelp) return;
     
-    ImGui::SetNextWindowSize(ImVec2(800, 600), ImGuiCond_FirstUseEver);
+    // Help window starts large, then user can resize
+    ImGui::SetNextWindowSize(ImVec2(1200, 800), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x * 0.5f, ImGui::GetIO().DisplaySize.y * 0.5f), 
                             ImGuiCond_FirstUseEver, ImVec2(0.5f, 0.5f));
     
