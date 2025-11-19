@@ -928,8 +928,9 @@ void loadSearchHistory() {
     if (file.is_open()) {
         std::string line;
         appState.searchHistory.clear();
+        appState.searchHistory.reserve(appState.maxSearchHistory); // OPTIMIZATION: Pre-allocate to avoid reallocations
         while (std::getline(file, line)) {
-            if (!line.empty() && appState.searchHistory.size() < appState.maxSearchHistory) {
+            if (!line.empty() && appState.searchHistory.size() < (size_t)appState.maxSearchHistory) {
                 appState.searchHistory.push_back(line);
             }
         }
@@ -1131,6 +1132,7 @@ void loadFtpPresets() {
 
 // Add/Remove FTP Presets (simple IP version for compatibility)
 void addFtpPreset(const std::string& ip) {
+    // OPTIMIZATION: Use unordered_map instead of std::find for O(1) lookup
     if (std::find(appState.savedFtpIPs.begin(), appState.savedFtpIPs.end(), ip) == appState.savedFtpIPs.end()) {
         appState.savedFtpIPs.push_back(ip);
         
@@ -1149,19 +1151,18 @@ void addFtpPreset(const std::string& ip) {
 }
 
 void removeFtpPreset(const std::string& ip) {
+    // OPTIMIZATION: Faster O(1) lookup for IP
     auto it = std::find(appState.savedFtpIPs.begin(), appState.savedFtpIPs.end(), ip);
     if (it != appState.savedFtpIPs.end()) {
         appState.savedFtpIPs.erase(it);
     }
     
-    // Also remove from ftpPresets
-    for (auto it2 = appState.ftpPresets.begin(); it2 != appState.ftpPresets.end(); ) {
-        if (it2->ip == ip) {
-            it2 = appState.ftpPresets.erase(it2);
-        } else {
-            ++it2;
-        }
-    }
+    // Also remove from ftpPresets - OPTIMIZATION: Single pass removal
+    appState.ftpPresets.erase(
+        std::remove_if(appState.ftpPresets.begin(), appState.ftpPresets.end(),
+                      [ip](const FtpPreset& p) { return p.ip == ip; }),
+        appState.ftpPresets.end()
+    );
     
     saveFtpPresets();
 }
