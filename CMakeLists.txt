@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(FileDuper)
+project(FileDuper VERSION 1.0.0 LANGUAGES CXX)
 
 # Deaktiviere Warnungen-als-Fehler für deprecated OpenSSL 3.0 MD5 Funktionen
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=deprecated-declarations")
@@ -137,6 +137,7 @@ set(SOURCES
     ${NETWORKSCANNER_SRC}
     src/networkscanner_adapter.cpp
     src/ftpclient.cpp
+    src/arp_utils.cpp
     src/ultraspeedengine.cpp
     src/ftplistworker.cpp
     src/ftpdeleteworker.cpp
@@ -266,6 +267,14 @@ install(TARGETS test_parse_local_exports RUNTIME DESTINATION bin)
 add_executable(test_networkscanner_adapter tools/test_networkscanner_adapter.cpp src/networkscanner_adapter.cpp ${NETWORKSCANNER_SRC})
 install(TARGETS test_networkscanner_adapter RUNTIME DESTINATION bin)
 
+add_executable(test_networkscanner_50 tools/test_networkscanner_50.cpp src/networkscanner_adapter.cpp ${NETWORKSCANNER_SRC})
+install(TARGETS test_networkscanner_50 RUNTIME DESTINATION bin)
+add_test(NAME test_networkscanner_50 COMMAND test_networkscanner_50)
+
+add_executable(test_arp tools/test_arp.cpp src/arp_utils.cpp)
+target_include_directories(test_arp PRIVATE include)
+install(TARGETS test_arp RUNTIME DESTINATION bin)
+
     # Basic test for the non-Qt NetworkScannerAdapter
     add_executable(test_networkscanner_cancel tools/test_networkscanner_cancel.cpp src/networkscanner_adapter.cpp ${NETWORKSCANNER_SRC})
     add_executable(test_net_utils tools/test_net_utils.cpp)
@@ -273,6 +282,15 @@ install(TARGETS test_networkscanner_adapter RUNTIME DESTINATION bin)
     target_link_libraries(test_net_utils PRIVATE pthread net_utils)
     install(TARGETS test_net_utils RUNTIME DESTINATION bin)
     install(TARGETS test_networkscanner_cancel RUNTIME DESTINATION bin)
+
+    # Enable ctest and register basic test executables
+    enable_testing()
+    add_test(NAME test_arp COMMAND test_arp)
+    add_test(NAME test_net_utils COMMAND test_net_utils)
+    add_test(NAME test_networkscanner_adapter COMMAND test_networkscanner_adapter)
+    add_test(NAME test_networkscanner_cancel COMMAND test_networkscanner_cancel)
+    add_test(NAME test_parse_local_exports COMMAND test_parse_local_exports)
+    add_test(NAME test_nfs_listexports COMMAND test_nfs_listexports)
 
     if(WIN32)
         target_link_libraries(test_networkscanner_adapter PRIVATE ws2_32)

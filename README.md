@@ -1,8 +1,8 @@
 # FileDuper - Advanced Duplicate File Scanner
 
-## 🎉 **PROJEKT ERFOLGREICH ABGESCHLOSSEN!**
+## 🎉 **VERSION 1.0.0 - STABLE RELEASE**
 
-**FileDuper V2.0** ist eine vollständig funktionsfähige, production-ready Qt6/C++ Anwendung für intelligente Duplikat-Erkennung mit erweiterten Features.
+**FileDuper V1.0** ist eine vollständig funktionsfähige, production-ready ImGui/C++ Anwendung für intelligente Duplikat-Erkennung mit erweiterten Features.
 
 ---
 
@@ -158,10 +158,10 @@ make -j$(nproc)
 
 ## 🤖 **FOR AI AGENTS - COMPREHENSIVE DOCUMENTATION**
 
-**FileDuper V2.0** serves as a complete reference implementation for:
+**FileDuper V1.0** serves as a complete reference implementation for:
 
-- **🏗️ Modern Qt6/C++ Architecture** - Modular, scalable, maintainable
-- **⚡ Hardware-Aware Applications** - NPU/GPU/CPU optimization patterns
+- **🏗️ Modern ImGui/C++ Architecture** - Modular, scalable, maintainable
+- **⚡ Hardware-Aware Applications** - OpenCL/GPU/CPU optimization patterns
 - **🌐 Network-Integrated Desktop Apps** - Service discovery and remote access
 - **🎨 User-Centric GUI Design** - Color-coding, shortcuts, context menus
 - **📊 Real-time Data Processing** - Async operations with progress feedback
@@ -171,4 +171,4 @@ make -j$(nproc)
 
 ---
 
-**🎉 FileDuper V2.0 - Mission Accomplished! 🎉**
+**🎉 FileDuper V1.0 - Stable Release! 🎉**

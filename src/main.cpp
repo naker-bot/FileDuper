@@ -51,6 +51,140 @@
 
 using json = nlohmann::json;
 
+// Translation system - maps English strings to both languages
+class Translator {
+public:
+    enum Language { DEUTSCH = 0, ENGLISH = 1 };
+    
+    static std::string translate(const std::string& key, Language lang) {
+        static const std::map<std::string, std::pair<std::string, std::string>> dictionary = {
+            // Menu items
+            {"File", {"Datei", "File"}},
+            {"Exit", {"Beenden", "Exit"}},
+            {"Edit", {"Bearbeiten", "Edit"}},
+            {"Settings", {"Einstellungen", "Settings"}},
+            {"Reset Settings", {"Einstellungen zurucksetzen", "Reset Settings"}},
+            {"View", {"Ansicht", "View"}},
+            {"Language", {"Sprache", "Language"}},
+            {"Theme", {"Theme", "Theme"}},
+            {"Scanner", {"Scanner", "Scanner"}},
+            {"Local Directories", {"Lokale Verzeichnisse", "Local Directories"}},
+            {"Network Directories", {"Netzwerk-Verzeichnisse", "Network Directories"}},
+            {"Network Scanner", {"Netzwerk-Scanner", "Network Scanner"}},
+            {"Help", {"Hilfe", "Help"}},
+            {"Show Help", {"Hilfe anzeigen", "Show Help"}},
+            {"About", {"Uber", "About"}},
+            
+            // Dialog titles
+            {"FileDuper - Help", {"FileDuper - Hilfe", "FileDuper - Help"}},
+            {"About FileDuper", {"Uber FileDuper", "About FileDuper"}},
+            {"Settings", {"Einstellungen", "Settings"}},
+            
+            // Help tabs
+            {"Operation", {"Bedienung", "Operation"}},
+            {"Menu Navigation", {"Menuführung", "Menu Navigation"}},
+            {"Configuration", {"Einstellung", "Configuration"}},
+            {"Directory Index", {"Indexverzeichnis", "Directory Index"}},
+            {"License", {"Lizenz", "License"}},
+            
+            // Button labels
+            {"Close", {"Schliessen", "Close"}},
+            {"OK", {"OK", "OK"}},
+            {"Cancel", {"Abbrechen", "Cancel"}},
+            {"Save", {"Speichern", "Save"}},
+            {"Delete", {"Loschen", "Delete"}},
+            {"Start Scan", {"Scan starten", "Start Scan"}},
+            {"Pause", {"Pause", "Pause"}},
+            {"Stop", {"Stop", "Stop"}},
+            {"Select All", {"Alle wahlen", "Select All"}},
+            
+            // Help content
+            {"Basic Operation", {"Grundlegende Bedienung", "Basic Operation"}},
+            {"Select Directory", {"Verzeichnis auswahlen", "Select Directory"}},
+            {"Click Local Directories", {"Klicken Sie auf Lokale Verzeichnisse", "Click Local Directories"}},
+            {"Click Network Directories", {"Klicken Sie auf Netzwerk-Verzeichnisse", "Click Network Directories"}},
+            {"Multiple Selection", {"Mehrfachauswahl moglich", "Multiple Selection"}},
+            {"Choose Hash Algorithm", {"Hash-Algorithmus wahlen", "Choose Hash Algorithm"}},
+            {"MD5 Quick", {"MD5: Schnell", "MD5: Quick"}},
+            {"SHA256 Recommended", {"SHA256: Empfohlen fur sichere Duplikat-Erkennung", "SHA256: Recommended for secure duplicate detection"}},
+            {"SHA512 Most Secure", {"SHA512: Hochste Sicherheit, etwas langsamer", "SHA512: Highest security, slightly slower"}},
+            {"Start Scanning", {"Scan starten", "Start Scanning"}},
+            {"Scan Progress", {"Fortschritt wird in der Statusleiste angezeigt", "Progress is shown in the status bar"}},
+            {"Can Pause Stop", {"Bei Bedarf konnen Sie mit Pause oder Stopp unterbrechen", "You can pause or stop as needed"}},
+            {"Manage Duplicates", {"Duplikate verwalten", "Manage Duplicates"}},
+            {"Results Display", {"Duplikate werden in einer Tabelle angezeigt", "Duplicates are displayed in a table"}},
+            {"Select Files Delete", {"Wahlen Sie Dateien zum Loschen", "Select files to delete"}},
+            {"Original Marked Yellow", {"Original-Datei ist gelb markiert und wird nicht geloscht", "Original file is marked yellow and will not be deleted"}},
+            {"Click Delete", {"Klicken Sie Loschen um ausgewahlte Duplikate zu entfernen", "Click Delete to remove selected duplicates"}},
+            
+            // Menu navigation
+            {"File Menu", {"Datei-Menu (Strg+Alt+F)", "File Menu (Ctrl+Alt+F)"}},
+            {"Edit Menu", {"Bearbeiten-Menu", "Edit Menu"}},
+            {"View Menu", {"Ansicht-Menu", "View Menu"}},
+            {"Scanner Menu", {"Scanner-Menu", "Scanner Menu"}},
+            {"Help Menu", {"Hilfe-Menu", "Help Menu"}},
+            
+            // Settings content
+            {"Scan Settings", {"Scan-Einstellungen", "Scan Settings"}},
+            {"Number Threads", {"Anzahl Threads: Bestimmt die Parallelverarbeitung (Standard: 4)", "Number Threads: Determines parallel processing (default: 4)"}},
+            {"Minimum File Size", {"Mindestdateigröße: Ignoriert Dateien unter dieser Große", "Minimum File Size: Ignores files below this size"}},
+            {"File Filter", {"Dateifilter: Nur bestimmte Dateitypen einschliessen", "File Filter: Include only certain file types"}},
+            {"Hash Settings", {"Hash-Einstellungen", "Hash Settings"}},
+            {"Quick Hash", {"Quick Hash: Vergleicht nur Start/Ende der Datei (schneller)", "Quick Hash: Compares only start/end of file (faster)"}},
+            {"Full Hash", {"Full Hash: Vergleicht gesamte Dateien (genauer)", "Full Hash: Compares entire files (more accurate)"}},
+            {"Network Settings", {"Netzwerk-Einstellungen", "Network Settings"}},
+            {"FTP Timeout", {"FTP Timeout: Sekunden bis Verbindung abbricht", "FTP Timeout: Seconds until connection breaks"}},
+            {"Parallel Connections", {"Parallel Connections: Mehrere gleichzeitige Verbindungen", "Parallel Connections: Multiple simultaneous connections"}},
+            {"Proxy Settings", {"Proxy-Einstellungen: Falls erforderlich konfigurieren", "Proxy Settings: Configure if required"}},
+            {"Display Settings", {"Darstellung", "Display Settings"}},
+            {"Theme Selection", {"Theme: Verschiedene Themes für unterschiedliche Vorlieben", "Theme: Various themes for different preferences"}},
+            {"Language Setting", {"Sprache: Deutsch (de) oder Englisch (en)", "Language: German (de) or English (en)"}},
+            {"Font Size", {"Schriftgröße: Anpassung an Monitor und Sehvermögen", "Font Size: Adjustment for monitor and vision"}},
+            
+            // Directory index
+            {"Important Directories", {"Wichtige Verzeichnisse", "Important Directories"}},
+            {"Application Directory", {"Anwendungsverzeichnis: ~/.config/fileduper/", "Application Directory: ~/.config/fileduper/"}},
+            {"Settings Path", {"Einstellungen: ~/.config/fileduper/settings.conf", "Settings Path: ~/.config/fileduper/settings.conf"}},
+            {"Presets Path", {"Presets: ~/.config/fileduper/presets.json", "Presets Path: ~/.config/fileduper/presets.json"}},
+            {"Logs Path", {"Protokolle: ~/.config/fileduper/logs/", "Logs Path: ~/.config/fileduper/logs/"}},
+            {"Temporary Files", {"Temporare Dateien", "Temporary Files"}},
+            {"Scan Cache", {"Scan-Cache: /tmp/fileduper_cache/", "Scan Cache: /tmp/fileduper_cache/"}},
+            {"Temporary Lists", {"Temporare Listen: /tmp/fileduper_tmp/", "Temporary Lists: /tmp/fileduper_tmp/"}},
+            {"Auto Delete Temp", {"Werden automatisch nach Programm-Ende geloscht", "Automatically deleted after program ends"}},
+            {"File Structure", {"Dateistruktur", "File Structure"}},
+            {"Configuration Files", {"Konfiguration:", "Configuration Files:"}},
+            {"Log Files", {"Protokolle:", "Log Files:"}},
+            
+            // License
+            {"GNU GPL v3", {"GNU General Public License v3.0", "GNU General Public License v3.0"}},
+            {"Free Software", {"FileDuper ist freie Software, die unter der GPL v3.0 lizenziert ist.", "FileDuper is free software licensed under GPL v3.0."}},
+            {"Freedoms", {"Freiheiten:", "Freedoms:"}},
+            {"Free Use", {"Frei verwendbar für jeden Zweck", "Free to use for any purpose"}},
+            {"Study Modify", {"Quellcode kann studiert und modifiziert werden", "Source code can be studied and modified"}},
+            {"Distribute Copies", {"Verteilung von Kopien ist erlaubt", "Distribution of copies is allowed"}},
+            {"Share Improvements", {"Verbesserungen durfen weitergegeben werden", "Improvements can be shared"}},
+            {"Conditions", {"Bedingungen:", "Conditions:"}},
+            {"Source Available", {"Quellcode muss verfügbar sein", "Source code must be available"}},
+            {"License Notice", {"Lizenz und Urheberrecht müssen angegeben werden", "License and copyright must be indicated"}},
+            {"Document Changes", {"Anderungen müssen dokumentiert werden", "Changes must be documented"}},
+            {"Same License", {"Gleiches Lizenzmodell bei Weitergabe erforderlich", "Same license model required for distribution"}},
+            {"More Information", {"Weitere Informationen:", "More Information:"}},
+            {"GPL Full Text", {"Vollstandiger GPL v3.0 Text: https://www.gnu.org/licenses/gpl-3.0.txt", "Full GPL v3.0 Text: https://www.gnu.org/licenses/gpl-3.0.txt"}},
+            {"GPL Summary", {"GPL Zusammenfassung: https://www.gnu.org/licenses/quick-guide-gplv3.html", "GPL Summary: https://www.gnu.org/licenses/quick-guide-gplv3.html"}},
+            {"Copyright", {"© 2025 FileDuper Contributors", "© 2025 FileDuper Contributors"}},
+            {"No Warranty", {"KEINE GARANTIE", "NO WARRANTY"}},
+            {"Program Provided", {"Dieses Programm wird ohne Garantie bereitgestellt.", "This program is provided without warranty."}},
+            {"User Responsibility", {"Der Benutzer nutzt es auf eigene Verantwortung.", "The user uses it at their own risk."}}
+        };
+        
+        auto it = dictionary.find(key);
+        if (it != dictionary.end()) {
+            return lang == DEUTSCH ? it->second.first : it->second.second;
+        }
+        return key; // Return key if not found
+    }
+};
+
 // FTP/NFS/SMB/WebDAV Server Preset
 struct FtpPreset {
     std::string name;
@@ -145,6 +279,7 @@ struct AppState {
     bool showEditSubnetPreset = false;
     int editPresetIndex = -1;
     bool showAddSubnetPreset = false; // modal for adding new preset
+    int currentPresetScanningIndex = -1; // index of subnet preset being scanned
     
     // NFS Local Browser
     std::string selectedNfsMountPath = ""; // Welches NFS-Mount wird gerade angezeigt
@@ -218,6 +353,8 @@ struct AppState {
     
     // UI State
     bool showAbout = false;
+    bool showHelp = false;
+    int helpTabSelected = 0;  // Tab selection: 0=Bedienung, 1=Menüführung, 2=Einstellung, 3=Indexverzeichniss, 4=Lizenz
     bool showSettings = false;
     bool showLocalBrowser = false;
     bool showFtpBrowser = false;
@@ -240,6 +377,10 @@ struct AppState {
     // Network/FTP state
     std::vector<std::string> discoveredHosts;
     std::string selectedFtpHost = "";
+    std::string selectedFtpPresetName = "";  // Track selected preset name for form display
+    std::string selectedNfsPresetName = "";  // ✅ FIX: Track selected NFS preset name
+    std::string selectedSmbPresetName = "";  // ✅ FIX: Track selected SMB preset name  
+    std::string selectedDavPresetName = "";  // ✅ FIX: Track selected WebDAV preset name
     std::string ftpUsername = "anonymous";
     std::string ftpPassword = "";
     int ftpPort = 21;
@@ -293,7 +434,7 @@ struct AppState {
     int scanTimeout = 1; // Timeout in Sekunden pro Host
     bool useLightningSpeed = true;
     bool useArpDiscovery = true; // Use ARP-based discovery by default
-    bool usePingDiscovery = false; // Option to also use ICMP ping discovery
+    // ICMP discovery is automatic (used when ARP returns no hosts)
     bool showLargeScanConfirm = false; // Show confirmation modal for large fallback scans
     bool allowLargeFallback = false;       // User explicit override
     std::string pendingLargeScanSubnet;    // The CIDR waiting for confirmation
@@ -354,6 +495,9 @@ struct AppState {
     bool ftpKeepAlive = true;        // TCP Keep-Alive
     int curlBufferSize = 512000;     // CURL Buffer Size (bytes) - default 500KB for max performance
     
+    // Language setting: 0 = Deutsch, 1 = English
+    int currentLanguage = 0; // Default: Deutsch
+    
     // Theme
     int currentTheme = 3; // Quake 3 Light Blue als Default
     const char* themes[33] = {
@@ -371,6 +515,12 @@ static AppState appState;
 static std::thread scanThread;
 static std::atomic<bool> stopScan(false);
 static std::mutex hostsMutex; // Für thread-sichere Host-Discovery
+
+// Helper function for translations
+inline std::string T(const std::string& key) {
+    Translator::Language lang = (appState.currentLanguage == 0) ? Translator::DEUTSCH : Translator::ENGLISH;
+    return Translator::translate(key, lang);
+}
 
 // HASH CACHE: Store computed hashes to avoid recalculating
 // Key: (inode, mtime) - identifies unique file state
@@ -3480,155 +3630,17 @@ bool connectAndFetchDirectories(FtpPreset& preset, int presetIndex = -1) {
     return true;
 }
 
-// ARP-basierte Host-Erkennung (viel schneller und genauer)
-std::vector<std::string> getActiveHostsViaARP() {
-    std::vector<std::string> activeHosts;
-    
-    // Lese ARP-Tabelle aus /proc/net/arp
-    std::ifstream arpFile("/proc/net/arp");
-    if (!arpFile.is_open()) {
-        std::cerr << "[ARP] Cannot read /proc/net/arp" << std::endl;
-        return activeHosts;
-    }
-    
-    std::string line;
-    std::getline(arpFile, line); // Skip header
-    
-    while (std::getline(arpFile, line)) {
-        std::istringstream iss(line);
-        std::string ip, hw, flags, mac, mask, device;
-        
-        // Format: IP address HW type Flags HW address Mask Device
-        if (iss >> ip >> hw >> flags >> mac >> mask >> device) {
-            // Flag 0x2 = REACHABLE (aktiver Host)
-            // Flag 0x6 = STALE (war aktiv)
-            int flagVal = std::stoi(flags, nullptr, 16);
-            
-            if ((flagVal & 0x2) || (flagVal & 0x6)) { // REACHABLE or STALE
-                activeHosts.push_back(ip);
-                std::cout << "[ARP] Found active host: " << ip << " (MAC: " << mac << ")" << std::endl;
-            }
-        }
-    }
-    arpFile.close();
-    
-    std::cout << "[ARP] Total active hosts found: " << activeHosts.size() << std::endl;
-    return activeHosts;
-}
+// ARP helper lives in arp_utils
+#include "arp_utils.h"
 
-// List local interface subnets using 'ip' command
-std::vector<std::string> getLocalInterfaceSubnets() {
-    std::vector<std::string> subs;
-    // Use the ip tool to list IPv4 addresses with prefixes
-    FILE* pipe = popen("ip -o -4 addr show | awk '{print $4}'", "r");
-    if (!pipe) return subs;
+// Removed helper: we do not show local subnet suggestions anymore.
 
-    char buf[256];
-    while (fgets(buf, sizeof(buf), pipe)) {
-        std::string line(buf);
-        line.erase(line.find_last_not_of("\n\r") + 1);
-        // line format: 192.168.1.10/24
-        if (line.empty()) continue;
-        // Compute network base
-        std::string ip = line;
-        size_t slash = ip.find('/');
-        if (slash == std::string::npos) continue;
-        std::string prefixStr = ip.substr(slash + 1);
-        std::string ipStr = ip.substr(0, slash);
-        int prefix = std::stoi(prefixStr);
+// Ping utilities moved to net_utils
+#include "net_utils.h"
+#include "networkscanner.h"
 
-        struct in_addr addr;
-        if (inet_pton(AF_INET, ipStr.c_str(), &addr) != 1) continue;
-        uint32_t ipnum = ntohl(addr.s_addr);
-        uint64_t mask = (prefix == 0) ? 0 : (~0ULL << (32 - prefix)) & 0xFFFFFFFFULL;
-        uint32_t net = ipnum & (uint32_t)mask;
-
-        struct in_addr s; s.s_addr = htonl(net);
-        char out[INET_ADDRSTRLEN];
-        inet_ntop(AF_INET, &s, out, sizeof(out));
-        std::string base = std::string(out) + "/" + std::to_string(prefix);
-        // Avoid duplicates
-        if (std::find(subs.begin(), subs.end(), base) == subs.end()) subs.push_back(base);
-    }
-    pclose(pipe);
-    return subs;
-}
-
-// Ping a single host via system 'ping -c 1 -W <sec>' (returns true if reachable)
-bool pingHost(const std::string &ip, int timeoutSeconds) {
-    // Build ping command; -n for numeric output
-    std::string cmd = "ping -c 1 -W " + std::to_string(timeoutSeconds) + " -n " + ip + " >/dev/null 2>&1";
-    int res = system(cmd.c_str());
-    return (res == 0);
-}
-
-// Ping-based range scan (fast but ICMP-only)
-void pingHostRange(const std::string &startIpStr, const std::string &endIpStr, int timeoutSeconds, std::vector<std::string> *results) {
-    auto ip2int = [](const std::string &ip) -> uint32_t {
-        struct in_addr addr;
-        if (inet_pton(AF_INET, ip.c_str(), &addr) != 1) return 0;
-        return ntohl(addr.s_addr);
-    };
-    auto int2ip = [](uint32_t v) -> std::string {
-        struct in_addr s; s.s_addr = htonl(v);
-        char buf[INET_ADDRSTRLEN];
-        inet_ntop(AF_INET, &s, buf, sizeof(buf));
-        return std::string(buf);
-    };
-
-    uint32_t start = ip2int(startIpStr);
-    uint32_t end = ip2int(endIpStr);
-    if (start == 0 || end == 0 || end < start) return;
-
-    const int BATCH_SIZE = 100; // ping a batch of hosts in parallel
-    std::vector<std::future<bool>> futures;
-    for (uint32_t ip = start; ip <= end; ++ip) {
-        std::string ipStr = int2ip(ip);
-        futures.push_back(std::async(std::launch::async, [ipStr, timeoutSeconds]() {
-            return pingHost(ipStr, timeoutSeconds);
-        }));
-
-        if ((int)futures.size() >= BATCH_SIZE || ip == end) {
-            uint32_t cur = ip - (futures.size()-1);
-            for (auto &f : futures) {
-                bool ok = f.get();
-                if (ok) {
-                    std::lock_guard<std::mutex> lock(hostsMutex);
-                    results->push_back(int2ip(cur));
-                }
-                cur++;
-            }
-            futures.clear();
-        }
-    }
-}
-
-// Convert CIDR to numeric start and end IPs (inclusive host range), returns false on error
-bool cidrToRange(const std::string& cidr, uint32_t &outStart, uint32_t &outEnd) {
-    size_t slash = cidr.find('/');
-    std::string ipStr = (slash == std::string::npos) ? cidr : cidr.substr(0, slash);
-    int prefix = (slash == std::string::npos) ? 32 : std::stoi(cidr.substr(slash+1));
-    if (prefix < 0 || prefix > 32) return false;
-
-    struct in_addr addr;
-    if (inet_pton(AF_INET, ipStr.c_str(), &addr) != 1) return false;
-    uint32_t ip = ntohl(addr.s_addr);
-
-    uint64_t mask = (prefix == 0) ? 0 : (~0ULL << (32 - prefix)) & 0xFFFFFFFFULL;
-    uint32_t net = ip & (uint32_t)mask;
-    uint32_t broadcast = (uint32_t)(net | (~(uint32_t)mask));
-
-    // Host range: net+1 .. broadcast-1 (unless prefix==32)
-    if (prefix == 32) {
-        outStart = outEnd = net;
-    } else if (prefix == 31) {
-        outStart = net; outEnd = broadcast; // two hosts
-    } else {
-        outStart = net + 1;
-        outEnd = broadcast - 1;
-    }
-    return true;
-}
+// CIDR utilities moved to net_utils
+#include "net_utils.h"
 
 // Port-Scan für einzelnen Host mit Timeout
 struct PortScanResult {
@@ -3748,32 +3760,67 @@ void startLightningScan(const std::string& subnet) {
     appState.scanningNetwork = true;
     
     std::cout << "[Lightning Scanner] Starting ARP-based host discovery + port scanning" << std::endl;
-    // Normalise quick notations -> e.g. "10.0" -> "10.0.0.0/24"
-    std::string normalizedSubnet = subnet;
-    if (normalizedSubnet.find('/') == std::string::npos) {
-        std::vector<std::string> parts;
-        std::istringstream iss(normalizedSubnet);
-        std::string tok;
-        while (std::getline(iss, tok, '.')) {
-            if (!tok.empty()) parts.push_back(tok);
-        }
-        if (parts.size() == 2) {
-            normalizedSubnet = parts[0] + "." + parts[1] + ".0/24";
-        } else if (parts.size() == 3) {
-            normalizedSubnet = parts[0] + "." + parts[1] + "." + parts[2] + ".0/24";
-        }
-    }
+    // Normalize quick notations -> e.g. "10.0" -> "10.0.0.0/24"
+    std::string normalizedSubnet = normalizeSubnet(subnet);
     
     // Starte ARP-Scan in separatem Thread (non-blocking)
     std::thread([subnet, normalizedSubnet]() {
+        // If subnet is not local, use nmap-based NetworkScanner which is
+        // better-suited for scanning remote networks than ARP/ICMP.
+        if (!isSubnetLocal(normalizedSubnet)) {
+            std::cout << "[Lightning Scanner] Subnet " << normalizedSubnet << " not local -> using NetworkScanner (nmap)" << std::endl;
+            NetworkScanner ns;
+            auto hosts = ns.scanSubnet(normalizedSubnet);
+            appState.totalHostsToScan = hosts.size();
+            // Now run existing port-scan phase over these hosts
+            const int BATCH_SIZE = 10;
+            std::vector<std::future<PortScanResult>> futures;
+            for (const auto &ip : hosts) {
+                if (!appState.scanThreadRunning) break;
+                futures.push_back(std::async(std::launch::async, [ip]() { return scanHostPorts(ip, 50); }));
+                if ((int)futures.size() >= BATCH_SIZE || ip == hosts.back()) {
+                    for (auto &f : futures) {
+                        auto result = f.get();
+                        if (!result.openPorts.empty()) {
+                            std::lock_guard<std::mutex> lock(hostsMutex);
+                            appState.discoveredHosts.push_back(result.ip);
+                            std::cout << "[Scanner] " << result.hostIdentifier << std::endl;
+                        }
+                    }
+                    futures.clear();
+                }
+            }
+            appState.scanningNetwork = false;
+            appState.scanThreadRunning = false;
+            return;
+        }
         // Phase 1: ARP-basierte aktive Host-Erkennung (sehr schnell!)
         auto activeHosts = getActiveHostsViaARP();
         appState.totalHostsToScan = activeHosts.size();
         
         std::cout << "[Lightning Scanner] Phase 1 complete: " << activeHosts.size() 
                   << " active hosts found via ARP" << std::endl;
+
+        // Filter ARP results by the requested CIDR to avoid scanning unrelated
+        // local networks (e.g., default 192.168.1.0/24) when the user requested
+        // a different subnet like 192.168.50.0/24.
+        uint32_t reqStart = 0, reqEnd = 0;
+        std::vector<std::string> activeHostsFiltered;
+        if (cidrToRange(normalizedSubnet, reqStart, reqEnd)) {
+            std::cout << "[DEBUG] normalizedSubnet range: " << normalizedSubnet << " => " << reqStart << ".." << reqEnd << std::endl;
+            auto ip2int = [](const std::string &ip) -> uint32_t { struct in_addr a; inet_pton(AF_INET, ip.c_str(), &a); return ntohl(a.s_addr); };
+            for (const auto &h : activeHosts) {
+                uint32_t val = ip2int(h);
+                if (val >= reqStart && val <= reqEnd) activeHostsFiltered.push_back(h);
+            }
+            for (const auto &h : activeHostsFiltered) {
+                std::cout << "[DEBUG] host in range: " << h << std::endl;
+            }
+        } else {
+            activeHostsFiltered = activeHosts; // Couldn't parse requested CIDR: keep ARP results as-is
+        }
         
-        if (activeHosts.empty() || !appState.useArpDiscovery) {
+        if (activeHostsFiltered.empty()) {
             std::cout << "[Warning] No active hosts found via ARP, scanning anyway..." << std::endl;
             // Fallback: full-range scan for /24 networks
             uint32_t startIpNumeric = 0, endIpNumeric = 0;
@@ -3821,13 +3868,13 @@ void startLightningScan(const std::string& subnet) {
         }
         
         // Phase 2: Port-Scan auf allen aktiven Hosts (mit Parallelisierung)
-        std::cout << "[Lightning Scanner] Phase 2: Scanning " << activeHosts.size() 
+        std::cout << "[Lightning Scanner] Phase 2: Scanning " << activeHostsFiltered.size() 
                   << " hosts for file services..." << std::endl;
         
         const int BATCH_SIZE = 10; // Parallel scanning
         std::vector<std::future<PortScanResult>> futures;
         
-        for (const auto& ip : activeHosts) {
+        for (const auto& ip : activeHostsFiltered) {
             if (!appState.scanThreadRunning) break;
             
             // Async port scan
@@ -3841,7 +3888,7 @@ void startLightningScan(const std::string& subnet) {
                     auto result = future.get();
                     
                     // Nur Hosts mit offenen Ports speichern
-                    if (!result.openPorts.empty()) {
+                            if (!result.openPorts.empty()) {
                         std::lock_guard<std::mutex> lock(hostsMutex);
                         appState.discoveredHosts.push_back(result.ip);
                         std::cout << "[Scanner] " << result.hostIdentifier << std::endl;
@@ -3855,6 +3902,18 @@ void startLightningScan(const std::string& subnet) {
         
         appState.scanningNetwork = false;
         appState.scanThreadRunning = false;
+
+        // If this scan was initiated from a preset, update that preset with results
+        if (appState.currentPresetScanningIndex >= 0 && appState.currentPresetScanningIndex < (int)appState.subnetPresets.size()) {
+            int idx = appState.currentPresetScanningIndex;
+            SubnetPreset &p = appState.subnetPresets[idx];
+            p.lastScannedAt = time(nullptr);
+            p.lastFoundHosts = appState.discoveredHosts.size();
+            p.lastResults = appState.discoveredHosts;
+            saveSubnetPresets();
+            appState.currentPresetScanningIndex = -1;
+            std::cout << "[Preset] Updated preset '" << p.name << "' with " << p.lastFoundHosts << " hosts" << std::endl;
+        }
         
         std::cout << "[Lightning Scanner] ✅ Scan complete! Found " 
                  << appState.discoveredHosts.size() << " file servers" << std::endl;
@@ -5656,16 +5715,26 @@ void renderNetworkScanner() {
                     
                     ImGui::PushStyleColor(ImGuiCol_Text, textColor);
                     bool isSelected = (appState.connectedPresetIndex == (int)i);
+                    // ✅ FIX: Kopiere displayText vor c_str() Aufruf um Pointer-Invalidity zu vermeiden
+                    // Der String bleibt für die ImGui::Selectable() Funktion gültig
                     bool clicked = ImGui::Selectable(displayText.c_str(), isSelected, ImGuiSelectableFlags_AllowDoubleClick);
                     ImGui::PopStyleColor();
                     
                     if (clicked) {
+                        // ✅ FIX: Aktualisiere connectedPresetIndex SOFORT nach Click
+                        appState.connectedPresetIndex = (int)i;
+                        
                         // Einfachklick: Daten ins Formular laden
                         appState.selectedFtpHost = preset.ip;
+                        appState.selectedFtpPresetName = preset.name;
                         appState.ftpPort = preset.port;
                         appState.ftpUsername = preset.username;
                         appState.ftpPassword = preset.password;
-                        std::cout << "[FTP] Loaded preset: " << preset.name << std::endl;
+                        std::cout << "[FTP] ✅ Preset ausgewählt: " << preset.name << std::endl;
+                        std::cout << "[FTP]  ├─ Server: " << preset.ip << std::endl;
+                        std::cout << "[FTP]  ├─ Port: " << preset.port << std::endl;
+                        std::cout << "[FTP]  ├─ Username: " << preset.username << std::endl;
+                        std::cout << "[FTP]  └─ Password: " << (preset.password.empty() ? "(empty)" : "***") << std::endl;
                     }
                     
                     // Doppelklick: Direkt verbinden und Verzeichnisse holen
@@ -5740,10 +5809,21 @@ void renderNetworkScanner() {
             static char username[128] = "anonymous";
             static char password[128] = "";
             
-            // Auto-fill wenn aus Netzwerk-Scan ausgewählt
+            // Auto-fill wenn aus Netzwerk-Scan ausgewählt oder Preset geladen
             if (!appState.selectedFtpHost.empty()) {
                 strncpy(ftpHost, appState.selectedFtpHost.c_str(), sizeof(ftpHost) - 1);
+                ftpHost[sizeof(ftpHost) - 1] = '\0';
             }
+            // ✅ FIX: Sync preset name ALWAYS - auch wenn leer (manuell bearbeitet)
+            strncpy(presetName, appState.selectedFtpPresetName.c_str(), sizeof(presetName) - 1);
+            presetName[sizeof(presetName) - 1] = '\0';
+            
+            // Sync username and password from appState
+            strncpy(username, appState.ftpUsername.c_str(), sizeof(username) - 1);
+            username[sizeof(username) - 1] = '\0';
+            
+            strncpy(password, appState.ftpPassword.c_str(), sizeof(password) - 1);
+            password[sizeof(password) - 1] = '\0';
             
             ImGui::Columns(2, "ConnectionDetails", false);
             ImGui::SetColumnWidth(0, 120);
@@ -5752,6 +5832,8 @@ void renderNetworkScanner() {
             ImGui::NextColumn();
             ImGui::SetNextItemWidth(-1);
             ImGui::InputText("##PresetName", presetName, sizeof(presetName));
+            // ✅ FIX: FORCE Update AppState nach InputText - wird JEDESMAL ausgeführt
+            appState.selectedFtpPresetName = presetName;
             ImGui::NextColumn();
             
             ImGui::Text("Dienst:");
@@ -5888,6 +5970,10 @@ void renderNetworkScanner() {
             static char nfsOptions[256] = "vers=4,rw";
             static char nfsUsername[256] = "nfsuser";
             static char nfsPassword[256] = "";
+            
+            // ✅ FIX: Synchronisiere NFS-Buffers IMMER vom AppState (nicht nur beim Click)
+            strncpy(nfsName, appState.selectedNfsPresetName.c_str(), sizeof(nfsName) - 1);
+            nfsName[sizeof(nfsName) - 1] = '\0';
             static bool nfsAutoMount = false;
             
             // Gespeicherte NFS Presets anzeigen
@@ -5991,7 +6077,10 @@ void renderNetworkScanner() {
                         
                         // Single click: Load ALL preset data into form (including username/password)
                         if (clicked && !ImGui::IsMouseDoubleClicked(0)) {
-                            std::cout << "[NFS] Loaded preset: " << preset->name << std::endl;
+                            // ✅ FIX: Speichere preset name im AppState
+                            appState.selectedNfsPresetName = preset->name;
+                            
+                            std::cout << "[NFS] ✅ Preset ausgewählt: " << preset->name << std::endl;
                             std::cout << "[NFS] ├─ Server: " << preset->ip << std::endl;
                             std::cout << "[NFS] ├─ Export: " << preset->nfsExportPath << std::endl;
                             std::cout << "[NFS] ├─ Mount: " << preset->nfsMountPoint << std::endl;
@@ -6047,6 +6136,7 @@ void renderNetworkScanner() {
             ImGui::NextColumn();
             ImGui::SetNextItemWidth(-1);
             ImGui::InputText("##NfsName", nfsName, sizeof(nfsName));
+            appState.selectedNfsPresetName = nfsName;  // ✅ FIX: Sync back to AppState
             ImGui::NextColumn();
             
             ImGui::Text("NFS Server:");
@@ -6226,6 +6316,10 @@ void renderNetworkScanner() {
             static char smbOptions[256] = "vers=3.0";
             static bool smbAutoMount = false;
             
+            // ✅ FIX: Synchronisiere SMB-Buffers IMMER vom AppState
+            strncpy(smbName, appState.selectedSmbPresetName.c_str(), sizeof(smbName) - 1);
+            smbName[sizeof(smbName) - 1] = '\0';
+            
             // Gespeicherte SMB Presets anzeigen
             if (!appState.ftpPresets.empty()) {
                 std::vector<FtpPreset*> smbPresets;
@@ -6259,8 +6353,11 @@ void renderNetworkScanner() {
                         ImGui::PushStyleColor(ImGuiCol_Text, statusColor);
                         bool isSelected = preset->smbMounted;
                         if (ImGui::Selectable(displayText.c_str(), isSelected, ImGuiSelectableFlags_AllowDoubleClick)) {
+                            // ✅ FIX: Speichere SMB preset name im AppState
+                            appState.selectedSmbPresetName = preset->name;
+                            
                             // Single click: Load into form
-                            std::cout << "[SMB] Loaded preset: " << preset->name << std::endl;
+                            std::cout << "[SMB] ✅ Preset ausgewählt: " << preset->name << std::endl;
                             strcpy(smbName, preset->name.c_str());
                             strcpy(smbServer, preset->ip.c_str());
                             strcpy(smbShareName, preset->smbSharePath.c_str());
@@ -6342,22 +6439,7 @@ void renderNetworkScanner() {
                                 }
                             }
                             ImGui::Separator();
-                            if (ImGui::MenuItem("➕ Neues Preset hinzufügen")) {
-                                // Clear form for new preset
-                                memset(smbName, 0, sizeof(smbName));
-                                memset(smbServer, 0, sizeof(smbServer));
-                                memset(smbShareName, 0, sizeof(smbShareName));
-                                memset(smbMountPoint, 0, sizeof(smbMountPoint));
-                                memset(smbUsername, 0, sizeof(smbUsername));
-                                memset(smbPassword, 0, sizeof(smbPassword));
-                                memset(smbDomain, 0, sizeof(smbDomain));
-                                memset(smbWorkgroup, 0, sizeof(smbWorkgroup));
-                                memset(smbOptions, 0, sizeof(smbOptions));
-                                smbAutoMount = false;
-                                strcpy(smbMountPoint, "/mnt/smb_");
-                                strcpy(smbOptions, "vers=3.0,uid=1000,gid=1000");
-                                std::cout << "[SMB] Form cleared for new preset" << std::endl;
-                            }
+                            // Removed 'Add preset' from context menu (we keep presets in the header Add button)
                             if (ImGui::MenuItem("🗑️ Preset löschen")) {
                                 // Find actual index in ftpPresets
                                 for (size_t j = 0; j < appState.ftpPresets.size(); j++) {
@@ -6405,6 +6487,7 @@ void renderNetworkScanner() {
             ImGui::NextColumn();
             ImGui::SetNextItemWidth(-1);
             ImGui::InputText("##SmbName", smbName, sizeof(smbName));
+            appState.selectedSmbPresetName = smbName;  // ✅ FIX: Sync back to AppState
             ImGui::NextColumn();
             
             ImGui::Text("SMB Server:");
@@ -6593,6 +6676,11 @@ void renderNetworkScanner() {
             static char davOptions[256] = "";
             static bool davUseSSL = true;
             static bool davAutoMount = false;
+            static bool davMounted = false;
+            
+            // ✅ FIX: Synchronisiere WebDAV-Buffers IMMER vom AppState
+            strncpy(davName, appState.selectedDavPresetName.c_str(), sizeof(davName) - 1);
+            davName[sizeof(davName) - 1] = '\0';
             
             // Gespeicherte WebDAV Presets anzeigen
             std::vector<FtpPreset*> davPresets;
@@ -6626,8 +6714,11 @@ void renderNetworkScanner() {
                         ImGui::PushStyleColor(ImGuiCol_Text, statusColor);
                         bool isSelected = preset->davMounted;
                         if (ImGui::Selectable(displayText.c_str(), isSelected, ImGuiSelectableFlags_AllowDoubleClick)) {
+                            // ✅ FIX: Speichere WebDAV preset name im AppState
+                            appState.selectedDavPresetName = preset->name;
+                            
                             // Single click: Load into form
-                            std::cout << "[WebDAV] Loaded preset: " << preset->name << std::endl;
+                            std::cout << "[WebDAV] ✅ Preset ausgewählt: " << preset->name << std::endl;
                             strcpy(davName, preset->name.c_str());
                             strcpy(davUrl, preset->davUrl.c_str());
                             strcpy(davMountPoint, preset->davMountPoint.c_str());
@@ -6750,6 +6841,7 @@ void renderNetworkScanner() {
             ImGui::NextColumn();
             ImGui::SetNextItemWidth(-1);
             ImGui::InputText("##DavName", davName, sizeof(davName));
+            appState.selectedDavPresetName = davName;  // ✅ FIX: Sync back to AppState
             ImGui::NextColumn();
             
             ImGui::Text("WebDAV URL:");
@@ -6956,15 +7048,16 @@ void renderNetworkScanner() {
                     if (ImGui::Selectable(displayText.c_str(), isSelected, ImGuiSelectableFlags_AllowDoubleClick)) {
                         selectedPresetIndex = i;
                         strcpy(subnet, preset.subnet.c_str());
-                        
-                        // Single-click on a preset should start the scan with that preset
-                        if (ImGui::IsItemClicked(0)) {
+
+                        // Start scan immediately on selection (single click)
+                        if (!appState.scanningNetwork) {
                             appState.scanningNetwork = true;
                             // Load preset options into UI
                             appState.useLightningSpeed = preset.useLightning;
                             appState.scannerThreads = preset.scannerThreads;
                             appState.scanTimeout = preset.scanTimeout;
-                            appState.useArpDiscovery = preset.useARP;
+                            // Auto discovery is enabled; ignore preset's explicit ARP flag.
+                            appState.currentPresetScanningIndex = i;
                             std::cout << "[Network] Starting scan for preset: " << preset.name << " (" << preset.subnet << ")" << std::endl;
                             startLightningScan(preset.subnet);
                         }
@@ -6979,7 +7072,8 @@ void renderNetworkScanner() {
                             appState.useLightningSpeed = preset.useLightning;
                             appState.scannerThreads = preset.scannerThreads;
                             appState.scanTimeout = preset.scanTimeout;
-                            appState.useArpDiscovery = preset.useARP;
+                            // Auto discovery is enabled; ignore preset's explicit ARP flag.
+                            appState.currentPresetScanningIndex = i;
                             appState.scanningNetwork = true;
                             startLightningScan(preset.subnet);
                         }
@@ -6990,7 +7084,7 @@ void renderNetworkScanner() {
                             appState.useLightningSpeed = preset.useLightning;
                             appState.scannerThreads = preset.scannerThreads;
                             appState.scanTimeout = preset.scanTimeout;
-                            appState.useArpDiscovery = preset.useARP;
+                            // Auto discovery is enabled; ignore preset's explicit ARP flag.
                         }
                         if (ImGui::MenuItem("✏️ Bearbeiten")) {
                             // Open edit modal for this preset
@@ -7005,7 +7099,8 @@ void renderNetworkScanner() {
                             appState.useLightningSpeed = preset.useLightning;
                             appState.scannerThreads = preset.scannerThreads;
                             appState.scanTimeout = preset.scanTimeout;
-                            appState.useArpDiscovery = preset.useARP;
+                            // Auto discovery is enabled; ignore preset's explicit ARP flag.
+                            appState.currentPresetScanningIndex = i;
                             appState.scanningNetwork = true;
                             startLightningScan(preset.subnet);
                         }
@@ -7107,50 +7202,7 @@ void renderNetworkScanner() {
             ImGui::SameLine();
             ImGui::TextDisabled("(z.B. 192.168.1.0/24)");
             
-            // Quick preset suggestions (NEW)
-            ImGui::TextColored(ImVec4(0.5f, 1.0f, 0.5f, 1.0f), "💡 Vorschläge:");
-            ImGui::SameLine();
-            
-            // Get current network
-            FILE *ifconfigPipe = popen("hostname -I 2>/dev/null | awk '{print $1}'", "r");
-            static std::string currentIp = "";
-            if (ifconfigPipe) {
-                char ipBuf[256];
-                if (fgets(ipBuf, sizeof(ipBuf), ifconfigPipe)) {
-                    currentIp = ipBuf;
-                    currentIp.erase(currentIp.find_last_not_of("\n\r") + 1);
-                }
-                pclose(ifconfigPipe);
-            }
-            
-            // Auto-generate subnet suggestions
-            if (!currentIp.empty() && currentIp.find('.') != std::string::npos) {
-                size_t lastDot = currentIp.rfind('.');
-                std::string subnet24 = currentIp.substr(0, lastDot) + ".0/24";
-
-                if (ImGui::Button(("🔍 " + subnet24).c_str())) {
-                    strcpy(subnet, subnet24.c_str());
-                }
-            }
-
-            // Also show detected local interface subnets (from ip -4)
-            auto localSubs = getLocalInterfaceSubnets();
-            for (const auto &ls : localSubs) {
-                ImGui::SameLine();
-                std::string label = "🌐 " + ls;
-                if (ImGui::Button(label.c_str())) {
-                    strcpy(subnet, ls.c_str());
-                }
-            }
-            
-            ImGui::SameLine();
-            if (ImGui::Button("🔍 192.168.1.0/24")) {
-                strcpy(subnet, "192.168.1.0/24");
-            }
-            ImGui::SameLine();
-            if (ImGui::Button("🔍 10.0.0.0/24")) {
-                strcpy(subnet, "10.0.0.0/24");
-            }
+            // Subnet suggestions removed: discovery will automatically choose ARP or ICMP.
             
             ImGui::Spacing();
             // Scanner options for custom presets
@@ -7159,10 +7211,7 @@ void renderNetworkScanner() {
             ImGui::SameLine();
             ImGui::InputInt("Threads##scannerThreads", &appState.scannerThreads, 1, 32);
             ImGui::InputInt("Timeout (s)##scanTimeout", &appState.scanTimeout);
-            ImGui::Checkbox("🔎 ARP-Discovery verwenden", &appState.useArpDiscovery);
-            // Optional ICMP Ping discovery
-            ImGui::SameLine();
-            ImGui::Checkbox("📟 ICMP-Ping verwenden", &appState.usePingDiscovery);
+            ImGui::TextColored(ImVec4(0.7f,0.7f,0.7f,1.0f), "Discovery: automatic (ARP → ICMP → full-range fallback)");
             
             if (!appState.scanningNetwork) {
                 if (ImGui::Button(appState.useLightningSpeed ? 
@@ -7182,23 +7231,28 @@ void renderNetworkScanner() {
                             std::cout << "[Network] Scanning " << subnet << " with ARP service detection..." << std::endl;
                             
                             // Step 1: Get live hosts using selected discovery method
-                            std::string normalizedSubnet = subnet;
-                            if (normalizedSubnet.find('/') == std::string::npos) {
-                                std::vector<std::string> parts;
-                                std::istringstream iss(normalizedSubnet);
-                                std::string tok;
-                                while (std::getline(iss, tok, '.')) {
-                                    if (!tok.empty()) parts.push_back(tok);
-                                }
-                                if (parts.size() == 2) normalizedSubnet = parts[0] + "." + parts[1] + ".0/24";
-                                else if (parts.size() == 3) normalizedSubnet = parts[0] + "." + parts[1] + "." + parts[2] + ".0/24";
-                            }
+                            std::string normalizedSubnet = normalizeSubnet(subnet);
                             std::vector<std::string> liveHosts;
-                            if (appState.useArpDiscovery) {
-                                liveHosts = getActiveHostsViaARP();
+                            // Prefer ARP locally (very fast); for remote subnets use nmap
+                            if (isSubnetLocal(normalizedSubnet)) {
+                                auto arpHosts = getActiveHostsViaARP();
+                                uint32_t rstart = 0, rend = 0;
+                                if (cidrToRange(normalizedSubnet, rstart, rend)) {
+                                    auto ip2int = [](const std::string &ip) -> uint32_t { struct in_addr a; inet_pton(AF_INET, ip.c_str(), &a); return ntohl(a.s_addr); };
+                                    for (const auto &h : arpHosts) {
+                                        uint32_t val = ip2int(h);
+                                        if (val >= rstart && val <= rend) liveHosts.push_back(h);
+                                    }
+                                } else {
+                                    liveHosts = arpHosts; // fallback
+                                }
+                            } else {
+                                std::cout << "[Network] Subnet " << normalizedSubnet << " not local -> using NetworkScanner" << std::endl;
+                                NetworkScanner ns;
+                                liveHosts = ns.scanSubnet(normalizedSubnet);
                             }
-                            if (appState.usePingDiscovery) {
-                                // Check range size before performing a full ping scan
+                            // If ARP found none, try ICMP/ping sweep inside the same CIDR
+                            if (liveHosts.empty()) {
                                 uint32_t startIpNumeric = 0, endIpNumeric = 0;
                                 if (cidrToRange(normalizedSubnet, startIpNumeric, endIpNumeric)) {
                                     uint32_t count = endIpNumeric - startIpNumeric + 1;
@@ -7211,13 +7265,11 @@ void renderNetworkScanner() {
                                         std::cout << "[Warning] Ping range too large (" << count << ") - asking for confirmation" << std::endl;
                                         return;
                                     }
-                                }
-                                // If ping provided, also try a numeric ping scan of the CIDR (short)
-                                uint32_t startIpNumeric = 0, endIpNumeric = 0;
-                                if (cidrToRange(std::string(subnet), startIpNumeric, endIpNumeric)) {
+
                                     std::string startIp; char buf[INET_ADDRSTRLEN]; struct in_addr a;
                                     a.s_addr = htonl(startIpNumeric); inet_ntop(AF_INET, &a, buf, sizeof(buf)); startIp = buf;
                                     a.s_addr = htonl(endIpNumeric); inet_ntop(AF_INET, &a, buf, sizeof(buf)); std::string endIp = buf;
+
                                     std::vector<std::string> pingResults;
                                     pingHostRange(startIp, endIp, appState.scanTimeout, &pingResults);
                                     for (const auto &p : pingResults) {
@@ -7225,7 +7277,6 @@ void renderNetworkScanner() {
                                     }
                                 }
                             }
-                            std::vector<std::string> liveHosts;
                             // OPTIMIZED: Use popen instead of system() for piped commands
                             FILE *arpPipe = popen("arp -a 2>/dev/null | grep -oE '([0-9]{1,3}\\.){3}[0-9]{1,3}' | sort -u", "r");
                             if (arpPipe) {
@@ -7421,7 +7472,6 @@ void renderNetworkScanner() {
                     static bool editLightning;
                     static int editThreads;
                     static int editTimeout;
-                    static bool editUseARP;
                     static bool editInit = false;
 
                     if (!editInit) {
@@ -7430,7 +7480,7 @@ void renderNetworkScanner() {
                         editLightning = p.useLightning;
                         editThreads = p.scannerThreads;
                         editTimeout = p.scanTimeout;
-                        editUseARP = p.useARP;
+                        // Note: ARP/ICMP selection is automatic; p.useARP is kept for backwards compatibility
                         editInit = true;
                     }
 
@@ -7439,7 +7489,6 @@ void renderNetworkScanner() {
                     ImGui::Checkbox("Lightning (parallel)", &editLightning);
                     ImGui::InputInt("Threads", &editThreads);
                     ImGui::InputInt("Timeout (s)", &editTimeout);
-                    ImGui::Checkbox("Use ARP Discovery", &editUseARP);
 
                     if (ImGui::Button("Save")) {
                         p.name = editName;
@@ -7447,7 +7496,7 @@ void renderNetworkScanner() {
                         p.useLightning = editLightning;
                         p.scannerThreads = editThreads;
                         p.scanTimeout = editTimeout;
-                        p.useARP = editUseARP;
+                        // p.useARP intentionally not modified; auto-discovery will be used
                         saveSubnetPresets();
                         editInit = false;
                         appState.showEditSubnetPreset = false;
@@ -7594,18 +7643,18 @@ void renderMainWindow() {
                             ImGuiWindowFlags_NoResize |
                             ImGuiWindowFlags_NoCollapse;
     
-    if (ImGui::Begin("FileDuper - Hauptfenster", nullptr, flags)) {
+    if (ImGui::Begin(T("File").c_str(), nullptr, flags)) {
         
         // Menu Bar
         if (ImGui::BeginMenuBar()) {
-            if (ImGui::BeginMenu("Datei")) {
-                if (ImGui::MenuItem("Beenden")) {
+            if (ImGui::BeginMenu(T("File").c_str())) {
+                if (ImGui::MenuItem(T("Exit").c_str())) {
                     glfwSetWindowShouldClose(glfwGetCurrentContext(), GLFW_TRUE);
                 }
                 ImGui::EndMenu();
             }
-            if (ImGui::BeginMenu("Bearbeiten")) {
-                if (ImGui::MenuItem("[CFG] Einstellungen", "Ctrl+,")) {
+            if (ImGui::BeginMenu(T("Edit").c_str())) {
+                if (ImGui::MenuItem(T("Settings").c_str(), "Ctrl+,")) {
                     appState.showSettings = true;
                 }
                 ImGui::EndMenu();
@@ -7657,6 +7706,16 @@ void renderMainWindow() {
                 ImGui::EndMenu();
             }
             if (ImGui::BeginMenu("Ansicht")) {
+                if (ImGui::BeginMenu("Sprache")) {
+                    if (ImGui::MenuItem("Deutsch", nullptr, appState.currentLanguage == 0)) {
+                        appState.currentLanguage = 0;
+                    }
+                    if (ImGui::MenuItem("English", nullptr, appState.currentLanguage == 1)) {
+                        appState.currentLanguage = 1;
+                    }
+                    ImGui::EndMenu();
+                }
+                ImGui::Separator();
                 if (ImGui::BeginMenu("Theme (33 verfügbar)")) {
                     // Gruppe 1: Standard Themes
                     ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Standard");
@@ -7723,6 +7782,10 @@ void renderMainWindow() {
                 ImGui::EndMenu();
             }
             if (ImGui::BeginMenu("Hilfe")) {
+                if (ImGui::MenuItem("Hilfe anzeigen", "F1")) {
+                    appState.showHelp = true;
+                }
+                ImGui::Separator();
                 if (ImGui::MenuItem("Über")) {
                     appState.showAbout = true;
                 }
@@ -10887,6 +10950,223 @@ void renderSmbMountDialog() {
 // Simple XOR encryption using hostname as key
 
 // ============================================================================
+// Render Help Dialog with comprehensive documentation
+void renderHelpDialog() {
+    if (!appState.showHelp) return;
+    
+    ImGui::SetNextWindowSize(ImVec2(800, 600), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x * 0.5f, ImGui::GetIO().DisplaySize.y * 0.5f), 
+                            ImGuiCond_FirstUseEver, ImVec2(0.5f, 0.5f));
+    
+    if (ImGui::Begin("FileDuper - Hilfe", &appState.showHelp, ImGuiWindowFlags_AlwaysAutoResize)) {
+        // Tab bar for different help sections
+        if (ImGui::BeginTabBar("HelpTabs")) {
+            
+            // =====================================================
+            // TAB 1: Bedienung (Operating Instructions)
+            // =====================================================
+            if (ImGui::BeginTabItem("Bedienung")) {
+                ImGui::BeginChild("BedienungContent", ImVec2(0, -40), true);
+                
+                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.5f, 1.0f), "Grundlegende Bedienung");
+                ImGui::Text("1. Verzeichnis auswählen:");
+                ImGui::BulletText("Klicken Sie auf 'Lokale Verzeichnisse' für lokale Festplatte");
+                ImGui::BulletText("Klicken Sie auf 'Netzwerk-Verzeichnisse' für FTP/SFTP/SMB/NFS");
+                ImGui::BulletText("Mehrfachauswahl möglich: Halten Sie Strg (Ctrl) und klicken Sie");
+                
+                ImGui::Spacing();
+                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.5f, 1.0f), "Scan starten");
+                ImGui::Text("2. Hash-Algorithmus wählen:");
+                ImGui::BulletText("MD5: Schnell, für schnelle Vorscans");
+                ImGui::BulletText("SHA256: Empfohlen für sichere Duplikat-Erkennung");
+                ImGui::BulletText("SHA512: Höchste Sicherheit, etwas langsamer");
+                
+                ImGui::Spacing();
+                ImGui::Text("3. Scan starten:");
+                ImGui::BulletText("Klicken Sie 'Scan starten' - Die Anwendung scannt alle Dateien");
+                ImGui::BulletText("Fortschritt wird in der Statusleiste angezeigt");
+                ImGui::BulletText("Bei Bedarf können Sie mit 'Pause' oder 'Stopp' unterbrechen");
+                
+                ImGui::Spacing();
+                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.5f, 1.0f), "Duplikate verwalten");
+                ImGui::Text("4. Ergebnisse:");
+                ImGui::BulletText("Duplikate werden in einer Tabelle angezeigt");
+                ImGui::BulletText("Wählen Sie Dateien zum Löschen (grüne Markierung)");
+                ImGui::BulletText("Original-Datei ist gelb markiert und wird nicht gelöscht");
+                ImGui::BulletText("Klicken Sie 'Löschen' um ausgewählte Duplikate zu entfernen");
+                
+                ImGui::EndChild();
+                
+                if (ImGui::Button("Schließen##bedienung", ImVec2(120, 0))) {
+                    appState.showHelp = false;
+                }
+                ImGui::EndTabItem();
+            }
+            
+            // =====================================================
+            // TAB 2: Menüführung (Menu Navigation)
+            // =====================================================
+            if (ImGui::BeginTabItem("Menüführung")) {
+                ImGui::BeginChild("MenuContent", ImVec2(0, -40), true);
+                
+                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.5f, 1.0f), "Datei-Menü (Strg+Alt+F)");
+                ImGui::BulletText("Beenden (Strg+Q): Schließt die Anwendung");
+                
+                ImGui::Spacing();
+                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.5f, 1.0f), "Bearbeiten-Menü");
+                ImGui::BulletText("Einstellungen (Strg+,): Öffnet Einstellungen-Dialog");
+                ImGui::BulletText("Alle Einstellungen zurücksetzen: Stellt Standardwerte her");
+                
+                ImGui::Spacing();
+                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.5f, 1.0f), "Ansicht-Menü");
+                ImGui::BulletText("Theme: Wechseln Sie zwischen verschiedenen Themes");
+                ImGui::BulletText("Fensterposition speichern: Merkt sich Größe und Position");
+                
+                ImGui::Spacing();
+                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.5f, 1.0f), "Scanner-Menü");
+                ImGui::BulletText("Lokale Verzeichnisse: Durchsuchen Sie Ihre Festplatte");
+                ImGui::BulletText("Netzwerk-Verzeichnisse: Verbinden Sie zu FTP/SMB/NFS");
+                ImGui::BulletText("Netzwerk-Scanner: Scannen Sie das lokale Netzwerk automatisch");
+                
+                ImGui::Spacing();
+                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.5f, 1.0f), "Hilfe-Menü");
+                ImGui::BulletText("Hilfe anzeigen (F1): Öffnet dieses Fenster");
+                ImGui::BulletText("Über: Zeigt Versionsinformation und Features");
+                
+                ImGui::EndChild();
+                
+                if (ImGui::Button("Schließen##menu", ImVec2(120, 0))) {
+                    appState.showHelp = false;
+                }
+                ImGui::EndTabItem();
+            }
+            
+            // =====================================================
+            // TAB 3: Einstellung (Settings/Configuration)
+            // =====================================================
+            if (ImGui::BeginTabItem("Einstellung")) {
+                ImGui::BeginChild("SettingsContent", ImVec2(0, -40), true);
+                
+                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.5f, 1.0f), "Scan-Einstellungen");
+                ImGui::BulletText("Anzahl Threads: Bestimmt die Parallelverarbeitung (Standard: 4)");
+                ImGui::BulletText("Mindestdateigröße: Ignoriert Dateien unter dieser Größe");
+                ImGui::BulletText("Dateifilter: Nur bestimmte Dateitypen einschließen");
+                
+                ImGui::Spacing();
+                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.5f, 1.0f), "Hash-Einstellungen");
+                ImGui::BulletText("Quick Hash: Vergleicht nur Start/Ende der Datei (schneller)");
+                ImGui::BulletText("Full Hash: Vergleicht gesamte Dateien (genauer)");
+                ImGui::BulletText("Algorithmus: MD5, SHA1, SHA256, SHA512");
+                
+                ImGui::Spacing();
+                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.5f, 1.0f), "Netzwerk-Einstellungen");
+                ImGui::BulletText("FTP Timeout: Sekunden bis Verbindung abbricht");
+                ImGui::BulletText("Parallel Connections: Mehrere gleichzeitige Verbindungen");
+                ImGui::BulletText("Proxy-Einstellungen: Falls erforderlich konfigurieren");
+                
+                ImGui::Spacing();
+                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.5f, 1.0f), "Darstellung");
+                ImGui::BulletText("Theme: Verschiedene Themes für unterschiedliche Vorlieben");
+                ImGui::BulletText("Sprache: Deutsch (de) oder Englisch (en)");
+                ImGui::BulletText("Schriftgröße: Anpassung an Monitor und Sehvermögen");
+                
+                ImGui::EndChild();
+                
+                if (ImGui::Button("Schließen##settings", ImVec2(120, 0))) {
+                    appState.showHelp = false;
+                }
+                ImGui::EndTabItem();
+            }
+            
+            // =====================================================
+            // TAB 4: Indexverzeichnis (Index/Directory Reference)
+            // =====================================================
+            if (ImGui::BeginTabItem("Indexverzeichnis")) {
+                ImGui::BeginChild("IndexContent", ImVec2(0, -40), true);
+                
+                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.5f, 1.0f), "Wichtige Verzeichnisse");
+                ImGui::BulletText("Anwendungsverzeichnis: ~/.config/fileduper/");
+                ImGui::BulletText("Einstellungen: ~/.config/fileduper/settings.conf");
+                ImGui::BulletText("Presets: ~/.config/fileduper/presets.json");
+                ImGui::BulletText("Protokolle: ~/.config/fileduper/logs/");
+                
+                ImGui::Spacing();
+                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.5f, 1.0f), "Temporäre Dateien");
+                ImGui::BulletText("Scan-Cache: /tmp/fileduper_cache/");
+                ImGui::BulletText("Temporäre Listen: /tmp/fileduper_tmp/");
+                ImGui::BulletText("Werden automatisch nach Programm-Ende gelöscht");
+                
+                ImGui::Spacing();
+                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.5f, 1.0f), "Dateistruktur");
+                ImGui::Text("Konfiguration:");
+                ImGui::BulletText("settings.conf - Allgemeine Einstellungen");
+                ImGui::BulletText("presets.json - Gespeicherte Verzeichnis-Presets");
+                ImGui::BulletText("credentials.enc - Verschlüsselte Netzwerk-Anmeldedaten");
+                
+                ImGui::Spacing();
+                ImGui::Text("Logs:");
+                ImGui::BulletText("scan.log - Scan-Operationen und Fehler");
+                ImGui::BulletText("network.log - Netzwerk-Verbindungen");
+                ImGui::BulletText("delete.log - Gelöschte Dateien");
+                
+                ImGui::EndChild();
+                
+                if (ImGui::Button("Schließen##index", ImVec2(120, 0))) {
+                    appState.showHelp = false;
+                }
+                ImGui::EndTabItem();
+            }
+            
+            // =====================================================
+            // TAB 5: Lizenz (License)
+            // =====================================================
+            if (ImGui::BeginTabItem("Lizenz")) {
+                ImGui::BeginChild("LicenseContent", ImVec2(0, -40), true);
+                
+                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.5f, 1.0f), "GNU General Public License v3.0");
+                ImGui::Spacing();
+                ImGui::Text("FileDuper ist freie Software, die unter der GPL v3.0 lizenziert ist.");
+                ImGui::Spacing();
+                
+                ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Freiheiten:");
+                ImGui::BulletText("Frei verwendbar für jeden Zweck");
+                ImGui::BulletText("Quellcode kann studiert und modifiziert werden");
+                ImGui::BulletText("Verteilung von Kopien ist erlaubt");
+                ImGui::BulletText("Verbesserungen dürfen weitergegeben werden");
+                
+                ImGui::Spacing();
+                ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Bedingungen:");
+                ImGui::BulletText("Quellcode muss verfügbar sein");
+                ImGui::BulletText("Lizenz und Urheberrecht müssen angegeben werden");
+                ImGui::BulletText("Änderungen müssen dokumentiert werden");
+                ImGui::BulletText("Gleiches Lizenzmodell bei Weitergabe erforderlich");
+                
+                ImGui::Spacing();
+                ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Weitere Informationen:");
+                ImGui::BulletText("Vollständiger GPL v3.0 Text: https://www.gnu.org/licenses/gpl-3.0.txt");
+                ImGui::BulletText("GPL Zusammenfassung: https://www.gnu.org/licenses/quick-guide-gplv3.html");
+                ImGui::BulletText("© 2025 FileDuper Contributors");
+                
+                ImGui::Spacing();
+                ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f), "KEINE GARANTIE");
+                ImGui::Text("Dieses Programm wird ohne Garantie bereitgestellt.");
+                ImGui::Text("Der Benutzer nutzt es auf eigene Verantwortung.");
+                
+                ImGui::EndChild();
+                
+                if (ImGui::Button("Schließen##license", ImVec2(120, 0))) {
+                    appState.showHelp = false;
+                }
+                ImGui::EndTabItem();
+            }
+            
+            ImGui::EndTabBar();
+        }
+    }
+    ImGui::End();
+}
+
+// ============================================================================
 // Render About Dialog
 void renderAbout() {
     if (!appState.showAbout) return;
@@ -10894,7 +11174,7 @@ void renderAbout() {
     ImGui::SetNextWindowSize(ImVec2(400, 250), ImGuiCond_Always);
     if (ImGui::Begin("Über FileDuper", &appState.showAbout, ImGuiWindowFlags_NoResize)) {
         ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.5f, 1.0f), "FileDuper");
-        ImGui::Text("Version 2.0 - ImGui Edition");
+        ImGui::Text("Version 1.0.0 - ImGui Edition");
         ImGui::Separator();
         ImGui::Text("Duplicate File Scanner");
         ImGui::Text("Findet und verwaltet doppelte Dateien");
@@ -14301,6 +14581,7 @@ int main(int argc, char* argv[]) {
         renderSmbMountDialog();
         renderSettings();
         renderSudoPasswordDialog();
+        renderHelpDialog();
         renderAbout();
         renderFileErrorDialog();
         renderDeleteSuccess();
