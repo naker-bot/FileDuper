@@ -294,6 +294,10 @@ struct AppState {
     bool useLightningSpeed = true;
     bool useArpDiscovery = true; // Use ARP-based discovery by default
     bool usePingDiscovery = false; // Option to also use ICMP ping discovery
+    bool showLargeScanConfirm = false; // Show confirmation modal for large fallback scans
+    bool allowLargeFallback = false;       // User explicit override
+    std::string pendingLargeScanSubnet;    // The CIDR waiting for confirmation
+    uint32_t pendingLargeScanHostCount = 0; // hosts count
     int minFileSize = 0; // Geändert von 1024 auf 0 - ALLE Dateien scannen (auch kleinste)
     bool scanHiddenFiles = true;  // Default: AN - versteckte Dateien einbeziehen
     bool followSymlinks = true;   // Default: AN - symbolischen Links folgen
@@ -3734,6 +3738,9 @@ void scanIPRange(const std::string &startIpStr, const std::string &endIpStr, int
 
 // (removed - replaced by ARP + PortScan approach)
 
+// Maximum count before we ask user for confirmation
+static const uint32_t MAX_FALLBACK_CONFIRM = 65536;
+
 void startLightningScan(const std::string& subnet) {
     appState.scanThreadRunning = true;
     appState.scannedHosts = 0;
@@ -3775,10 +3782,17 @@ void startLightningScan(const std::string& subnet) {
                 // limit fallback to reasonable sizes unless user explicitally disables safety
                 const uint32_t MAX_FALLBACK = 65536;
                 if (count > MAX_FALLBACK) {
-                    std::cout << "[Warning] Fallback range too large (>" << MAX_FALLBACK << "): " << count << " hosts. Aborting." << std::endl;
-                    appState.scanningNetwork = false;
-                    appState.scanThreadRunning = false;
-                    return;
+                    // Ask for confirmation if the fallback is large - do not start scanning from a background thread
+                    if (!appState.allowLargeFallback) {
+                        appState.pendingLargeScanSubnet = normalizedSubnet;
+                        appState.pendingLargeScanHostCount = count;
+                        appState.showLargeScanConfirm = true;
+                        appState.scanningNetwork = false;
+                        appState.scanThreadRunning = false;
+                        std::cout << "[Warning] Fallback range too large (" << count << ") - asking for confirmation" << std::endl;
+                        return;
+                    }
+                    // if explicitly allowed by user, continue
                 }
 
                 // perform fallback with numeric start/end
@@ -7467,6 +7481,44 @@ void renderNetworkScanner() {
                     appState.showAddSubnetPreset = false;
                     ImGui::CloseCurrentPopup();
                 }
+                ImGui::EndPopup();
+            }
+
+            // Confirmation for large fallback scans
+            if (appState.showLargeScanConfirm) ImGui::OpenPopup("Confirm Large Scan");
+            if (ImGui::BeginPopupModal("Confirm Large Scan", &appState.showLargeScanConfirm, ImGuiWindowFlags_AlwaysAutoResize)) {
+                ImGui::Text("You are about to scan the CIDR: %s", appState.pendingLargeScanSubnet.c_str());
+                ImGui::Text("This will scan %u hosts and may take a long time.", appState.pendingLargeScanHostCount);
+                ImGui::Spacing();
+                ImGui::TextWrapped("This operation may generate significant network traffic. It is recommended to use ARP discovery for local networks. Continue?");
+
+                static bool allowForSession = false;
+                ImGui::Checkbox("Allow large fallback scans without confirmation (this session)", &allowForSession);
+
+                ImGui::Spacing();
+                if (ImGui::Button("Proceed")) {
+                    appState.allowLargeFallback = allowForSession;
+                    appState.showLargeScanConfirm = false;
+                    // Start the scan now with the pending CIDR
+                    if (!appState.pendingLargeScanSubnet.empty()) {
+                        std::string cidr = appState.pendingLargeScanSubnet;
+                        appState.pendingLargeScanSubnet.clear();
+                        appState.pendingLargeScanHostCount = 0;
+
+                        // Set scanning flags and start
+                        appState.scanningNetwork = true;
+                        startLightningScan(cidr);
+                    }
+                    ImGui::CloseCurrentPopup();
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Cancel")) {
+                    appState.showLargeScanConfirm = false;
+                    appState.pendingLargeScanSubnet.clear();
+                    appState.pendingLargeScanHostCount = 0;
+                    ImGui::CloseCurrentPopup();
+                }
+
                 ImGui::EndPopup();
             }
 
