@@ -10662,6 +10662,9 @@ float testDiskBandwidth(const std::string& path) {
     
     std::cout << "[Bandwidth] Testing disk bandwidth for: " << path << std::endl;
     
+    // OPTIMIZATION: Pre-allocate buffer once for both read and write (avoids 2 allocations)
+    std::vector<char> buffer(bufferSize, 'X');
+    
     // Write test
     auto startWrite = std::chrono::high_resolution_clock::now();
     {
@@ -10671,7 +10674,6 @@ float testDiskBandwidth(const std::string& path) {
             return 500.0f; // Default 500 MB/s
         }
         
-        std::vector<char> buffer(bufferSize, 'X');
         for (size_t written = 0; written < testSize; written += bufferSize) {
             out.write(buffer.data(), bufferSize);
         }
@@ -10683,7 +10685,7 @@ float testDiskBandwidth(const std::string& path) {
     {
         std::ifstream in(testFile, std::ios::binary);
         if (in.is_open()) {
-            std::vector<char> buffer(bufferSize);
+            // OPTIMIZATION: Reuse pre-allocated buffer instead of allocating new one
             while (in.read(buffer.data(), bufferSize)) {
                 // Just read, measure speed
             }
