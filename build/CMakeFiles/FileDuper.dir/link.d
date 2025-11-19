@@ -21,6 +21,7 @@ FileDuper: \
   CMakeFiles/FileDuper.dir/src/smbclient.cpp.o \
   CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.o \
   CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o \
+  CMakeFiles/FileDuper.dir/src/export_discovery.cpp.o \
   lib/imgui/libimgui.a \
   /usr/lib/libglfw.so.3.4 \
   /usr/lib/libSM.so \
@@ -169,6 +170,8 @@ CMakeFiles/FileDuper.dir/src/smbclient.cpp.o:
 CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.o:
 
 CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o:
+
+CMakeFiles/FileDuper.dir/src/export_discovery.cpp.o:
 
 lib/imgui/libimgui.a:
 

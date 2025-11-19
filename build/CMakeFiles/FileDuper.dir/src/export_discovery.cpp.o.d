@@ -1,9 +1,6 @@
-CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o: \
- /home/nex/c++/src/unified_directory_browser_ui.cpp \
- /usr/include/stdc-predef.h \
- /home/nex/c++/include/unified_directory_browser_ui.h \
- /home/nex/c++/include/unified_directory_browser.h \
- /usr/include/c++/15.2.1/string \
+CMakeFiles/FileDuper.dir/src/export_discovery.cpp.o: \
+ /home/nex/c++/src/export_discovery.cpp /usr/include/stdc-predef.h \
+ /home/nex/c++/include/export_discovery.h /usr/include/c++/15.2.1/string \
  /usr/include/c++/15.2.1/bits/requires_hosted.h \
  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++config.h \
  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/os_defines.h \
@@ -110,32 +107,14 @@ CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o: \
  /usr/include/c++/15.2.1/bits/stl_uninitialized.h \
  /usr/include/c++/15.2.1/bits/stl_vector.h \
  /usr/include/c++/15.2.1/bits/stl_bvector.h \
- /usr/include/c++/15.2.1/bits/vector.tcc /usr/include/c++/15.2.1/map \
- /usr/include/c++/15.2.1/bits/stl_tree.h \
- /usr/include/c++/15.2.1/ext/aligned_buffer.h \
- /usr/include/c++/15.2.1/bits/node_handle.h \
- /usr/include/c++/15.2.1/bits/stl_map.h \
- /usr/include/c++/15.2.1/bits/stl_multimap.h \
- /usr/include/c++/15.2.1/bits/erase_if.h /usr/include/c++/15.2.1/set \
- /usr/include/c++/15.2.1/bits/stl_set.h \
- /usr/include/c++/15.2.1/bits/stl_multiset.h \
- /usr/include/c++/15.2.1/functional \
- /usr/include/c++/15.2.1/bits/std_function.h \
- /usr/include/c++/15.2.1/typeinfo /usr/include/c++/15.2.1/unordered_map \
- /usr/include/c++/15.2.1/bits/unordered_map.h \
- /usr/include/c++/15.2.1/bits/hashtable.h \
- /usr/include/c++/15.2.1/bits/hashtable_policy.h \
- /usr/include/c++/15.2.1/bits/enable_special_members.h \
- /usr/include/c++/15.2.1/array /usr/include/c++/15.2.1/compare \
- /usr/include/c++/15.2.1/cstdint \
- /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h \
- /usr/include/stdint.h /usr/include/bits/stdint-uintn.h \
- /usr/include/bits/stdint-least.h \
- /home/nex/c++/include/export_discovery.h /home/nex/c++/lib/imgui/imgui.h \
- /home/nex/c++/lib/imgui/imconfig.h \
- /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/float.h \
- /usr/include/string.h /usr/include/strings.h /usr/include/assert.h \
- /usr/include/c++/15.2.1/iomanip /usr/include/c++/15.2.1/bits/ios_base.h \
+ /usr/include/c++/15.2.1/bits/vector.tcc /usr/include/c++/15.2.1/iostream \
+ /usr/include/c++/15.2.1/ostream /usr/include/c++/15.2.1/bits/ostream.h \
+ /usr/include/c++/15.2.1/ios /usr/include/c++/15.2.1/exception \
+ /usr/include/c++/15.2.1/bits/exception_ptr.h \
+ /usr/include/c++/15.2.1/bits/cxxabi_init_exception.h \
+ /usr/include/c++/15.2.1/typeinfo \
+ /usr/include/c++/15.2.1/bits/nested_exception.h \
+ /usr/include/c++/15.2.1/bits/ios_base.h \
  /usr/include/c++/15.2.1/ext/atomicity.h \
  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/gthr.h \
  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/gthr-default.h \
@@ -158,33 +137,70 @@ CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o: \
  /usr/include/c++/15.2.1/bits/locale_classes.tcc \
  /usr/include/c++/15.2.1/system_error \
  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/error_constants.h \
- /usr/include/c++/15.2.1/stdexcept /usr/include/c++/15.2.1/exception \
- /usr/include/c++/15.2.1/bits/exception_ptr.h \
- /usr/include/c++/15.2.1/bits/cxxabi_init_exception.h \
- /usr/include/c++/15.2.1/bits/nested_exception.h \
- /usr/include/c++/15.2.1/locale \
+ /usr/include/c++/15.2.1/stdexcept /usr/include/c++/15.2.1/streambuf \
+ /usr/include/c++/15.2.1/bits/streambuf.tcc \
+ /usr/include/c++/15.2.1/bits/basic_ios.h \
  /usr/include/c++/15.2.1/bits/locale_facets.h \
  /usr/include/c++/15.2.1/cwctype /usr/include/wctype.h \
  /usr/include/bits/wctype-wchar.h \
  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/ctype_base.h \
- /usr/include/c++/15.2.1/streambuf \
- /usr/include/c++/15.2.1/bits/streambuf.tcc \
  /usr/include/c++/15.2.1/bits/streambuf_iterator.h \
  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/ctype_inline.h \
  /usr/include/c++/15.2.1/bits/locale_facets.tcc \
+ /usr/include/c++/15.2.1/bits/basic_ios.tcc \
+ /usr/include/c++/15.2.1/bits/ostream.tcc /usr/include/c++/15.2.1/istream \
+ /usr/include/c++/15.2.1/bits/istream.tcc /usr/include/c++/15.2.1/sstream \
+ /usr/include/c++/15.2.1/bits/sstream.tcc /usr/include/c++/15.2.1/regex \
+ /usr/include/c++/15.2.1/bitset /usr/include/c++/15.2.1/locale \
  /usr/include/c++/15.2.1/bits/locale_facets_nonio.h \
  /usr/include/c++/15.2.1/ctime \
  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/time_members.h \
  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/messages_members.h \
  /usr/include/libintl.h /usr/include/c++/15.2.1/bits/codecvt.h \
  /usr/include/c++/15.2.1/bits/locale_facets_nonio.tcc \
- /usr/include/c++/15.2.1/bits/locale_conv.h \
- /usr/include/c++/15.2.1/bits/quoted_string.h \
- /usr/include/c++/15.2.1/sstream /usr/include/c++/15.2.1/istream \
- /usr/include/c++/15.2.1/ios /usr/include/c++/15.2.1/bits/basic_ios.h \
- /usr/include/c++/15.2.1/bits/basic_ios.tcc \
- /usr/include/c++/15.2.1/ostream /usr/include/c++/15.2.1/bits/ostream.h \
- /usr/include/c++/15.2.1/bits/ostream.tcc \
- /usr/include/c++/15.2.1/bits/istream.tcc \
- /usr/include/c++/15.2.1/bits/sstream.tcc /usr/include/c++/15.2.1/cstring \
- /usr/include/c++/15.2.1/iostream
+ /usr/include/c++/15.2.1/bits/locale_conv.h /usr/include/c++/15.2.1/stack \
+ /usr/include/c++/15.2.1/deque /usr/include/c++/15.2.1/bits/stl_deque.h \
+ /usr/include/c++/15.2.1/bits/deque.tcc \
+ /usr/include/c++/15.2.1/bits/stl_stack.h \
+ /usr/include/c++/15.2.1/ext/aligned_buffer.h \
+ /usr/include/c++/15.2.1/bits/shared_ptr.h \
+ /usr/include/c++/15.2.1/bits/shared_ptr_base.h \
+ /usr/include/c++/15.2.1/bits/allocated_ptr.h \
+ /usr/include/c++/15.2.1/bits/unique_ptr.h \
+ /usr/include/c++/15.2.1/ext/concurrence.h \
+ /usr/include/c++/15.2.1/bits/std_function.h \
+ /usr/include/c++/15.2.1/bits/stl_algo.h \
+ /usr/include/c++/15.2.1/bits/algorithmfwd.h \
+ /usr/include/c++/15.2.1/bits/stl_heap.h \
+ /usr/include/c++/15.2.1/bits/uniform_int_dist.h \
+ /usr/include/c++/15.2.1/bits/stl_tempbuf.h \
+ /usr/include/c++/15.2.1/bits/stl_tree.h \
+ /usr/include/c++/15.2.1/bits/node_handle.h \
+ /usr/include/c++/15.2.1/bits/stl_map.h \
+ /usr/include/c++/15.2.1/bits/regex_constants.h \
+ /usr/include/c++/15.2.1/bits/regex_error.h \
+ /usr/include/c++/15.2.1/bits/regex_automaton.h \
+ /usr/include/c++/15.2.1/bits/regex_automaton.tcc \
+ /usr/include/c++/15.2.1/bits/regex_scanner.h \
+ /usr/include/c++/15.2.1/bits/regex_scanner.tcc \
+ /usr/include/c++/15.2.1/bits/regex_compiler.h \
+ /usr/include/c++/15.2.1/bits/regex_compiler.tcc \
+ /usr/include/c++/15.2.1/bits/regex.h \
+ /usr/include/c++/15.2.1/bits/regex.tcc \
+ /usr/include/c++/15.2.1/bits/regex_executor.h \
+ /usr/include/c++/15.2.1/bits/regex_executor.tcc \
+ /usr/include/c++/15.2.1/cstring /usr/include/string.h \
+ /usr/include/strings.h /usr/include/unistd.h \
+ /usr/include/bits/posix_opt.h /usr/include/bits/environments.h \
+ /usr/include/bits/confname.h /usr/include/bits/getopt_posix.h \
+ /usr/include/bits/getopt_core.h /usr/include/bits/unistd_ext.h \
+ /usr/include/linux/close_range.h /usr/include/sys/socket.h \
+ /usr/include/bits/types/struct_iovec.h /usr/include/bits/socket.h \
+ /usr/include/bits/socket_type.h /usr/include/bits/sockaddr.h \
+ /usr/include/asm/socket.h /usr/include/asm-generic/socket.h \
+ /usr/include/asm/sockios.h /usr/include/asm-generic/sockios.h \
+ /usr/include/bits/types/struct_osockaddr.h /usr/include/netinet/in.h \
+ /usr/include/bits/stdint-uintn.h /usr/include/bits/in.h \
+ /usr/include/arpa/inet.h /usr/include/netdb.h /usr/include/rpc/netdb.h \
+ /usr/include/bits/types/sigevent_t.h \
+ /usr/include/bits/types/__sigval_t.h /usr/include/bits/netdb.h

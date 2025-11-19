@@ -3,11 +3,13 @@
  */
 
 #include "unified_directory_browser_ui.h"
+#include "export_discovery.h"
 #include <imgui.h>
 #include <iomanip>
 #include <sstream>
 #include <ctime>
 #include <cstring>
+#include <iostream>
 
 const char* UnifiedDirectoryBrowserUI::getSourceIcon(const std::string& source) {
     if (source == "Local") return "📁";
@@ -271,3 +273,96 @@ void UnifiedDirectoryBrowserUI::renderSyncDialog(UnifiedDirectoryBrowser& browse
         state.syncMode = false;
     }
 }
+
+void UnifiedDirectoryBrowserUI::renderExportDiscovery(UnifiedDirectoryBrowser& browser) {
+    auto& state = browser.getState();
+    
+    ImGui::SetNextWindowSize(ImVec2(900, 600), ImGuiCond_FirstUseEver);
+    
+    if (ImGui::Begin("🔌 NFS/SMB Export Discovery", nullptr)) {
+        ImGui::Text("🔍 Discover available NFS exports and SMB shares from servers");
+        ImGui::Separator();
+        
+        // Input for server host
+        static char serverInput[256] = "";
+        ImGui::InputTextWithHint("##ServerInput", "Server IP or hostname (e.g. 192.168.1.100)", 
+                                serverInput, sizeof(serverInput));
+        ImGui::SameLine();
+        
+        // Server type selector
+        static int serverType = 0;  // 0=NFS, 1=SMB
+        ImGui::RadioButton("NFS##type", &serverType, 0);
+        ImGui::SameLine();
+        ImGui::RadioButton("SMB##type", &serverType, 1);
+        
+        if (ImGui::Button("🔎 Discover Exports", ImVec2(200, 0))) {
+            if (strlen(serverInput) > 0) {
+                std::cout << "🔍 Starting discovery for: " << serverInput << std::endl;
+                
+                if (serverType == 0) {  // NFS
+                    std::cout << "📊 Querying NFS server exports..." << std::endl;
+                    // This will be called asynchronously in main application
+                } else {  // SMB
+                    std::cout << "📊 Querying SMB server shares..." << std::endl;
+                    // This will be called asynchronously in main application
+                }
+            }
+        }
+        
+        ImGui::Separator();
+        ImGui::Text("📋 Available Exports/Shares:");
+        ImGui::Spacing();
+        
+        // Table header
+        if (ImGui::BeginTable("##ExportTable", 5, 
+            ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ScrollY)) {
+            
+            ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthStretch, 200);
+            ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 80);
+            ImGui::TableSetupColumn("Access", ImGuiTableColumnFlags_WidthFixed, 80);
+            ImGui::TableSetupColumn("Server", ImGuiTableColumnFlags_WidthStretch, 150);
+            ImGui::TableSetupColumn("Action", ImGuiTableColumnFlags_WidthFixed, 100);
+            ImGui::TableHeadersRow();
+            
+            // Example export entries (will be replaced with real data)
+            static std::vector<ExportInfo> exports;
+            
+            for (const auto& export_info : exports) {
+                ImGui::TableNextRow();
+                
+                ImGui::TableSetColumnIndex(0);
+                ImGui::TextColored(getSourceColor(export_info.type), "%s %s",
+                                 getSourceIcon(export_info.type), export_info.name.c_str());
+                
+                ImGui::TableSetColumnIndex(1);
+                ImGui::Text("%s", export_info.type.c_str());
+                
+                ImGui::TableSetColumnIndex(2);
+                ImVec4 accessColor = (export_info.accessLevel == "rw") 
+                    ? ImVec4(0.2f, 0.8f, 0.2f, 1.0f)  // Green for rw
+                    : ImVec4(1.0f, 0.7f, 0.2f, 1.0f); // Orange for ro
+                ImGui::TextColored(accessColor, "%s", export_info.accessLevel.c_str());
+                
+                ImGui::TableSetColumnIndex(3);
+                ImGui::Text("%s", export_info.server.c_str());
+                
+                ImGui::TableSetColumnIndex(4);
+                if (ImGui::Button(("Mount##" + export_info.name).c_str(), ImVec2(80, 0))) {
+                    std::cout << "✅ Mounting: " << export_info.path << std::endl;
+                    // Trigger mount action
+                }
+            }
+            
+            ImGui::EndTable();
+        }
+        
+        ImGui::Separator();
+        if (ImGui::Button("Close", ImVec2(100, 0))) {
+            ImGui::End();
+            return;
+        }
+        
+        ImGui::End();
+    }
+}
+

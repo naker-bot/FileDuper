@@ -10,6 +10,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/nex/c++/src/libnfs_wrapper.c" "CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.o" "gcc" "CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.o.d"
   "/home/nex/c++/src/arp_utils.cpp" "CMakeFiles/FileDuper.dir/src/arp_utils.cpp.o" "gcc" "CMakeFiles/FileDuper.dir/src/arp_utils.cpp.o.d"
+  "/home/nex/c++/src/export_discovery.cpp" "CMakeFiles/FileDuper.dir/src/export_discovery.cpp.o" "gcc" "CMakeFiles/FileDuper.dir/src/export_discovery.cpp.o.d"
   "/home/nex/c++/src/ftpclient.cpp" "CMakeFiles/FileDuper.dir/src/ftpclient.cpp.o" "gcc" "CMakeFiles/FileDuper.dir/src/ftpclient.cpp.o.d"
   "/home/nex/c++/src/ftpdeleteworker.cpp" "CMakeFiles/FileDuper.dir/src/ftpdeleteworker.cpp.o" "gcc" "CMakeFiles/FileDuper.dir/src/ftpdeleteworker.cpp.o.d"
   "/home/nex/c++/src/ftplistworker.cpp" "CMakeFiles/FileDuper.dir/src/ftplistworker.cpp.o" "gcc" "CMakeFiles/FileDuper.dir/src/ftplistworker.cpp.o.d"

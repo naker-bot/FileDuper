@@ -140,6 +140,7 @@ set(SOURCES
     src/smbclient.cpp
     src/unified_directory_browser.cpp
     src/unified_directory_browser_ui.cpp
+    src/export_discovery.cpp
 )
 
 # Platform-specific network scanner implementation

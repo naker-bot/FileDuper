@@ -341,6 +341,30 @@ src/arp_utils.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_arp.dir/build.make CMakeFiles/test_arp.dir/src/arp_utils.cpp.s
 .PHONY : src/arp_utils.cpp.s
 
+src/export_discovery.o: src/export_discovery.cpp.o
+.PHONY : src/export_discovery.o
+
+# target to build an object file
+src/export_discovery.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileDuper.dir/build.make CMakeFiles/FileDuper.dir/src/export_discovery.cpp.o
+.PHONY : src/export_discovery.cpp.o
+
+src/export_discovery.i: src/export_discovery.cpp.i
+.PHONY : src/export_discovery.i
+
+# target to preprocess a source file
+src/export_discovery.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileDuper.dir/build.make CMakeFiles/FileDuper.dir/src/export_discovery.cpp.i
+.PHONY : src/export_discovery.cpp.i
+
+src/export_discovery.s: src/export_discovery.cpp.s
+.PHONY : src/export_discovery.s
+
+# target to generate assembly for a file
+src/export_discovery.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileDuper.dir/build.make CMakeFiles/FileDuper.dir/src/export_discovery.cpp.s
+.PHONY : src/export_discovery.cpp.s
+
 src/ftpclient.o: src/ftpclient.cpp.o
 .PHONY : src/ftpclient.o
 
@@ -1013,6 +1037,9 @@ help:
 	@echo "... src/arp_utils.o"
 	@echo "... src/arp_utils.i"
 	@echo "... src/arp_utils.s"
+	@echo "... src/export_discovery.o"
+	@echo "... src/export_discovery.i"
+	@echo "... src/export_discovery.s"
 	@echo "... src/ftpclient.o"
 	@echo "... src/ftpclient.i"
 	@echo "... src/ftpclient.s"

@@ -2,6 +2,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/FileDuper.dir/link.d"
   "CMakeFiles/FileDuper.dir/src/arp_utils.cpp.o"
   "CMakeFiles/FileDuper.dir/src/arp_utils.cpp.o.d"
+  "CMakeFiles/FileDuper.dir/src/export_discovery.cpp.o"
+  "CMakeFiles/FileDuper.dir/src/export_discovery.cpp.o.d"
   "CMakeFiles/FileDuper.dir/src/ftpclient.cpp.o"
   "CMakeFiles/FileDuper.dir/src/ftpclient.cpp.o.d"
   "CMakeFiles/FileDuper.dir/src/ftpdeleteworker.cpp.o"

@@ -218,6 +218,291 @@ CMakeFiles/FileDuper.dir/src/arp_utils.cpp.o: /home/nex/c++/src/arp_utils.cpp \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h
 
+CMakeFiles/FileDuper.dir/src/export_discovery.cpp.o: /home/nex/c++/src/export_discovery.cpp \
+  /home/nex/c++/include/export_discovery.h \
+  /usr/include/alloca.h \
+  /usr/include/arpa/inet.h \
+  /usr/include/asm-generic/bitsperlong.h \
+  /usr/include/asm-generic/errno-base.h \
+  /usr/include/asm-generic/errno.h \
+  /usr/include/asm-generic/int-ll64.h \
+  /usr/include/asm-generic/posix_types.h \
+  /usr/include/asm-generic/socket.h \
+  /usr/include/asm-generic/sockios.h \
+  /usr/include/asm-generic/types.h \
+  /usr/include/asm/bitsperlong.h \
+  /usr/include/asm/errno.h \
+  /usr/include/asm/posix_types.h \
+  /usr/include/asm/posix_types_64.h \
+  /usr/include/asm/socket.h \
+  /usr/include/asm/sockios.h \
+  /usr/include/asm/types.h \
+  /usr/include/bits/atomic_wide_counter.h \
+  /usr/include/bits/byteswap.h \
+  /usr/include/bits/confname.h \
+  /usr/include/bits/cpu-set.h \
+  /usr/include/bits/endian.h \
+  /usr/include/bits/endianness.h \
+  /usr/include/bits/environments.h \
+  /usr/include/bits/errno.h \
+  /usr/include/bits/floatn-common.h \
+  /usr/include/bits/floatn.h \
+  /usr/include/bits/getopt_core.h \
+  /usr/include/bits/getopt_posix.h \
+  /usr/include/bits/in.h \
+  /usr/include/bits/libc-header-start.h \
+  /usr/include/bits/locale.h \
+  /usr/include/bits/long-double.h \
+  /usr/include/bits/netdb.h \
+  /usr/include/bits/posix_opt.h \
+  /usr/include/bits/pthread_stack_min-dynamic.h \
+  /usr/include/bits/pthreadtypes-arch.h \
+  /usr/include/bits/pthreadtypes.h \
+  /usr/include/bits/sched.h \
+  /usr/include/bits/select.h \
+  /usr/include/bits/setjmp.h \
+  /usr/include/bits/sockaddr.h \
+  /usr/include/bits/socket.h \
+  /usr/include/bits/socket_type.h \
+  /usr/include/bits/stdint-intn.h \
+  /usr/include/bits/stdint-uintn.h \
+  /usr/include/bits/stdio.h \
+  /usr/include/bits/stdio_lim.h \
+  /usr/include/bits/stdlib-bsearch.h \
+  /usr/include/bits/stdlib-float.h \
+  /usr/include/bits/struct_mutex.h \
+  /usr/include/bits/struct_rwlock.h \
+  /usr/include/bits/thread-shared-types.h \
+  /usr/include/bits/time.h \
+  /usr/include/bits/time64.h \
+  /usr/include/bits/timesize.h \
+  /usr/include/bits/timex.h \
+  /usr/include/bits/types.h \
+  /usr/include/bits/types/FILE.h \
+  /usr/include/bits/types/__FILE.h \
+  /usr/include/bits/types/__fpos64_t.h \
+  /usr/include/bits/types/__fpos_t.h \
+  /usr/include/bits/types/__locale_t.h \
+  /usr/include/bits/types/__mbstate_t.h \
+  /usr/include/bits/types/__sigset_t.h \
+  /usr/include/bits/types/__sigval_t.h \
+  /usr/include/bits/types/clock_t.h \
+  /usr/include/bits/types/clockid_t.h \
+  /usr/include/bits/types/cookie_io_functions_t.h \
+  /usr/include/bits/types/error_t.h \
+  /usr/include/bits/types/locale_t.h \
+  /usr/include/bits/types/mbstate_t.h \
+  /usr/include/bits/types/sigevent_t.h \
+  /usr/include/bits/types/sigset_t.h \
+  /usr/include/bits/types/struct_FILE.h \
+  /usr/include/bits/types/struct___jmp_buf_tag.h \
+  /usr/include/bits/types/struct_iovec.h \
+  /usr/include/bits/types/struct_itimerspec.h \
+  /usr/include/bits/types/struct_osockaddr.h \
+  /usr/include/bits/types/struct_sched_param.h \
+  /usr/include/bits/types/struct_timespec.h \
+  /usr/include/bits/types/struct_timeval.h \
+  /usr/include/bits/types/struct_tm.h \
+  /usr/include/bits/types/time_t.h \
+  /usr/include/bits/types/timer_t.h \
+  /usr/include/bits/types/wint_t.h \
+  /usr/include/bits/typesizes.h \
+  /usr/include/bits/uintn-identity.h \
+  /usr/include/bits/unistd_ext.h \
+  /usr/include/bits/waitflags.h \
+  /usr/include/bits/waitstatus.h \
+  /usr/include/bits/wchar.h \
+  /usr/include/bits/wctype-wchar.h \
+  /usr/include/bits/wordsize.h \
+  /usr/include/c++/15.2.1/backward/binders.h \
+  /usr/include/c++/15.2.1/bit \
+  /usr/include/c++/15.2.1/bits/algorithmfwd.h \
+  /usr/include/c++/15.2.1/bits/alloc_traits.h \
+  /usr/include/c++/15.2.1/bits/allocated_ptr.h \
+  /usr/include/c++/15.2.1/bits/allocator.h \
+  /usr/include/c++/15.2.1/bits/basic_ios.h \
+  /usr/include/c++/15.2.1/bits/basic_ios.tcc \
+  /usr/include/c++/15.2.1/bits/basic_string.h \
+  /usr/include/c++/15.2.1/bits/basic_string.tcc \
+  /usr/include/c++/15.2.1/bits/char_traits.h \
+  /usr/include/c++/15.2.1/bits/charconv.h \
+  /usr/include/c++/15.2.1/bits/codecvt.h \
+  /usr/include/c++/15.2.1/bits/concept_check.h \
+  /usr/include/c++/15.2.1/bits/cpp_type_traits.h \
+  /usr/include/c++/15.2.1/bits/cxxabi_forced.h \
+  /usr/include/c++/15.2.1/bits/cxxabi_init_exception.h \
+  /usr/include/c++/15.2.1/bits/deque.tcc \
+  /usr/include/c++/15.2.1/bits/exception.h \
+  /usr/include/c++/15.2.1/bits/exception_defines.h \
+  /usr/include/c++/15.2.1/bits/exception_ptr.h \
+  /usr/include/c++/15.2.1/bits/functexcept.h \
+  /usr/include/c++/15.2.1/bits/functional_hash.h \
+  /usr/include/c++/15.2.1/bits/hash_bytes.h \
+  /usr/include/c++/15.2.1/bits/invoke.h \
+  /usr/include/c++/15.2.1/bits/ios_base.h \
+  /usr/include/c++/15.2.1/bits/istream.tcc \
+  /usr/include/c++/15.2.1/bits/locale_classes.h \
+  /usr/include/c++/15.2.1/bits/locale_classes.tcc \
+  /usr/include/c++/15.2.1/bits/locale_conv.h \
+  /usr/include/c++/15.2.1/bits/locale_facets.h \
+  /usr/include/c++/15.2.1/bits/locale_facets.tcc \
+  /usr/include/c++/15.2.1/bits/locale_facets_nonio.h \
+  /usr/include/c++/15.2.1/bits/locale_facets_nonio.tcc \
+  /usr/include/c++/15.2.1/bits/localefwd.h \
+  /usr/include/c++/15.2.1/bits/memory_resource.h \
+  /usr/include/c++/15.2.1/bits/memoryfwd.h \
+  /usr/include/c++/15.2.1/bits/move.h \
+  /usr/include/c++/15.2.1/bits/nested_exception.h \
+  /usr/include/c++/15.2.1/bits/new_allocator.h \
+  /usr/include/c++/15.2.1/bits/node_handle.h \
+  /usr/include/c++/15.2.1/bits/ostream.h \
+  /usr/include/c++/15.2.1/bits/ostream.tcc \
+  /usr/include/c++/15.2.1/bits/ostream_insert.h \
+  /usr/include/c++/15.2.1/bits/postypes.h \
+  /usr/include/c++/15.2.1/bits/predefined_ops.h \
+  /usr/include/c++/15.2.1/bits/ptr_traits.h \
+  /usr/include/c++/15.2.1/bits/range_access.h \
+  /usr/include/c++/15.2.1/bits/refwrap.h \
+  /usr/include/c++/15.2.1/bits/regex.h \
+  /usr/include/c++/15.2.1/bits/regex.tcc \
+  /usr/include/c++/15.2.1/bits/regex_automaton.h \
+  /usr/include/c++/15.2.1/bits/regex_automaton.tcc \
+  /usr/include/c++/15.2.1/bits/regex_compiler.h \
+  /usr/include/c++/15.2.1/bits/regex_compiler.tcc \
+  /usr/include/c++/15.2.1/bits/regex_constants.h \
+  /usr/include/c++/15.2.1/bits/regex_error.h \
+  /usr/include/c++/15.2.1/bits/regex_executor.h \
+  /usr/include/c++/15.2.1/bits/regex_executor.tcc \
+  /usr/include/c++/15.2.1/bits/regex_scanner.h \
+  /usr/include/c++/15.2.1/bits/regex_scanner.tcc \
+  /usr/include/c++/15.2.1/bits/requires_hosted.h \
+  /usr/include/c++/15.2.1/bits/shared_ptr.h \
+  /usr/include/c++/15.2.1/bits/shared_ptr_base.h \
+  /usr/include/c++/15.2.1/bits/sstream.tcc \
+  /usr/include/c++/15.2.1/bits/std_abs.h \
+  /usr/include/c++/15.2.1/bits/std_function.h \
+  /usr/include/c++/15.2.1/bits/stl_algo.h \
+  /usr/include/c++/15.2.1/bits/stl_algobase.h \
+  /usr/include/c++/15.2.1/bits/stl_bvector.h \
+  /usr/include/c++/15.2.1/bits/stl_construct.h \
+  /usr/include/c++/15.2.1/bits/stl_deque.h \
+  /usr/include/c++/15.2.1/bits/stl_function.h \
+  /usr/include/c++/15.2.1/bits/stl_heap.h \
+  /usr/include/c++/15.2.1/bits/stl_iterator.h \
+  /usr/include/c++/15.2.1/bits/stl_iterator_base_funcs.h \
+  /usr/include/c++/15.2.1/bits/stl_iterator_base_types.h \
+  /usr/include/c++/15.2.1/bits/stl_map.h \
+  /usr/include/c++/15.2.1/bits/stl_pair.h \
+  /usr/include/c++/15.2.1/bits/stl_stack.h \
+  /usr/include/c++/15.2.1/bits/stl_tempbuf.h \
+  /usr/include/c++/15.2.1/bits/stl_tree.h \
+  /usr/include/c++/15.2.1/bits/stl_uninitialized.h \
+  /usr/include/c++/15.2.1/bits/stl_vector.h \
+  /usr/include/c++/15.2.1/bits/streambuf.tcc \
+  /usr/include/c++/15.2.1/bits/streambuf_iterator.h \
+  /usr/include/c++/15.2.1/bits/string_view.tcc \
+  /usr/include/c++/15.2.1/bits/stringfwd.h \
+  /usr/include/c++/15.2.1/bits/uniform_int_dist.h \
+  /usr/include/c++/15.2.1/bits/unique_ptr.h \
+  /usr/include/c++/15.2.1/bits/uses_allocator.h \
+  /usr/include/c++/15.2.1/bits/uses_allocator_args.h \
+  /usr/include/c++/15.2.1/bits/utility.h \
+  /usr/include/c++/15.2.1/bits/vector.tcc \
+  /usr/include/c++/15.2.1/bits/version.h \
+  /usr/include/c++/15.2.1/bitset \
+  /usr/include/c++/15.2.1/cctype \
+  /usr/include/c++/15.2.1/cerrno \
+  /usr/include/c++/15.2.1/clocale \
+  /usr/include/c++/15.2.1/concepts \
+  /usr/include/c++/15.2.1/cstddef \
+  /usr/include/c++/15.2.1/cstdio \
+  /usr/include/c++/15.2.1/cstdlib \
+  /usr/include/c++/15.2.1/cstring \
+  /usr/include/c++/15.2.1/ctime \
+  /usr/include/c++/15.2.1/cwchar \
+  /usr/include/c++/15.2.1/cwctype \
+  /usr/include/c++/15.2.1/debug/assertions.h \
+  /usr/include/c++/15.2.1/debug/debug.h \
+  /usr/include/c++/15.2.1/deque \
+  /usr/include/c++/15.2.1/exception \
+  /usr/include/c++/15.2.1/ext/aligned_buffer.h \
+  /usr/include/c++/15.2.1/ext/alloc_traits.h \
+  /usr/include/c++/15.2.1/ext/atomicity.h \
+  /usr/include/c++/15.2.1/ext/concurrence.h \
+  /usr/include/c++/15.2.1/ext/numeric_traits.h \
+  /usr/include/c++/15.2.1/ext/string_conversions.h \
+  /usr/include/c++/15.2.1/ext/type_traits.h \
+  /usr/include/c++/15.2.1/initializer_list \
+  /usr/include/c++/15.2.1/ios \
+  /usr/include/c++/15.2.1/iosfwd \
+  /usr/include/c++/15.2.1/iostream \
+  /usr/include/c++/15.2.1/istream \
+  /usr/include/c++/15.2.1/locale \
+  /usr/include/c++/15.2.1/new \
+  /usr/include/c++/15.2.1/ostream \
+  /usr/include/c++/15.2.1/pstl/pstl_config.h \
+  /usr/include/c++/15.2.1/regex \
+  /usr/include/c++/15.2.1/sstream \
+  /usr/include/c++/15.2.1/stack \
+  /usr/include/c++/15.2.1/stdexcept \
+  /usr/include/c++/15.2.1/streambuf \
+  /usr/include/c++/15.2.1/string \
+  /usr/include/c++/15.2.1/string_view \
+  /usr/include/c++/15.2.1/system_error \
+  /usr/include/c++/15.2.1/tuple \
+  /usr/include/c++/15.2.1/type_traits \
+  /usr/include/c++/15.2.1/typeinfo \
+  /usr/include/c++/15.2.1/vector \
+  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/atomic_word.h \
+  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++allocator.h \
+  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++config.h \
+  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++locale.h \
+  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/cpu_defines.h \
+  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/ctype_base.h \
+  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/ctype_inline.h \
+  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/error_constants.h \
+  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/gthr-default.h \
+  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/gthr.h \
+  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/messages_members.h \
+  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/os_defines.h \
+  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/time_members.h \
+  /usr/include/ctype.h \
+  /usr/include/endian.h \
+  /usr/include/errno.h \
+  /usr/include/features-time64.h \
+  /usr/include/features.h \
+  /usr/include/gnu/stubs-64.h \
+  /usr/include/gnu/stubs.h \
+  /usr/include/libintl.h \
+  /usr/include/linux/close_range.h \
+  /usr/include/linux/errno.h \
+  /usr/include/linux/posix_types.h \
+  /usr/include/linux/sched/types.h \
+  /usr/include/linux/stddef.h \
+  /usr/include/linux/types.h \
+  /usr/include/locale.h \
+  /usr/include/netdb.h \
+  /usr/include/netinet/in.h \
+  /usr/include/pthread.h \
+  /usr/include/rpc/netdb.h \
+  /usr/include/sched.h \
+  /usr/include/stdc-predef.h \
+  /usr/include/stdio.h \
+  /usr/include/stdlib.h \
+  /usr/include/string.h \
+  /usr/include/strings.h \
+  /usr/include/sys/cdefs.h \
+  /usr/include/sys/select.h \
+  /usr/include/sys/single_threaded.h \
+  /usr/include/sys/socket.h \
+  /usr/include/sys/types.h \
+  /usr/include/time.h \
+  /usr/include/unistd.h \
+  /usr/include/wchar.h \
+  /usr/include/wctype.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h
+
 CMakeFiles/FileDuper.dir/src/ftpclient.cpp.o: /home/nex/c++/src/ftpclient.cpp \
   /home/nex/c++/include/ftpclient.h \
   /usr/include/alloca.h \
@@ -3634,6 +3919,7 @@ FileDuper: /usr/lib/Scrt1.o \
   /usr/lib32/libz.so.1 \
   /usr/lib32/libzstd.so.1 \
   CMakeFiles/FileDuper.dir/src/arp_utils.cpp.o \
+  CMakeFiles/FileDuper.dir/src/export_discovery.cpp.o \
   CMakeFiles/FileDuper.dir/src/ftpclient.cpp.o \
   CMakeFiles/FileDuper.dir/src/ftpdeleteworker.cpp.o \
   CMakeFiles/FileDuper.dir/src/ftplistworker.cpp.o \
@@ -3650,9 +3936,13 @@ FileDuper: /usr/lib/Scrt1.o \
   CMakeFiles/FileDuper.dir/src/smbclient.cpp.o \
   CMakeFiles/FileDuper.dir/src/tree_view.cpp.o \
   CMakeFiles/FileDuper.dir/src/ultraspeedengine.cpp.o \
+  CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.o \
+  CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o \
   lib/imgui/libimgui.a \
   libnet_utils.a
 
+
+CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.o:
 
 CMakeFiles/FileDuper.dir/src/tree_view.cpp.o:
 
@@ -3671,6 +3961,8 @@ CMakeFiles/FileDuper.dir/src/hardwarebenchmark.cpp.o:
 CMakeFiles/FileDuper.dir/src/ftplistworker.cpp.o:
 
 CMakeFiles/FileDuper.dir/src/ftpdeleteworker.cpp.o:
+
+CMakeFiles/FileDuper.dir/src/export_discovery.cpp.o:
 
 CMakeFiles/FileDuper.dir/src/arp_utils.cpp.o:
 
@@ -3802,6 +4094,8 @@ CMakeFiles/FileDuper.dir/src/arp_utils.cpp.o:
 
 /home/nex/c++/src/networkscanner.cpp:
 
+CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o:
+
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/xtestintrin.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/xsaveoptintrin.h:
@@ -3809,8 +4103,6 @@ CMakeFiles/FileDuper.dir/src/arp_utils.cpp.o:
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/xsavecintrin.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/x86gprintrin.h:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/wmmintrin.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/waitpkgintrin.h:
 
@@ -3894,8 +4186,6 @@ CMakeFiles/FileDuper.dir/src/arp_utils.cpp.o:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avxintrin.h:
 
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx512vpopcntdqvlintrin.h:
-
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx512vpopcntdqintrin.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx512vp2intersectintrin.h:
@@ -3972,89 +4262,139 @@ CMakeFiles/FileDuper.dir/src/arp_utils.cpp.o:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/adxintrin.h:
 
-/usr/include/unistd.h:
-
 /usr/include/sys/vfs.h:
 
 /usr/include/sys/ucontext.h:
-
-/usr/include/X11/X.h:
-
-/usr/include/c++/15.2.1/pstl/pstl_config.h:
-
-/usr/lib32/libkrb5.so.3:
-
-/home/nex/c++/src/tree_view.h:
 
 /usr/lib/libm.so.6:
 
 /usr/include/sys/ttydefaults.h:
 
-/home/nex/c++/lib/imgui/imgui.h:
+/usr/include/sys/statvfs.h:
 
-/home/nex/c++/lib/imgui/backends/imgui_impl_glfw.h:
+/usr/include/sys/stat.h:
 
-/usr/include/bits/cpu-set.h:
+/usr/lib/libkrb5.so.3:
 
-/usr/include/c++/15.2.1/bits/streambuf.tcc:
+/usr/include/sys/mount.h:
 
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h:
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/cldemoteintrin.h:
 
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/xmmintrin.h:
+/usr/include/sys/mman.h:
 
-/usr/include/stdint.h:
+/usr/include/sys/ioctl.h:
 
-/usr/include/endian.h:
+/usr/include/paths.h:
+
+/usr/include/nlohmann/ordered_map.hpp:
+
+/usr/include/nlohmann/json_fwd.hpp:
 
 /usr/include/nlohmann/detail/value_t.hpp:
 
-/usr/include/openssl/e_os2.h:
+/usr/include/nlohmann/detail/string_utils.hpp:
 
-/usr/include/string.h:
+/usr/include/nlohmann/detail/string_escape.hpp:
+
+/usr/include/nlohmann/detail/output/serializer.hpp:
+
+/usr/include/nlohmann/detail/output/binary_writer.hpp:
+
+/usr/include/c++/15.2.1/bits/regex_executor.h:
+
+/usr/include/c++/15.2.1/bits/regex_constants.h:
+
+/usr/include/c++/15.2.1/bits/functional_hash.h:
+
+/usr/include/c++/15.2.1/bits/stl_numeric.h:
+
+/usr/include/c++/15.2.1/bits/regex_automaton.tcc:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/wmmintrin.h:
+
+/usr/include/c++/15.2.1/bits/regex.h:
+
+/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/error_constants.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/pmmintrin.h:
+
+/usr/include/c++/15.2.1/bits/locale_conv.h:
+
+/usr/include/c++/15.2.1/bits/deque.tcc:
+
+/usr/include/c++/15.2.1/bits/regex.tcc:
+
+/usr/include/bits/stdlib-float.h:
+
+/usr/include/c++/15.2.1/bits/regex_compiler.h:
+
+/usr/include/c++/15.2.1/ext/alloc_traits.h:
+
+/usr/lib/libSM.so:
+
+/usr/include/c++/15.2.1/mutex:
+
+CMakeFiles/FileDuper.dir/src/nfsclient.cpp.o:
+
+/usr/include/linux/falloc.h:
+
+/usr/include/c++/15.2.1/functional:
 
 /usr/lib/libOpenCL.so:
 
 /usr/include/bits/socket_type.h:
 
-/usr/include/c++/15.2.1/cstring:
+/usr/include/string.h:
 
-/usr/include/bits/stdint-least.h:
+/usr/include/c++/15.2.1/bits/locale_facets_nonio.tcc:
 
-/usr/include/bits/mman_ext.h:
+/usr/include/bits/select.h:
 
-/usr/include/bits/local_lim.h:
+/usr/include/bits/netdb.h:
 
-/home/nex/c++/src/ftpdeleteworker.cpp:
+/usr/include/c++/15.2.1/pstl/execution_defs.h:
 
-/usr/include/c++/15.2.1/bits/fs_path.h:
+/usr/lib32/libresolv.so.2:
 
-/usr/include/c++/15.2.1/cstddef:
+/usr/include/bits/getopt_core.h:
 
-/home/nex/c++/src/smbclient.cpp:
+/usr/lib32/libkrb5support.so.0:
 
-/usr/include/openssl/macros.h:
+/usr/include/bits/confname.h:
 
-/usr/include/c++/15.2.1/bits/cxxabi_forced.h:
+/usr/include/nlohmann/detail/macro_unscope.hpp:
 
-/usr/include/nlohmann/detail/input/input_adapters.hpp:
+/usr/include/asm/sockios.h:
+
+/usr/include/c++/15.2.1/bits/gslice.h:
+
+/usr/include/asm-generic/socket.h:
+
+/usr/include/arpa/inet.h:
+
+/usr/include/c++/15.2.1/stack:
+
+/usr/include/nlohmann/detail/meta/std_fs.hpp:
+
+/home/nex/c++/include/export_discovery.h:
+
+/usr/include/c++/15.2.1/atomic:
 
 /usr/include/c++/15.2.1/numeric:
 
 /usr/include/stdio.h:
 
-/home/nex/c++/include/hashengine.h:
-
 /usr/include/nfsc/libnfs.h:
 
 /usr/include/bits/wordsize.h:
 
-/usr/include/sched.h:
-
-/usr/include/GLFW/glfw3native.h:
+/home/nex/c++/include/hashengine.h:
 
 /usr/lib/libk5crypto.so.3:
 
 /usr/include/wctype.h:
+
+/usr/include/GLFW/glfw3native.h:
 
 /usr/lib/libc.so.6:
 
@@ -4066,14 +4406,6 @@ CMakeFiles/FileDuper.dir/src/arp_utils.cpp.o:
 
 /usr/include/c++/15.2.1/bits/stl_algo.h:
 
-/usr/include/GL/gl.h:
-
-/home/nex/c++/lib/imgui/imconfig.h:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx10_2-512convertintrin.h:
-
-/usr/include/c++/15.2.1/tr1/exp_integral.tcc:
-
 /usr/include/linux/sched/types.h:
 
 /usr/include/linux/posix_types.h:
@@ -4084,15 +4416,9 @@ CMakeFiles/FileDuper.dir/src/arp_utils.cpp.o:
 
 /usr/include/linux/errno.h:
 
+/usr/include/c++/15.2.1/array:
+
 /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/os_defines.h:
-
-/home/nex/c++/include/networkscanner.h:
-
-/usr/include/c++/15.2.1/bits/char_traits.h:
-
-/usr/include/nlohmann/detail/meta/is_sax.hpp:
-
-/home/nex/c++/src/libnfs_wrapper.c:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/amxtf32intrin.h:
 
@@ -4114,21 +4440,21 @@ CMakeFiles/FileDuper.dir/src/ftpclient.cpp.o:
 
 /usr/include/bits/types/__sigset_t.h:
 
-/usr/include/bits/dlfcn.h:
-
-/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/basic_file.h:
-
 /usr/lib32/libbrotlidec.so.1:
 
 /usr/include/stdlib.h:
+
+/usr/include/endian.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/xmmintrin.h:
+
+/usr/include/stdint.h:
 
 /home/nex/c++/include/networkservice_core.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx512vbmiintrin.h:
 
 /usr/include/c++/15.2.1/string_view:
-
-/usr/include/GLFW/glfw3.h:
 
 /usr/lib/libzstd.so.1:
 
@@ -4146,10 +4472,6 @@ CMakeFiles/FileDuper.dir/src/ftpclient.cpp.o:
 
 /usr/include/c++/15.2.1/iostream:
 
-/usr/include/openssl/md5.h:
-
-/usr/include/bits/mathcalls.h:
-
 /usr/include/c++/15.2.1/iosfwd:
 
 /usr/include/c++/15.2.1/bits/atomic_lockfree_defines.h:
@@ -4162,21 +4484,9 @@ CMakeFiles/FileDuper.dir/src/ftpclient.cpp.o:
 
 /usr/include/nlohmann/detail/macro_scope.hpp:
 
-/usr/lib32/libresolv.so.2:
+/usr/include/c++/15.2.1/bits/regex_automaton.h:
 
-/usr/include/bits/getopt_core.h:
-
-/usr/include/c++/15.2.1/ext/alloc_traits.h:
-
-/usr/lib/libSM.so:
-
-/usr/include/c++/15.2.1/mutex:
-
-CMakeFiles/FileDuper.dir/src/nfsclient.cpp.o:
-
-/usr/include/linux/falloc.h:
-
-/usr/include/strings.h:
+/usr/include/X11/extensions/Xrender.h:
 
 /usr/include/c++/15.2.1/istream:
 
@@ -4192,6 +4502,8 @@ CMakeFiles/FileDuper.dir/src/nfsclient.cpp.o:
 
 /usr/include/c++/15.2.1/system_error:
 
+/home/nex/c++/src/ftpdeleteworker.cpp:
+
 /usr/include/nlohmann/detail/exceptions.hpp:
 
 /usr/include/wchar.h:
@@ -4200,9 +4512,15 @@ CMakeFiles/FileDuper.dir/src/nfsclient.cpp.o:
 
 /usr/include/c++/15.2.1/clocale:
 
-/usr/include/openssl/opensslconf.h:
+/usr/include/gnu/stubs-64.h:
 
-/usr/include/c++/15.2.1/bits/version.h:
+/usr/include/bits/getopt_posix.h:
+
+/usr/include/nlohmann/thirdparty/hedley/hedley_undef.hpp:
+
+/usr/include/errno.h:
+
+/usr/include/c++/15.2.1/tuple:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/rtmintrin.h:
 
@@ -4216,10 +4534,6 @@ CMakeFiles/FileDuper.dir/src/nfsclient.cpp.o:
 
 /usr/include/c++/15.2.1/bits/uses_allocator_args.h:
 
-/usr/include/c++/15.2.1/initializer_list:
-
-/home/nex/c++/include/net_utils.h:
-
 /usr/include/c++/15.2.1/bits/uses_allocator.h:
 
 /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/cpu_defines.h:
@@ -4227,18 +4541,6 @@ CMakeFiles/FileDuper.dir/src/nfsclient.cpp.o:
 /usr/include/locale.h:
 
 /usr/include/c++/15.2.1/bits/gslice_array.h:
-
-/usr/include/openssl/configuration.h:
-
-/usr/include/bits/typesizes.h:
-
-/usr/include/c++/15.2.1/tuple:
-
-/usr/include/bits/getopt_posix.h:
-
-/usr/include/dlfcn.h:
-
-/usr/include/c++/15.2.1/exception:
 
 /usr/lib/libc.so:
 
@@ -4266,11 +4568,27 @@ CMakeFiles/FileDuper.dir/src/nfsclient.cpp.o:
 
 /usr/include/bits/environments.h:
 
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/sgxintrin.h:
+
+/usr/include/bits/types/struct_iovec.h:
+
+/usr/include/c++/15.2.1/bits/std_thread.h:
+
 /usr/include/c++/15.2.1/filesystem:
 
 /usr/include/asm/types.h:
 
 /usr/include/bits/types/clockid_t.h:
+
+/usr/lib/libbrotlicommon.so.1:
+
+/usr/include/bits/posix_opt.h:
+
+/usr/include/sys/time.h:
+
+/usr/include/bits/mman-map-flags-generic.h:
+
+/home/nex/c++/src/ftplistworker.cpp:
 
 /usr/include/c++/15.2.1/bits/stl_iterator.h:
 
@@ -4280,23 +4598,9 @@ CMakeFiles/FileDuper.dir/src/nfsclient.cpp.o:
 
 /usr/include/c++/15.2.1/bits/move.h:
 
-/home/nex/c++/src/hardwarebenchmark.cpp:
-
-/home/nex/c++/src/ftpclient.cpp:
-
-CMakeFiles/FileDuper.dir/src/networkscanner.cpp.o:
-
-/usr/include/curl/header.h:
-
 /usr/include/c++/15.2.1/type_traits:
 
 /usr/include/c++/15.2.1/debug/debug.h:
-
-/home/nex/c++/include/ftplistworker.h:
-
-/usr/include/nlohmann/detail/output/output_adapters.hpp:
-
-/usr/include/c++/15.2.1/bits/align.h:
 
 lib/imgui/libimgui.a:
 
@@ -4316,13 +4620,11 @@ lib/imgui/libimgui.a:
 
 /usr/include/c++/15.2.1/bits/locale_classes.h:
 
-/usr/lib/libresolv.so.2:
-
-/usr/include/bits/sigstksz.h:
-
-/usr/include/alloca.h:
-
 /usr/include/bits/stdlib-bsearch.h:
+
+/usr/include/bits/siginfo-consts.h:
+
+/usr/include/c++/15.2.1/bits/new_allocator.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/libgcc.a:
 
@@ -4348,19 +4650,15 @@ lib/imgui/libimgui.a:
 
 /usr/include/X11/extensions/render.h:
 
-/usr/include/c++/15.2.1/bits/locale_facets_nonio.h:
-
-/home/nex/c++/include/hardwarebenchmark.h:
-
 /usr/include/bits/types/__fpos64_t.h:
-
-/usr/include/bits/select.h:
-
-/usr/include/c++/15.2.1/bits/locale_facets_nonio.tcc:
 
 /usr/include/c++/15.2.1/bits/codecvt.h:
 
 /usr/include/nlohmann/detail/input/lexer.hpp:
+
+/home/nex/c++/src/export_discovery.cpp:
+
+/usr/include/linux/close_range.h:
 
 /usr/include/asm/posix_types.h:
 
@@ -4377,10 +4675,6 @@ CMakeFiles/FileDuper.dir/src/nfs_helpers.cpp.o:
 /usr/include/nlohmann/detail/meta/call_std/begin.hpp:
 
 /usr/include/asm/posix_types_64.h:
-
-/usr/include/bits/types.h:
-
-/usr/include/c++/15.2.1/bits/locale_facets.tcc:
 
 /usr/lib32/libnghttp2.so.14:
 
@@ -4410,14 +4704,6 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o:
 
 /usr/include/bits/types/cookie_io_functions_t.h:
 
-/usr/include/c++/15.2.1/bits/functional_hash.h:
-
-/usr/include/c++/15.2.1/bits/stl_numeric.h:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/f16cintrin.h:
-
-/usr/include/openssl/opensslv.h:
-
 /usr/include/stdc-predef.h:
 
 /usr/include/c++/15.2.1/bits/stl_tempbuf.h:
@@ -4427,6 +4713,12 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o:
 /usr/include/asm-generic/posix_types.h:
 
 /usr/include/c++/15.2.1/bits/stl_map.h:
+
+/usr/include/c++/15.2.1/bits/regex_compiler.tcc:
+
+/usr/include/c++/15.2.1/valarray:
+
+/usr/include/nlohmann/detail/meta/void_t.hpp:
 
 /usr/include/asm-generic/errno-base.h:
 
@@ -4458,11 +4750,7 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o:
 
 /usr/include/bits/siginfo-consts-arch.h:
 
-/usr/include/c++/15.2.1/bits/valarray_array.h:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/amxfp16intrin.h:
-
-/home/nex/c++/src/main.cpp:
+/usr/include/c++/15.2.1/pstl/pstl_config.h:
 
 /usr/include/bits/pthread_stack_min-dynamic.h:
 
@@ -4472,8 +4760,6 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o:
 
 /usr/include/bits/types/timer_t.h:
 
-/usr/include/c++/15.2.1/tr1/poly_hermite.tcc:
-
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/uintrintrin.h:
 
 /home/nex/c++/src/arp_utils.cpp:
@@ -4482,25 +4768,29 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o:
 
 /usr/include/c++/15.2.1/bits/stl_construct.h:
 
-/home/nex/c++/include/ftpclient.h:
-
-/usr/include/c++/15.2.1/bits/istream.tcc:
-
 /usr/include/c++/15.2.1/limits:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx512bitalgvlintrin.h:
 
 /usr/include/bits/long-double.h:
 
-/usr/include/bits/stdlib-float.h:
-
 /usr/include/bits/time64.h:
 
 /usr/include/bits/byteswap.h:
 
+/usr/include/c++/15.2.1/bits/valarray_array.h:
+
+/usr/include/c++/15.2.1/regex:
+
 /usr/lib/libunistring.so.5:
 
 /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/atomic_word.h:
+
+/usr/include/bits/types.h:
+
+/usr/include/c++/15.2.1/bits/locale_facets.tcc:
+
+/usr/include/c++/15.2.1/bitset:
 
 /usr/include/c++/15.2.1/bits/parse_numbers.h:
 
@@ -4509,6 +4799,10 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o:
 /usr/include/bits/endianness.h:
 
 /usr/include/libintl.h:
+
+/usr/include/bits/mathcalls.h:
+
+/usr/include/openssl/md5.h:
 
 /usr/include/bits/uintn-identity.h:
 
@@ -4533,10 +4827,6 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o:
 /usr/include/bits/types/mbstate_t.h:
 
 /usr/include/bits/signal_ext.h:
-
-/usr/include/errno.h:
-
-/usr/include/nlohmann/thirdparty/hedley/hedley_undef.hpp:
 
 /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/ctype_base.h:
 
@@ -4570,13 +4860,31 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o:
 
 /usr/include/c++/15.2.1/bits/functexcept.h:
 
+/usr/include/nlohmann/json.hpp:
+
+/usr/include/bits/types/struct_sched_param.h:
+
 /usr/include/c++/15.2.1/bits/stl_pair.h:
+
+/usr/include/linux/sockios.h:
+
+/usr/include/bits/waitflags.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx512vlintrin.h:
 
 /usr/include/c++/15.2.1/forward_list:
 
 /usr/include/bits/types/struct_tm.h:
+
+/usr/include/bits/types/struct_osockaddr.h:
+
+/usr/include/nlohmann/detail/conversions/to_chars.hpp:
+
+/usr/include/c++/15.2.1/bits/char_traits.h:
+
+/home/nex/c++/include/networkscanner.h:
+
+/usr/include/nlohmann/detail/meta/is_sax.hpp:
 
 /usr/include/c++/15.2.1/bits/valarray_array.tcc:
 
@@ -4592,11 +4900,9 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o:
 
 /usr/include/c++/15.2.1/backward/binders.h:
 
-/usr/include/c++/15.2.1/ext/concurrence.h:
-
-/usr/include/c++/15.2.1/cctype:
-
 /usr/include/c++/15.2.1/bits/stl_iterator_base_funcs.h:
+
+/usr/include/c++/15.2.1/bits/regex_scanner.h:
 
 /usr/include/features.h:
 
@@ -4605,8 +4911,6 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o:
 /usr/include/c++/15.2.1/bits/ios_base.h:
 
 /usr/include/bits/dirent_ext.h:
-
-/home/nex/c++/src/hashengine.cpp:
 
 /usr/include/bits/timesize.h:
 
@@ -4632,19 +4936,31 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o:
 
 /usr/include/c++/15.2.1/bits/localefwd.h:
 
-/home/nex/c++/include/sftpclient.h:
-
-/usr/include/bits/thread-shared-types.h:
-
-/usr/include/openssl/sha.h:
-
-/usr/include/c++/15.2.1/pstl/glue_memory_defs.h:
+/usr/include/c++/15.2.1/bits/regex_executor.tcc:
 
 /usr/include/c++/15.2.1/cerrno:
 
 /usr/include/c++/15.2.1/bits/basic_ios.tcc:
 
+/usr/include/c++/15.2.1/bits/version.h:
+
+/usr/include/openssl/opensslconf.h:
+
 /usr/include/c++/15.2.1/bits/charconv.h:
+
+/usr/include/asm/socket.h:
+
+/usr/include/bits/mathcalls-helper-functions.h:
+
+/usr/lib32/libtasn1.so.6:
+
+/usr/include/bits/in.h:
+
+/usr/include/X11/extensions/randr.h:
+
+/usr/include/bits/socket.h:
+
+/usr/include/c++/15.2.1/bits/std_function.h:
 
 /usr/include/time.h:
 
@@ -4662,33 +4978,37 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o:
 
 /usr/include/c++/15.2.1/bits/concept_check.h:
 
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/xsaveintrin.h:
+/usr/include/c++/15.2.1/bits/cxxabi_forced.h:
 
-/usr/include/KHR/khrplatform.h:
+/usr/include/c++/15.2.1/cctype:
 
-/home/nex/c++/lib/imgui/backends/imgui_impl_opengl3.h:
+/usr/include/c++/15.2.1/ext/concurrence.h:
 
-/usr/include/c++/15.2.1/bits/quoted_string.h:
+/home/nex/c++/src/smbclient.cpp:
 
-/usr/include/bits/statvfs.h:
+/usr/include/openssl/macros.h:
 
-/usr/include/c++/15.2.1/bits/unique_ptr.h:
+/usr/include/nlohmann/detail/input/input_adapters.hpp:
+
+/usr/include/sched.h:
+
+/usr/include/netdb.h:
+
+/usr/include/bits/cpu-set.h:
+
+/usr/include/c++/15.2.1/bits/streambuf.tcc:
+
+/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/basic_file.h:
+
+/usr/include/bits/dlfcn.h:
 
 /usr/include/c++/15.2.1/bits/cpp_type_traits.h:
-
-/usr/lib/libkrb5.so.3:
-
-/usr/include/sys/mount.h:
 
 /usr/include/c++/15.2.1/bits/exception.h:
 
 /usr/include/bits/math-vector.h:
 
 /usr/include/bits/uio_lim.h:
-
-/usr/lib/libbrotlicommon.so.1:
-
-/usr/include/bits/posix_opt.h:
 
 /usr/include/bits/pthreadtypes.h:
 
@@ -4714,15 +5034,19 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o:
 
 /usr/include/c++/15.2.1/cwchar:
 
+/usr/include/c++/15.2.1/bits/uniform_int_dist.h:
+
 /usr/include/c++/15.2.1/bits/stl_bvector.h:
 
 /usr/include/bits/siginfo-arch.h:
 
-/usr/include/c++/15.2.1/bits/uniform_int_dist.h:
-
 /usr/lib32/libffi.so.8:
 
 /usr/include/bits/types/wint_t.h:
+
+/usr/include/c++/15.2.1/bits/algorithmfwd.h:
+
+/usr/include/c++/15.2.1/bits/memoryfwd.h:
 
 /usr/include/signal.h:
 
@@ -4732,9 +5056,13 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o:
 
 /usr/include/c++/15.2.1/bits/nested_exception.h:
 
-/usr/include/nlohmann/detail/iterators/iter_impl.hpp:
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx10_2-512minmaxintrin.h:
 
-/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/error_constants.h:
+/usr/include/nlohmann/detail/iterators/iteration_proxy.hpp:
+
+/usr/include/c++/15.2.1/bits/ostream.h:
+
+/usr/include/nlohmann/detail/iterators/iter_impl.hpp:
 
 /usr/include/ctype.h:
 
@@ -4742,13 +5070,17 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o:
 
 /usr/include/c++/15.2.1/queue:
 
+/usr/lib/libkeyutils.so.1:
+
+/usr/include/bits/types/sigevent_t.h:
+
+/usr/include/c++/15.2.1/bits/ostream_insert.h:
+
 /usr/include/c++/15.2.1/bits/postypes.h:
 
 /usr/include/bits/types/error_t.h:
 
 /usr/include/bits/ss_flags.h:
-
-/usr/include/gnu/stubs-64.h:
 
 /usr/include/bits/endian.h:
 
@@ -4760,15 +5092,153 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o:
 
 /usr/include/math.h:
 
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx512vpopcntdqvlintrin.h:
+
+/usr/include/c++/15.2.1/bits/regex_scanner.tcc:
+
+/usr/include/bits/types/__sigval_t.h:
+
+/usr/include/c++/15.2.1/bits/stl_deque.h:
+
+/usr/include/X11/keysym.h:
+
+/usr/include/c++/15.2.1/tr1/poly_hermite.tcc:
+
+/usr/include/c++/15.2.1/bits/stl_stack.h:
+
+/usr/include/c++/15.2.1/pstl/glue_algorithm_defs.h:
+
+/usr/include/c++/15.2.1/bits/unique_ptr.h:
+
+/home/nex/c++/lib/imgui/backends/imgui_impl_opengl3.h:
+
+/usr/include/c++/15.2.1/bits/quoted_string.h:
+
+/usr/include/bits/statvfs.h:
+
+/usr/include/c++/15.2.1/cstring:
+
+libnet_utils.a:
+
+/usr/include/c++/15.2.1/deque:
+
+/usr/include/c++/15.2.1/ext/aligned_buffer.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx512vnniintrin.h:
+
+/usr/include/c++/15.2.1/locale:
+
+/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/time_members.h:
+
+/usr/include/netinet/in.h:
+
+/usr/include/rpc/netdb.h:
+
+/usr/include/strings.h:
+
+/usr/include/unistd.h:
+
+/home/nex/c++/src/ftpclient.cpp:
+
+CMakeFiles/FileDuper.dir/src/networkscanner.cpp.o:
+
+/usr/include/curl/header.h:
+
+/usr/include/c++/15.2.1/bits/istream.tcc:
+
+/home/nex/c++/include/ftpclient.h:
+
+/usr/include/nlohmann/detail/output/output_adapters.hpp:
+
+/usr/include/c++/15.2.1/bits/align.h:
+
+/home/nex/c++/include/ftplistworker.h:
+
+/usr/include/bits/local_lim.h:
+
+/home/nex/c++/src/hardwarebenchmark.cpp:
+
+/usr/include/c++/15.2.1/bits/locale_facets_nonio.h:
+
+/home/nex/c++/include/hardwarebenchmark.h:
+
+/home/nex/c++/src/hashengine.cpp:
+
+/usr/include/bits/stdint-least.h:
+
+/usr/include/bits/mman_ext.h:
+
+/usr/include/bits/typesizes.h:
+
+/usr/include/openssl/configuration.h:
+
+/usr/include/openssl/e_os2.h:
+
+/usr/lib/libresolv.so.2:
+
+/usr/include/alloca.h:
+
+/usr/include/bits/sigstksz.h:
+
+/usr/include/c++/15.2.1/cstddef:
+
+/usr/include/c++/15.2.1/bits/fs_path.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/f16cintrin.h:
+
+/usr/include/openssl/opensslv.h:
+
+/home/nex/c++/include/sftpclient.h:
+
+/usr/include/bits/thread-shared-types.h:
+
+/usr/include/openssl/sha.h:
+
+/usr/include/c++/15.2.1/pstl/glue_memory_defs.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h:
+
+/home/nex/c++/src/libnfs_wrapper.c:
+
+/usr/include/c++/15.2.1/exception:
+
+/usr/include/dlfcn.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/amxfp16intrin.h:
+
+/home/nex/c++/src/main.cpp:
+
+/usr/include/c++/15.2.1/initializer_list:
+
+/home/nex/c++/include/net_utils.h:
+
+/home/nex/c++/lib/imgui/backends/imgui_impl_glfw.h:
+
+/home/nex/c++/lib/imgui/imconfig.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx10_2-512convertintrin.h:
+
+/usr/include/c++/15.2.1/tr1/exp_integral.tcc:
+
+/home/nex/c++/lib/imgui/imgui.h:
+
+/usr/lib32/libkrb5.so.3:
+
+/home/nex/c++/src/tree_view.h:
+
+/usr/include/GL/gl.h:
+
+/usr/include/GLFW/glfw3.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/xsaveintrin.h:
+
+/usr/include/KHR/khrplatform.h:
+
+/usr/include/X11/X.h:
+
 /usr/include/c++/15.2.1/cstdlib:
 
 /usr/include/X11/Xfuncproto.h:
-
-/usr/include/bits/mman-map-flags-generic.h:
-
-/home/nex/c++/src/ftplistworker.cpp:
-
-/usr/include/sys/time.h:
 
 /usr/include/X11/Xosdefs.h:
 
@@ -4786,18 +5256,6 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o:
 
 /usr/include/X11/extensions/Xrandr.h:
 
-/usr/include/X11/extensions/Xrender.h:
-
-/usr/include/X11/keysym.h:
-
-/usr/include/bits/types/__sigval_t.h:
-
-/usr/include/c++/15.2.1/bits/stl_deque.h:
-
-/usr/include/arpa/inet.h:
-
-/usr/include/nlohmann/detail/meta/std_fs.hpp:
-
 /usr/include/nlohmann/thirdparty/hedley/hedley.hpp:
 
 /usr/include/asm-generic/ioctl.h:
@@ -4808,21 +5266,9 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o:
 
 /usr/include/c++/15.2.1/version:
 
-/usr/include/nlohmann/detail/output/binary_writer.hpp:
-
-/usr/include/asm-generic/socket.h:
-
 /usr/include/asm/ioctl.h:
 
 /usr/include/asm/ioctls.h:
-
-/usr/include/bits/mathcalls-helper-functions.h:
-
-/usr/include/asm/socket.h:
-
-/usr/include/asm/sockios.h:
-
-/usr/include/c++/15.2.1/bits/gslice.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avxvnniintrin.h:
 
@@ -4830,17 +5276,9 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o:
 
 /usr/lib32/libbrotlicommon.so.1:
 
+/usr/include/c++/15.2.1/bits/regex_error.h:
+
 /usr/include/c++/15.2.1/bits/atomic_futex.h:
-
-/usr/lib32/libkrb5support.so.0:
-
-/usr/include/bits/confname.h:
-
-/usr/include/bits/waitflags.h:
-
-/usr/include/linux/sockios.h:
-
-/usr/include/nlohmann/detail/macro_unscope.hpp:
 
 /usr/include/bits/dirent.h:
 
@@ -4860,13 +5298,9 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o:
 
 /usr/include/linux/ioctl.h:
 
-/usr/include/c++/15.2.1/pstl/execution_defs.h:
-
 /usr/include/bits/ioctl-types.h:
 
 /usr/include/bits/ioctls.h:
-
-/usr/include/nlohmann/json_fwd.hpp:
 
 /usr/include/bits/iscanonical.h:
 
@@ -4890,17 +5324,11 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o:
 
 /usr/include/bits/sigevent-consts.h:
 
-/usr/include/c++/15.2.1/bits/new_allocator.h:
-
-/usr/include/bits/siginfo-consts.h:
-
 /usr/include/c++/15.2.1/bits/this_thread_sleep.h:
 
 /usr/include/bits/signum-generic.h:
 
 /usr/include/nlohmann/detail/conversions/from_json.hpp:
-
-/usr/include/sys/statvfs.h:
 
 /usr/include/bits/sigstack.h:
 
@@ -4909,16 +5337,6 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o:
 /usr/include/linux/mount.h:
 
 /usr/include/bits/sigthread.h:
-
-/usr/lib32/libtasn1.so.6:
-
-/usr/include/X11/extensions/randr.h:
-
-/usr/include/bits/in.h:
-
-/usr/include/bits/socket.h:
-
-/usr/include/c++/15.2.1/bits/std_function.h:
 
 /usr/include/c++/15.2.1/cmath:
 
@@ -4940,18 +5358,6 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o:
 
 /usr/include/bits/types/idtype_t.h:
 
-/usr/lib/libkeyutils.so.1:
-
-/usr/include/c++/15.2.1/bits/ostream_insert.h:
-
-/usr/include/bits/types/sigevent_t.h:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx10_2-512minmaxintrin.h:
-
-/usr/include/c++/15.2.1/bits/ostream.h:
-
-/usr/include/nlohmann/detail/iterators/iteration_proxy.hpp:
-
 /usr/include/bits/types/siginfo_t.h:
 
 /usr/include/bits/types/sigval_t.h:
@@ -4959,18 +5365,6 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o:
 /usr/include/bits/types/stack_t.h:
 
 /usr/include/c++/15.2.1/unordered_map:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/sgxintrin.h:
-
-/usr/include/c++/15.2.1/bits/std_thread.h:
-
-/usr/include/bits/types/struct_iovec.h:
-
-/usr/include/c++/15.2.1/functional:
-
-/usr/include/nlohmann/detail/conversions/to_chars.hpp:
-
-/usr/include/bits/types/struct_osockaddr.h:
 
 /usr/include/c++/15.2.1/bits/cxxabi_init_exception.h:
 
@@ -5000,25 +5394,19 @@ CMakeFiles/FileDuper.dir/src/sftpclient.cpp.o:
 
 /usr/include/c++/15.2.1/any:
 
-/usr/include/c++/15.2.1/array:
-
-/usr/include/c++/15.2.1/bits/memoryfwd.h:
-
-/usr/include/c++/15.2.1/bits/algorithmfwd.h:
-
-/usr/include/c++/15.2.1/atomic:
-
 /usr/include/bits/mman-linux.h:
 
 /usr/include/c++/15.2.1/backward/auto_ptr.h:
+
+/usr/include/c++/15.2.1/bits/fs_ops.h:
+
+/usr/include/c++/15.2.1/bits/atomic_base.h:
 
 /usr/include/sys/select.h:
 
 /usr/include/c++/15.2.1/bits/stl_function.h:
 
 /usr/include/c++/15.2.1/bits/chrono.h:
-
-/usr/include/c++/15.2.1/bits/deque.tcc:
 
 /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/messages_members.h:
 
@@ -5030,10 +5418,6 @@ CMakeFiles/FileDuper.dir/src/sftpclient.cpp.o:
 
 /usr/include/c++/15.2.1/bits/forward_list.h:
 
-/usr/include/c++/15.2.1/bits/atomic_base.h:
-
-/usr/include/c++/15.2.1/bits/fs_ops.h:
-
 /usr/include/c++/15.2.1/bits/fs_fwd.h:
 
 /usr/include/c++/15.2.1/bits/hashtable.h:
@@ -5041,10 +5425,6 @@ CMakeFiles/FileDuper.dir/src/sftpclient.cpp.o:
 /usr/include/c++/15.2.1/bits/hashtable_policy.h:
 
 /usr/include/c++/15.2.1/bits/indirect_array.h:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/pmmintrin.h:
-
-/usr/include/c++/15.2.1/bits/locale_conv.h:
 
 /usr/include/sys/statfs.h:
 
@@ -5054,13 +5434,11 @@ CMakeFiles/FileDuper.dir/src/sftpclient.cpp.o:
 
 /usr/include/c++/15.2.1/tr1/hypergeometric.tcc:
 
-/usr/include/c++/15.2.1/bits/stl_queue.h:
-
 /usr/include/bits/sockaddr.h:
 
-/usr/include/c++/15.2.1/bits/stl_set.h:
+/usr/include/c++/15.2.1/bits/stl_queue.h:
 
-/usr/include/c++/15.2.1/pstl/glue_algorithm_defs.h:
+/usr/include/c++/15.2.1/bits/stl_set.h:
 
 /usr/include/c++/15.2.1/bits/allocated_ptr.h:
 
@@ -5080,10 +5458,6 @@ CMakeFiles/FileDuper.dir/src/sftpclient.cpp.o:
 
 /usr/include/nlohmann/detail/meta/call_std/end.hpp:
 
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/cldemoteintrin.h:
-
-/usr/include/sys/mman.h:
-
 /usr/include/c++/15.2.1/codecvt:
 
 CMakeFiles/FileDuper.dir/src/ultraspeedengine.cpp.o:
@@ -5099,16 +5473,6 @@ CMakeFiles/FileDuper.dir/src/ultraspeedengine.cpp.o:
 /usr/include/bits/flt-eval-method.h:
 
 /usr/include/nlohmann/detail/json_ref.hpp:
-
-libnet_utils.a:
-
-/usr/include/c++/15.2.1/deque:
-
-/usr/include/c++/15.2.1/ext/aligned_buffer.h:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx512vnniintrin.h:
-
-/usr/include/c++/15.2.1/locale:
 
 /usr/include/c++/15.2.1/future:
 
@@ -5132,8 +5496,6 @@ libnet_utils.a:
 
 /usr/include/c++/15.2.1/tr1/bessel_function.tcc:
 
-/usr/include/nlohmann/detail/string_escape.hpp:
-
 /usr/include/c++/15.2.1/tr1/gamma.tcc:
 
 /usr/include/c++/15.2.1/tr1/poly_laguerre.tcc:
@@ -5145,12 +5507,6 @@ libnet_utils.a:
 /usr/include/c++/15.2.1/tr1/special_function_util.h:
 
 /usr/include/c++/15.2.1/utility:
-
-/usr/include/c++/15.2.1/valarray:
-
-/usr/include/nlohmann/detail/meta/void_t.hpp:
-
-/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/time_members.h:
 
 /usr/include/bits/poll.h:
 
@@ -5186,8 +5542,6 @@ libnet_utils.a:
 
 /usr/include/limits.h:
 
-/usr/include/linux/close_range.h:
-
 /usr/lib/crtn.o:
 
 /usr/include/linux/limits.h:
@@ -5195,8 +5549,6 @@ libnet_utils.a:
 /usr/lib32/libuuid.so.1:
 
 /usr/include/linux/stat.h:
-
-/usr/include/netinet/in.h:
 
 /usr/include/nlohmann/byte_container_with_subtype.hpp:
 
@@ -5218,8 +5570,6 @@ libnet_utils.a:
 
 /usr/include/nlohmann/detail/input/parser.hpp:
 
-/usr/include/paths.h:
-
 /usr/include/nlohmann/detail/iterators/internal_iterator.hpp:
 
 /usr/include/nlohmann/detail/iterators/iterator_traits.hpp:
@@ -5235,17 +5585,3 @@ libnet_utils.a:
 /home/nex/c++/include/nfsclient.h:
 
 /usr/include/nlohmann/detail/meta/identity_tag.hpp:
-
-/usr/include/nlohmann/detail/output/serializer.hpp:
-
-/usr/include/nlohmann/detail/string_utils.hpp:
-
-/usr/include/bits/types/struct_sched_param.h:
-
-/usr/include/nlohmann/json.hpp:
-
-/usr/include/nlohmann/ordered_map.hpp:
-
-/usr/include/sys/ioctl.h:
-
-/usr/include/sys/stat.h:

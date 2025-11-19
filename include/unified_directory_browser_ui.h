@@ -6,6 +6,7 @@
 #pragma once
 
 #include "unified_directory_browser.h"
+#include "export_discovery.h"
 #include <imgui.h>
 
 class UnifiedDirectoryBrowserUI {
@@ -28,6 +29,9 @@ public:
     // Render sync dialog
     void renderSyncDialog(UnifiedDirectoryBrowser& browser);
     
+    // Render export discovery dialog for NFS/SMB servers
+    void renderExportDiscovery(UnifiedDirectoryBrowser& browser);
+    
 private:
     // UI state
     int selectedIndex = -1;
@@ -37,3 +41,4 @@ private:
     const char* getSourceIcon(const std::string& source);
     ImVec4 getSourceColor(const std::string& source);
 };
+
