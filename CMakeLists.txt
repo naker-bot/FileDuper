@@ -213,6 +213,7 @@ target_link_libraries(FileDuper
     OpenSSL::Crypto
     pthread
     ${LIBNFS_LIBRARIES}
+    net_utils
 )
 
 if(WIN32)
@@ -243,6 +244,11 @@ endif()
 target_include_directories(fileduper_helpers PRIVATE include)
 target_link_libraries(fileduper_helpers PRIVATE ${CURL_LIBS} OpenSSL::SSL OpenSSL::Crypto pthread)
 
+# Small net utils for CIDR & subnet normalization
+add_library(net_utils STATIC src/net_utils.cpp)
+target_include_directories(net_utils PRIVATE include)
+target_link_libraries(net_utils PRIVATE pthread)
+
 # Install target
 install(TARGETS FileDuper DESTINATION bin)
 
@@ -262,6 +268,10 @@ install(TARGETS test_networkscanner_adapter RUNTIME DESTINATION bin)
 
     # Basic test for the non-Qt NetworkScannerAdapter
     add_executable(test_networkscanner_cancel tools/test_networkscanner_cancel.cpp src/networkscanner_adapter.cpp ${NETWORKSCANNER_SRC})
+    add_executable(test_net_utils tools/test_net_utils.cpp)
+    target_include_directories(test_net_utils PRIVATE include)
+    target_link_libraries(test_net_utils PRIVATE pthread net_utils)
+    install(TARGETS test_net_utils RUNTIME DESTINATION bin)
     install(TARGETS test_networkscanner_cancel RUNTIME DESTINATION bin)
 
     if(WIN32)
