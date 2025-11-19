@@ -3369,33 +3369,43 @@ bool connectAndFetchDirectories(FtpPreset& preset, int presetIndex = -1) {
 
 // Lightning Speed: Ping einzelnen Host (async)
 bool pingHost(const std::string& ip, int timeout) {
-    // Ultra-Fast TCP Connect Test (keine ICMP/system calls!)
-    int sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock < 0) return false;
+    // FIXED: Check for file services (FTP, SSH, SMB, NFS) not HTTP
+    // Returns true ONLY if at least one relevant service is found
+    const int ports[] = {21, 22, 139, 445, 2049}; // FTP, SSH, SMB-NetBIOS, SMB-CIFS, NFS
     
-    // Non-blocking mode für Timeout
-    fcntl(sock, F_SETFL, O_NONBLOCK);
+    for (int port : ports) {
+        int sock = socket(AF_INET, SOCK_STREAM, 0);
+        if (sock < 0) continue;
+        
+        // Non-blocking mode für Timeout
+        fcntl(sock, F_SETFL, O_NONBLOCK);
+        
+        struct sockaddr_in addr;
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(port);
+        inet_pton(AF_INET, ip.c_str(), &addr.sin_addr);
+        
+        connect(sock, (struct sockaddr*)&addr, sizeof(addr));
+        
+        // Select mit kurzer Timeout (50ms pro Port)
+        fd_set fdset;
+        FD_ZERO(&fdset);
+        FD_SET(sock, &fdset);
+        
+        struct timeval tv;
+        tv.tv_sec = 0;
+        tv.tv_usec = 50000; // 50ms instead of 1-5 seconds for each port
+        
+        int result = select(sock + 1, nullptr, &fdset, nullptr, &tv);
+        close(sock);
+        
+        // Found at least one relevant service
+        if (result > 0) {
+            return true;
+        }
+    }
     
-    struct sockaddr_in addr;
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(80); // Port 80 (HTTP) oder 21 (FTP)
-    inet_pton(AF_INET, ip.c_str(), &addr.sin_addr);
-    
-    connect(sock, (struct sockaddr*)&addr, sizeof(addr));
-    
-    // Select mit Timeout
-    fd_set fdset;
-    FD_ZERO(&fdset);
-    FD_SET(sock, &fdset);
-    
-    struct timeval tv;
-    tv.tv_sec = timeout;
-    tv.tv_usec = 0;
-    
-    int result = select(sock + 1, nullptr, &fdset, nullptr, &tv);
-    close(sock);
-    
-    return (result > 0);
+    return false; // No relevant services found
 }
 
 // Lightning Speed: Asynchroner Netzwerk-Scanner
