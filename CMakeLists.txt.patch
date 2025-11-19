@@ -1,3 +1,0 @@
-# Add before "# Conditional FTP sources"
-    src/themesystem.cpp
-    src/thememanagerwidget.cpp

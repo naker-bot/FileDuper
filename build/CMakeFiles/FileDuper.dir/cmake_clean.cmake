@@ -1,0 +1,42 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/FileDuper.dir/link.d"
+  "CMakeFiles/FileDuper.dir/src/arp_utils.cpp.o"
+  "CMakeFiles/FileDuper.dir/src/arp_utils.cpp.o.d"
+  "CMakeFiles/FileDuper.dir/src/ftpclient.cpp.o"
+  "CMakeFiles/FileDuper.dir/src/ftpclient.cpp.o.d"
+  "CMakeFiles/FileDuper.dir/src/ftpdeleteworker.cpp.o"
+  "CMakeFiles/FileDuper.dir/src/ftpdeleteworker.cpp.o.d"
+  "CMakeFiles/FileDuper.dir/src/ftplistworker.cpp.o"
+  "CMakeFiles/FileDuper.dir/src/ftplistworker.cpp.o.d"
+  "CMakeFiles/FileDuper.dir/src/hardwarebenchmark.cpp.o"
+  "CMakeFiles/FileDuper.dir/src/hardwarebenchmark.cpp.o.d"
+  "CMakeFiles/FileDuper.dir/src/hashengine.cpp.o"
+  "CMakeFiles/FileDuper.dir/src/hashengine.cpp.o.d"
+  "CMakeFiles/FileDuper.dir/src/main.cpp.o"
+  "CMakeFiles/FileDuper.dir/src/main.cpp.o.d"
+  "CMakeFiles/FileDuper.dir/src/networkscanner.cpp.o"
+  "CMakeFiles/FileDuper.dir/src/networkscanner.cpp.o.d"
+  "CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o"
+  "CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o.d"
+  "CMakeFiles/FileDuper.dir/src/nfs_helpers.cpp.o"
+  "CMakeFiles/FileDuper.dir/src/nfs_helpers.cpp.o.d"
+  "CMakeFiles/FileDuper.dir/src/nfsclient.cpp.o"
+  "CMakeFiles/FileDuper.dir/src/nfsclient.cpp.o.d"
+  "CMakeFiles/FileDuper.dir/src/scanner.cpp.o"
+  "CMakeFiles/FileDuper.dir/src/scanner.cpp.o.d"
+  "CMakeFiles/FileDuper.dir/src/sftpclient.cpp.o"
+  "CMakeFiles/FileDuper.dir/src/sftpclient.cpp.o.d"
+  "CMakeFiles/FileDuper.dir/src/smbclient.cpp.o"
+  "CMakeFiles/FileDuper.dir/src/smbclient.cpp.o.d"
+  "CMakeFiles/FileDuper.dir/src/tree_view.cpp.o"
+  "CMakeFiles/FileDuper.dir/src/tree_view.cpp.o.d"
+  "CMakeFiles/FileDuper.dir/src/ultraspeedengine.cpp.o"
+  "CMakeFiles/FileDuper.dir/src/ultraspeedengine.cpp.o.d"
+  "FileDuper"
+  "FileDuper.pdb"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/FileDuper.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()
