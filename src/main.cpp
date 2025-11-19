@@ -141,6 +141,10 @@ struct AppState {
     
     // Subnet Scanner Presets (NEW)
     std::vector<SubnetPreset> subnetPresets; // Gespeicherte Subnet-Scan-Konfigurationen
+    // Edit Subnet Preset modal state
+    bool showEditSubnetPreset = false;
+    int editPresetIndex = -1;
+    bool showAddSubnetPreset = false; // modal for adding new preset
     
     // NFS Local Browser
     std::string selectedNfsMountPath = ""; // Welches NFS-Mount wird gerade angezeigt
@@ -3507,6 +3511,33 @@ std::vector<std::string> getActiveHostsViaARP() {
     return activeHosts;
 }
 
+// Convert CIDR to numeric start and end IPs (inclusive host range), returns false on error
+bool cidrToRange(const std::string& cidr, uint32_t &outStart, uint32_t &outEnd) {
+    size_t slash = cidr.find('/');
+    std::string ipStr = (slash == std::string::npos) ? cidr : cidr.substr(0, slash);
+    int prefix = (slash == std::string::npos) ? 32 : std::stoi(cidr.substr(slash+1));
+    if (prefix < 0 || prefix > 32) return false;
+
+    struct in_addr addr;
+    if (inet_pton(AF_INET, ipStr.c_str(), &addr) != 1) return false;
+    uint32_t ip = ntohl(addr.s_addr);
+
+    uint64_t mask = (prefix == 0) ? 0 : (~0ULL << (32 - prefix)) & 0xFFFFFFFFULL;
+    uint32_t net = ip & (uint32_t)mask;
+    uint32_t broadcast = (uint32_t)(net | (~(uint32_t)mask));
+
+    // Host range: net+1 .. broadcast-1 (unless prefix==32)
+    if (prefix == 32) {
+        outStart = outEnd = net;
+    } else if (prefix == 31) {
+        outStart = net; outEnd = broadcast; // two hosts
+    } else {
+        outStart = net + 1;
+        outEnd = broadcast - 1;
+    }
+    return true;
+}
+
 // Port-Scan für einzelnen Host mit Timeout
 struct PortScanResult {
     std::string ip;
@@ -3574,16 +3605,33 @@ PortScanResult scanHostPorts(const std::string& ip, int timeout_ms) {
 }
 
 // Ping/Service scan a range of IPs (full-range fallback)
-void scanIPRange(const std::string &baseIP, int start, int end, int timeout_ms, std::vector<std::string> *results) {
+// Full-range scanning across IP numeric space (startIpStr and endIpStr are full IP strings)
+void scanIPRange(const std::string &startIpStr, const std::string &endIpStr, int timeout_ms, std::vector<std::string> *results) {
+    auto ip2int = [](const std::string &ip) -> uint32_t {
+        struct in_addr addr;
+        if (inet_pton(AF_INET, ip.c_str(), &addr) != 1) return 0;
+        return ntohl(addr.s_addr);
+    };
+    auto int2ip = [](uint32_t v) -> std::string {
+        struct in_addr s; s.s_addr = htonl(v);
+        char buf[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &s, buf, sizeof(buf));
+        return std::string(buf);
+    };
+
+    uint32_t start = ip2int(startIpStr);
+    uint32_t end = ip2int(endIpStr);
+    if (start == 0 || end == 0 || end < start) return;
+
     const int BATCH_SIZE = 80; // how many futures in-flight
     std::vector<std::future<PortScanResult>> futures;
-    for (int i = start; i <= end; ++i) {
-        std::string ip = baseIP + std::to_string(i);
-        futures.push_back(std::async(std::launch::async, [ip, timeout_ms]() {
-            return scanHostPorts(ip, timeout_ms);
+    for (uint32_t ip = start; ip <= end; ++ip) {
+        std::string ipStr = int2ip(ip);
+        futures.push_back(std::async(std::launch::async, [ipStr, timeout_ms]() {
+            return scanHostPorts(ipStr, timeout_ms);
         }));
 
-        if ((int)futures.size() >= BATCH_SIZE || i == end) {
+        if ((int)futures.size() >= BATCH_SIZE || ip == end) {
             for (auto &f : futures) {
                 PortScanResult res = f.get();
                 if (!res.openPorts.empty()) {
@@ -3633,10 +3681,27 @@ void startLightningScan(const std::string& subnet) {
         if (activeHosts.empty() || !appState.useArpDiscovery) {
             std::cout << "[Warning] No active hosts found via ARP, scanning anyway..." << std::endl;
             // Fallback: full-range scan for /24 networks
-            if (normalizedSubnet.find("/24") != std::string::npos) {
-                std::string baseIP = normalizedSubnet.substr(0, normalizedSubnet.find_last_of('.') + 1);
+            uint32_t startIpNumeric = 0, endIpNumeric = 0;
+            if (cidrToRange(normalizedSubnet, startIpNumeric, endIpNumeric)) {
+                uint32_t count = endIpNumeric - startIpNumeric + 1;
+                // limit fallback to reasonable sizes unless user explicitally disables safety
+                const uint32_t MAX_FALLBACK = 65536;
+                if (count > MAX_FALLBACK) {
+                    std::cout << "[Warning] Fallback range too large (>" << MAX_FALLBACK << "): " << count << " hosts. Aborting." << std::endl;
+                    appState.scanningNetwork = false;
+                    appState.scanThreadRunning = false;
+                    return;
+                }
+
+                // perform fallback with numeric start/end
+                std::string startIp = "";
+                struct in_addr s; s.s_addr = htonl(startIpNumeric);
+                char buf[INET_ADDRSTRLEN]; inet_ntop(AF_INET, &s, buf, sizeof(buf)); startIp = buf;
+                s.s_addr = htonl(endIpNumeric);
+                std::string endIp = ""; inet_ntop(AF_INET, &s, buf, sizeof(buf)); endIp = buf;
+
                 std::vector<std::string> fallbackResults;
-                scanIPRange(baseIP, 1, 254, 50, &fallbackResults); // 50ms per port
+                scanIPRange(startIp, endIp, 50, &fallbackResults);
                 for (const auto &r : fallbackResults) {
                     std::lock_guard<std::mutex> l(hostsMutex);
                     appState.discoveredHosts.push_back(r);
@@ -6799,6 +6864,12 @@ void renderNetworkScanner() {
                             appState.scanTimeout = preset.scanTimeout;
                             appState.useArpDiscovery = preset.useARP;
                         }
+                        if (ImGui::MenuItem("✏️ Bearbeiten")) {
+                            // Open edit modal for this preset
+                            appState.showEditSubnetPreset = true;
+                            appState.editPresetIndex = i;
+                            // We don't call OpenPopup here because this is outside the modal
+                        }
                         ImGui::Separator();
                         if (ImGui::MenuItem("🗑️ Löschen")) {
                             presetToDelete = i;
@@ -7068,40 +7139,128 @@ void renderNetworkScanner() {
             
             ImGui::Spacing();
             
-            // Save Preset Button (NEW)
+            // Add Preset Button: open modal to add or edit preset
             if (!appState.discoveredHosts.empty() && !appState.scanningNetwork) {
-                ImGui::TextColored(ImVec4(0.0f, 1.0f, 1.0f, 1.0f), "💾 Diesen Scan speichern:");
                 ImGui::SameLine();
-                
-                static char presetName[256] = "";
-                ImGui::InputText("Preset-Name##subnet", presetName, sizeof(presetName), ImGuiInputTextFlags_AutoSelectAll);
-                ImGui::SameLine();
-                
-                if (ImGui::Button("💾 Speichern", ImVec2(100, 0))) {
-                    if (strlen(presetName) > 0 && strlen(subnet) > 0) {
+                if (ImGui::Button("➕ Preset hinzufügen", ImVec2(160, 0))) {
+                    appState.showAddSubnetPreset = true;
+                }
+            }
+            
+            // Edit Subnet Preset Modal
+            if (appState.showEditSubnetPreset && appState.editPresetIndex >= 0 && appState.editPresetIndex < (int)appState.subnetPresets.size()) {
+                ImGui::OpenPopup("Edit Subnet Preset");
+            }
+
+            if (ImGui::BeginPopupModal("Edit Subnet Preset", &appState.showEditSubnetPreset, ImGuiWindowFlags_AlwaysAutoResize)) {
+                int idx = appState.editPresetIndex;
+                if (idx >= 0 && idx < (int)appState.subnetPresets.size()) {
+                    SubnetPreset &p = appState.subnetPresets[idx];
+                    static char editName[256];
+                    static char editSubnet[64];
+                    static bool editLightning;
+                    static int editThreads;
+                    static int editTimeout;
+                    static bool editUseARP;
+                    static bool editInit = false;
+
+                    if (!editInit) {
+                        strncpy(editName, p.name.c_str(), sizeof(editName)); editName[sizeof(editName)-1] = '\0';
+                        strncpy(editSubnet, p.subnet.c_str(), sizeof(editSubnet)); editSubnet[sizeof(editSubnet)-1] = '\0';
+                        editLightning = p.useLightning;
+                        editThreads = p.scannerThreads;
+                        editTimeout = p.scanTimeout;
+                        editUseARP = p.useARP;
+                        editInit = true;
+                    }
+
+                    ImGui::InputText("Name", editName, sizeof(editName));
+                    ImGui::InputText("Subnetz", editSubnet, sizeof(editSubnet));
+                    ImGui::Checkbox("Lightning (parallel)", &editLightning);
+                    ImGui::InputInt("Threads", &editThreads);
+                    ImGui::InputInt("Timeout (s)", &editTimeout);
+                    ImGui::Checkbox("Use ARP Discovery", &editUseARP);
+
+                    if (ImGui::Button("Save")) {
+                        p.name = editName;
+                        p.subnet = editSubnet;
+                        p.useLightning = editLightning;
+                        p.scannerThreads = editThreads;
+                        p.scanTimeout = editTimeout;
+                        p.useARP = editUseARP;
+                        saveSubnetPresets();
+                        editInit = false;
+                        appState.showEditSubnetPreset = false;
+                        appState.editPresetIndex = -1;
+                        ImGui::CloseCurrentPopup();
+                    }
+                    ImGui::SameLine();
+                    if (ImGui::Button("Cancel")) {
+                        editInit = false;
+                        appState.showEditSubnetPreset = false;
+                        appState.editPresetIndex = -1;
+                        ImGui::CloseCurrentPopup();
+                    }
+                }
+                ImGui::EndPopup();
+            }
+            // Add Subnet Preset Modal
+            if (appState.showAddSubnetPreset) ImGui::OpenPopup("Add Subnet Preset");
+            if (ImGui::BeginPopupModal("Add Subnet Preset", &appState.showAddSubnetPreset, ImGuiWindowFlags_AlwaysAutoResize)) {
+                static char addName[256] = "";
+                static char addSubnet[64] = "";
+                static bool addLightning = false;
+                static int addThreads = 128;
+                static int addTimeout = 1;
+                static bool addUseARP = true;
+
+                // initialize fields with current UI if not set
+                if (strlen(addSubnet) == 0) {
+                    strncpy(addSubnet, subnet, sizeof(addSubnet)); addSubnet[sizeof(addSubnet)-1] = '\0';
+                    addLightning = appState.useLightningSpeed;
+                    addThreads = appState.scannerThreads;
+                    addTimeout = appState.scanTimeout;
+                    addUseARP = appState.useArpDiscovery;
+                }
+
+                ImGui::InputText("Name", addName, sizeof(addName));
+                ImGui::InputText("Subnetz", addSubnet, sizeof(addSubnet));
+                ImGui::Checkbox("Lightning (parallel)", &addLightning);
+                ImGui::InputInt("Threads", &addThreads);
+                ImGui::InputInt("Timeout (s)", &addTimeout);
+                ImGui::Checkbox("Use ARP Discovery", &addUseARP);
+
+                if (ImGui::Button("Save")) {
+                    if (strlen(addName) > 0 && strlen(addSubnet) > 0) {
                         SubnetPreset newPreset;
-                        newPreset.name = presetName;
-                        newPreset.subnet = subnet;
+                        newPreset.name = addName;
+                        newPreset.subnet = addSubnet;
                         newPreset.createdAt = time(nullptr);
                         newPreset.lastScannedAt = time(nullptr);
                         newPreset.lastFoundHosts = appState.discoveredHosts.size();
                         newPreset.lastResults = appState.discoveredHosts;
-                        // Also store scanner options
-                        newPreset.useLightning = appState.useLightningSpeed;
-                        newPreset.scannerThreads = appState.scannerThreads;
-                        newPreset.scanTimeout = appState.scanTimeout;
-                        newPreset.useARP = appState.useArpDiscovery;
-                        
+                        newPreset.useLightning = addLightning;
+                        newPreset.scannerThreads = addThreads;
+                        newPreset.scanTimeout = addTimeout;
+                        newPreset.useARP = addUseARP;
                         appState.subnetPresets.push_back(newPreset);
                         saveSubnetPresets();
-                        
-                        strcpy(presetName, ""); // Clear input
-                        std::cout << "[Subnet] Saved preset: " << newPreset.name << " with " 
-                                 << newPreset.lastFoundHosts << " hosts" << std::endl;
+                        // clear fields
+                        addName[0] = '\0'; addSubnet[0] = '\0';
+                        addLightning = false; addThreads = 128; addTimeout = 1; addUseARP = true;
+                        appState.showAddSubnetPreset = false;
+                        ImGui::CloseCurrentPopup();
                     }
                 }
+
+                ImGui::SameLine();
+                if (ImGui::Button("Cancel")) {
+                    appState.showAddSubnetPreset = false;
+                    ImGui::CloseCurrentPopup();
+                }
+                ImGui::EndPopup();
             }
-            
+
             ImGui::Text("[TIP] Tipp: Doppelklick auf einen Host zum Verbinden");
             
             ImGui::EndTabItem(); // End Network Scan Tab
