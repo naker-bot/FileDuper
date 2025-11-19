@@ -499,7 +499,7 @@ struct AppState {
     int currentLanguage = 0; // Default: Deutsch
     
     // Theme
-    int currentTheme = 3; // Quake 3 Light Blue als Default
+    int currentTheme = 23; // Forest als Default
     const char* themes[33] = {
         "Dark", "Light", "Classic", "Quake 3", "Nord Dark", 
         "Dracula", "Monokai", "Solarized Dark", "Solarized Light", "Gruvbox Dark",
@@ -702,8 +702,8 @@ void loadThemeSettings() {
         }
         file.close();
     } else {
-        // Default: Quake 3
-        appState.currentTheme = 3;
+        // Default: Forest
+        appState.currentTheme = 23;
         std::cout << "[Config] Using default theme: " << appState.themes[appState.currentTheme] << std::endl;
     }
 }
@@ -722,9 +722,9 @@ void createDefaultConfigs() {
     if (!themeCheck.good()) {
         std::ofstream theme(themeFile);
         if (theme.is_open()) {
-            theme << "3" << std::endl; // Default: Quake 3 Light Blue
+            theme << "23" << std::endl; // Default: Forest
             theme.close();
-            std::cout << "[Config] Created default theme config: Quake 3 Light Blue" << std::endl;
+            std::cout << "[Config] Created default theme config: Forest" << std::endl;
         }
     }
     themeCheck.close();
@@ -1122,7 +1122,7 @@ void loadLanguageSettings() {
     } else {
         // Default: Deutsch
         appState.currentLanguage = 0;
-        appState.currentTheme = 3;
+        appState.currentTheme = 23;
         saveLanguageSettings();
         std::cout << "[Config] No language config found, created with defaults (Deutsch)" << std::endl;
     }
@@ -2227,7 +2227,7 @@ void saveSettings() {
 void loadSettings() {
     std::ifstream file(SETTINGS_FILE);
     if (!file.is_open()) {
-        std::cout << "[Settings] No settings file found, using defaults" << std::endl;
+        std::cout << "[Settings] No settings file found, creating with defaults..." << std::endl;
         
         // Set defaults manually
         appState.localTreeMaxDepth = 3;  // Reduced for NFS performance (was 10)
@@ -2271,7 +2271,7 @@ void loadSettings() {
         appState.ftpPipelining = true;
         appState.ftpKeepAlive = true;
         appState.curlBufferSize = 512000;
-        appState.currentTheme = 3;
+        appState.currentTheme = 23;
         appState.postScanActionEnabled = false;
         appState.postScanAction = 0;
         appState.postScanDelay = 60;
@@ -2280,6 +2280,9 @@ void loadSettings() {
         appState.savePasswordsPermanently = true;  // Default: AN
         appState.nfsAutoUnmount = true;             // Default: AN
         
+        // Speichern Sie die Standard-Einstellungen automatisch
+        saveSettings();
+        std::cout << "[Settings] ✅ Default settings file created: " << SETTINGS_FILE << std::endl;
         return;
     }
     
