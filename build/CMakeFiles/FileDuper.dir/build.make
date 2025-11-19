@@ -254,10 +254,24 @@ CMakeFiles/FileDuper.dir/src/nfs_helpers.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/FileDuper.dir/src/nfs_helpers.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/nex/c++/src/nfs_helpers.cpp -o CMakeFiles/FileDuper.dir/src/nfs_helpers.cpp.s
 
+CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.o: CMakeFiles/FileDuper.dir/flags.make
+CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.o: /home/nex/c++/src/libnfs_wrapper.c
+CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.o: CMakeFiles/FileDuper.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nex/c++/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building C object CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.o -MF CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.o.d -o CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.o -c /home/nex/c++/src/libnfs_wrapper.c
+
+CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/nex/c++/src/libnfs_wrapper.c > CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.i
+
+CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/nex/c++/src/libnfs_wrapper.c -o CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.s
+
 CMakeFiles/FileDuper.dir/src/tree_view.cpp.o: CMakeFiles/FileDuper.dir/flags.make
 CMakeFiles/FileDuper.dir/src/tree_view.cpp.o: /home/nex/c++/src/tree_view.cpp
 CMakeFiles/FileDuper.dir/src/tree_view.cpp.o: CMakeFiles/FileDuper.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nex/c++/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/FileDuper.dir/src/tree_view.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nex/c++/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/FileDuper.dir/src/tree_view.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/FileDuper.dir/src/tree_view.cpp.o -MF CMakeFiles/FileDuper.dir/src/tree_view.cpp.o.d -o CMakeFiles/FileDuper.dir/src/tree_view.cpp.o -c /home/nex/c++/src/tree_view.cpp
 
 CMakeFiles/FileDuper.dir/src/tree_view.cpp.i: cmake_force
@@ -271,7 +285,7 @@ CMakeFiles/FileDuper.dir/src/tree_view.cpp.s: cmake_force
 CMakeFiles/FileDuper.dir/src/sftpclient.cpp.o: CMakeFiles/FileDuper.dir/flags.make
 CMakeFiles/FileDuper.dir/src/sftpclient.cpp.o: /home/nex/c++/src/sftpclient.cpp
 CMakeFiles/FileDuper.dir/src/sftpclient.cpp.o: CMakeFiles/FileDuper.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nex/c++/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/FileDuper.dir/src/sftpclient.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nex/c++/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/FileDuper.dir/src/sftpclient.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/FileDuper.dir/src/sftpclient.cpp.o -MF CMakeFiles/FileDuper.dir/src/sftpclient.cpp.o.d -o CMakeFiles/FileDuper.dir/src/sftpclient.cpp.o -c /home/nex/c++/src/sftpclient.cpp
 
 CMakeFiles/FileDuper.dir/src/sftpclient.cpp.i: cmake_force
@@ -285,7 +299,7 @@ CMakeFiles/FileDuper.dir/src/sftpclient.cpp.s: cmake_force
 CMakeFiles/FileDuper.dir/src/smbclient.cpp.o: CMakeFiles/FileDuper.dir/flags.make
 CMakeFiles/FileDuper.dir/src/smbclient.cpp.o: /home/nex/c++/src/smbclient.cpp
 CMakeFiles/FileDuper.dir/src/smbclient.cpp.o: CMakeFiles/FileDuper.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nex/c++/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/FileDuper.dir/src/smbclient.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nex/c++/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/FileDuper.dir/src/smbclient.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/FileDuper.dir/src/smbclient.cpp.o -MF CMakeFiles/FileDuper.dir/src/smbclient.cpp.o.d -o CMakeFiles/FileDuper.dir/src/smbclient.cpp.o -c /home/nex/c++/src/smbclient.cpp
 
 CMakeFiles/FileDuper.dir/src/smbclient.cpp.i: cmake_force
@@ -295,6 +309,34 @@ CMakeFiles/FileDuper.dir/src/smbclient.cpp.i: cmake_force
 CMakeFiles/FileDuper.dir/src/smbclient.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/FileDuper.dir/src/smbclient.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/nex/c++/src/smbclient.cpp -o CMakeFiles/FileDuper.dir/src/smbclient.cpp.s
+
+CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.o: CMakeFiles/FileDuper.dir/flags.make
+CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.o: /home/nex/c++/src/unified_directory_browser.cpp
+CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.o: CMakeFiles/FileDuper.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nex/c++/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.o -MF CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.o.d -o CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.o -c /home/nex/c++/src/unified_directory_browser.cpp
+
+CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/nex/c++/src/unified_directory_browser.cpp > CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.i
+
+CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/nex/c++/src/unified_directory_browser.cpp -o CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.s
+
+CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o: CMakeFiles/FileDuper.dir/flags.make
+CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o: /home/nex/c++/src/unified_directory_browser_ui.cpp
+CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o: CMakeFiles/FileDuper.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nex/c++/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o -MF CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o.d -o CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o -c /home/nex/c++/src/unified_directory_browser_ui.cpp
+
+CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/nex/c++/src/unified_directory_browser_ui.cpp > CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.i
+
+CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/nex/c++/src/unified_directory_browser_ui.cpp -o CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.s
 
 # Object files for target FileDuper
 FileDuper_OBJECTS = \
@@ -311,9 +353,12 @@ FileDuper_OBJECTS = \
 "CMakeFiles/FileDuper.dir/src/ftpdeleteworker.cpp.o" \
 "CMakeFiles/FileDuper.dir/src/nfsclient.cpp.o" \
 "CMakeFiles/FileDuper.dir/src/nfs_helpers.cpp.o" \
+"CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.o" \
 "CMakeFiles/FileDuper.dir/src/tree_view.cpp.o" \
 "CMakeFiles/FileDuper.dir/src/sftpclient.cpp.o" \
-"CMakeFiles/FileDuper.dir/src/smbclient.cpp.o"
+"CMakeFiles/FileDuper.dir/src/smbclient.cpp.o" \
+"CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.o" \
+"CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o"
 
 # External object files for target FileDuper
 FileDuper_EXTERNAL_OBJECTS =
@@ -331,9 +376,12 @@ FileDuper: CMakeFiles/FileDuper.dir/src/ftplistworker.cpp.o
 FileDuper: CMakeFiles/FileDuper.dir/src/ftpdeleteworker.cpp.o
 FileDuper: CMakeFiles/FileDuper.dir/src/nfsclient.cpp.o
 FileDuper: CMakeFiles/FileDuper.dir/src/nfs_helpers.cpp.o
+FileDuper: CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.o
 FileDuper: CMakeFiles/FileDuper.dir/src/tree_view.cpp.o
 FileDuper: CMakeFiles/FileDuper.dir/src/sftpclient.cpp.o
 FileDuper: CMakeFiles/FileDuper.dir/src/smbclient.cpp.o
+FileDuper: CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.o
+FileDuper: CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o
 FileDuper: CMakeFiles/FileDuper.dir/build.make
 FileDuper: CMakeFiles/FileDuper.dir/compiler_depend.ts
 FileDuper: lib/imgui/libimgui.a
@@ -349,7 +397,7 @@ FileDuper: libnet_utils.a
 FileDuper: /usr/lib/libGLX.so
 FileDuper: /usr/lib/libOpenGL.so
 FileDuper: CMakeFiles/FileDuper.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/nex/c++/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Linking CXX executable FileDuper"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/nex/c++/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Linking CXX executable FileDuper"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/FileDuper.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

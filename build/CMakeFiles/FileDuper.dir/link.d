@@ -15,9 +15,12 @@ FileDuper: \
   CMakeFiles/FileDuper.dir/src/ftpdeleteworker.cpp.o \
   CMakeFiles/FileDuper.dir/src/nfsclient.cpp.o \
   CMakeFiles/FileDuper.dir/src/nfs_helpers.cpp.o \
+  CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.o \
   CMakeFiles/FileDuper.dir/src/tree_view.cpp.o \
   CMakeFiles/FileDuper.dir/src/sftpclient.cpp.o \
   CMakeFiles/FileDuper.dir/src/smbclient.cpp.o \
+  CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.o \
+  CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o \
   lib/imgui/libimgui.a \
   /usr/lib/libglfw.so.3.4 \
   /usr/lib/libSM.so \
@@ -32,6 +35,7 @@ FileDuper: \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/libpthread.a \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/libnfs.so \
   libnet_utils.a \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/libdl.a \
   /usr/lib/libGLX.so \
   /usr/lib/libOpenGL.so \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/libpthread.a \
@@ -61,8 +65,11 @@ FileDuper: \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/libgcc.a \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o \
+  /usr/lib32/libuuid.so.1 \
+  /usr/lib/libuuid.so.1 \
   /usr/lib32/libxcb.so.1 \
   /usr/lib/libxcb.so.1 \
+  /usr/lib/ld-linux-x86-64.so.2 \
   /usr/lib32/libnghttp3.so.9 \
   /usr/lib/libnghttp3.so.9 \
   /usr/lib32/libnghttp2.so.14 \
@@ -73,7 +80,6 @@ FileDuper: \
   /usr/lib/libssh2.so.1 \
   /usr/lib32/libpsl.so.5 \
   /usr/lib/libpsl.so.5 \
-  /usr/lib/libssl.so \
   /usr/lib32/libgssapi_krb5.so.2 \
   /usr/lib/libgssapi_krb5.so.2 \
   /usr/lib32/libzstd.so.1 \
@@ -86,7 +92,6 @@ FileDuper: \
   /usr/lib/libgnutls.so.30 \
   /usr/lib32/libGLdispatch.so.0 \
   /usr/lib/libGLdispatch.so.0 \
-  /usr/lib/ld-linux-x86-64.so.2 \
   /usr/lib32/libXau.so.6 \
   /usr/lib/libXau.so.6 \
   /usr/lib32/libXdmcp.so.6 \
@@ -153,11 +158,17 @@ CMakeFiles/FileDuper.dir/src/nfsclient.cpp.o:
 
 CMakeFiles/FileDuper.dir/src/nfs_helpers.cpp.o:
 
+CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.o:
+
 CMakeFiles/FileDuper.dir/src/tree_view.cpp.o:
 
 CMakeFiles/FileDuper.dir/src/sftpclient.cpp.o:
 
 CMakeFiles/FileDuper.dir/src/smbclient.cpp.o:
+
+CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.o:
+
+CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o:
 
 lib/imgui/libimgui.a:
 
@@ -186,6 +197,8 @@ lib/imgui/libimgui.a:
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/libnfs.so:
 
 libnet_utils.a:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/libdl.a:
 
 /usr/lib/libGLX.so:
 
@@ -245,9 +258,15 @@ libnet_utils.a:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o:
 
+/usr/lib32/libuuid.so.1:
+
+/usr/lib/libuuid.so.1:
+
 /usr/lib32/libxcb.so.1:
 
 /usr/lib/libxcb.so.1:
+
+/usr/lib/ld-linux-x86-64.so.2:
 
 /usr/lib32/libnghttp3.so.9:
 
@@ -268,8 +287,6 @@ libnet_utils.a:
 /usr/lib32/libpsl.so.5:
 
 /usr/lib/libpsl.so.5:
-
-/usr/lib/libssl.so:
 
 /usr/lib32/libgssapi_krb5.so.2:
 
@@ -294,8 +311,6 @@ libnet_utils.a:
 /usr/lib32/libGLdispatch.so.0:
 
 /usr/lib/libGLdispatch.so.0:
-
-/usr/lib/ld-linux-x86-64.so.2:
 
 /usr/lib32/libXau.so.6:
 

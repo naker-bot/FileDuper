@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(PFileDuper VERSION 1.0.0 LANGUAGES CXX)
+project(PFileDuper VERSION 1.0.0 LANGUAGES C CXX)
 
 # Deaktiviere Warnungen-als-Fehler für deprecated OpenSSL 3.0 MD5 Funktionen
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations -Wno-error=deprecated-declarations")
@@ -13,17 +13,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -march=x86-64 -mtune=generic")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
 
-# Link-Time Optimization (LTO) for Release builds
-if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-    include(CheckIPOSupported)
-    check_ipo_supported(RESULT ipo_supported OUTPUT ipo_error)
-    if(ipo_supported)
-        set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-        message(STATUS "✅ Link-Time Optimization (LTO) ENABLED")
-    else()
-        message(STATUS "⚠️ LTO not supported: ${ipo_error}")
-    endif()
-endif()
+# Note: LTO disabled due to libnfs_wrapper.c (C code) compatibility issues
+# Performance impact minimal with -O3 optimization
 
 # Compatibility flags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GLIBCXX_USE_CXX11_ABI=1")
@@ -143,9 +134,12 @@ set(SOURCES
     src/ftpdeleteworker.cpp
     src/nfsclient.cpp
     src/nfs_helpers.cpp
+    src/libnfs_wrapper.c
     src/tree_view.cpp
     src/sftpclient.cpp
     src/smbclient.cpp
+    src/unified_directory_browser.cpp
+    src/unified_directory_browser_ui.cpp
 )
 
 # Platform-specific network scanner implementation
@@ -215,6 +209,7 @@ target_link_libraries(FileDuper
     pthread
     ${LIBNFS_LIBRARIES}
     net_utils
+    dl
 )
 
 if(WIN32)

@@ -461,6 +461,30 @@ src/hashengine.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileDuper.dir/build.make CMakeFiles/FileDuper.dir/src/hashengine.cpp.s
 .PHONY : src/hashengine.cpp.s
 
+src/libnfs_wrapper.o: src/libnfs_wrapper.c.o
+.PHONY : src/libnfs_wrapper.o
+
+# target to build an object file
+src/libnfs_wrapper.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileDuper.dir/build.make CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.o
+.PHONY : src/libnfs_wrapper.c.o
+
+src/libnfs_wrapper.i: src/libnfs_wrapper.c.i
+.PHONY : src/libnfs_wrapper.i
+
+# target to preprocess a source file
+src/libnfs_wrapper.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileDuper.dir/build.make CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.i
+.PHONY : src/libnfs_wrapper.c.i
+
+src/libnfs_wrapper.s: src/libnfs_wrapper.c.s
+.PHONY : src/libnfs_wrapper.s
+
+# target to generate assembly for a file
+src/libnfs_wrapper.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileDuper.dir/build.make CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.s
+.PHONY : src/libnfs_wrapper.c.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -746,6 +770,54 @@ src/ultraspeedengine.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileDuper.dir/build.make CMakeFiles/FileDuper.dir/src/ultraspeedengine.cpp.s
 .PHONY : src/ultraspeedengine.cpp.s
 
+src/unified_directory_browser.o: src/unified_directory_browser.cpp.o
+.PHONY : src/unified_directory_browser.o
+
+# target to build an object file
+src/unified_directory_browser.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileDuper.dir/build.make CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.o
+.PHONY : src/unified_directory_browser.cpp.o
+
+src/unified_directory_browser.i: src/unified_directory_browser.cpp.i
+.PHONY : src/unified_directory_browser.i
+
+# target to preprocess a source file
+src/unified_directory_browser.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileDuper.dir/build.make CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.i
+.PHONY : src/unified_directory_browser.cpp.i
+
+src/unified_directory_browser.s: src/unified_directory_browser.cpp.s
+.PHONY : src/unified_directory_browser.s
+
+# target to generate assembly for a file
+src/unified_directory_browser.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileDuper.dir/build.make CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.s
+.PHONY : src/unified_directory_browser.cpp.s
+
+src/unified_directory_browser_ui.o: src/unified_directory_browser_ui.cpp.o
+.PHONY : src/unified_directory_browser_ui.o
+
+# target to build an object file
+src/unified_directory_browser_ui.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileDuper.dir/build.make CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o
+.PHONY : src/unified_directory_browser_ui.cpp.o
+
+src/unified_directory_browser_ui.i: src/unified_directory_browser_ui.cpp.i
+.PHONY : src/unified_directory_browser_ui.i
+
+# target to preprocess a source file
+src/unified_directory_browser_ui.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileDuper.dir/build.make CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.i
+.PHONY : src/unified_directory_browser_ui.cpp.i
+
+src/unified_directory_browser_ui.s: src/unified_directory_browser_ui.cpp.s
+.PHONY : src/unified_directory_browser_ui.s
+
+# target to generate assembly for a file
+src/unified_directory_browser_ui.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileDuper.dir/build.make CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.s
+.PHONY : src/unified_directory_browser_ui.cpp.s
+
 tools/test_arp.o: tools/test_arp.cpp.o
 .PHONY : tools/test_arp.o
 
@@ -956,6 +1028,9 @@ help:
 	@echo "... src/hashengine.o"
 	@echo "... src/hashengine.i"
 	@echo "... src/hashengine.s"
+	@echo "... src/libnfs_wrapper.o"
+	@echo "... src/libnfs_wrapper.i"
+	@echo "... src/libnfs_wrapper.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
@@ -989,6 +1064,12 @@ help:
 	@echo "... src/ultraspeedengine.o"
 	@echo "... src/ultraspeedengine.i"
 	@echo "... src/ultraspeedengine.s"
+	@echo "... src/unified_directory_browser.o"
+	@echo "... src/unified_directory_browser.i"
+	@echo "... src/unified_directory_browser.s"
+	@echo "... src/unified_directory_browser_ui.o"
+	@echo "... src/unified_directory_browser_ui.i"
+	@echo "... src/unified_directory_browser_ui.s"
 	@echo "... tools/test_arp.o"
 	@echo "... tools/test_arp.i"
 	@echo "... tools/test_arp.s"

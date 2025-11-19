@@ -12,6 +12,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/FileDuper.dir/src/hardwarebenchmark.cpp.o.d"
   "CMakeFiles/FileDuper.dir/src/hashengine.cpp.o"
   "CMakeFiles/FileDuper.dir/src/hashengine.cpp.o.d"
+  "CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.o"
+  "CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.o.d"
   "CMakeFiles/FileDuper.dir/src/main.cpp.o"
   "CMakeFiles/FileDuper.dir/src/main.cpp.o.d"
   "CMakeFiles/FileDuper.dir/src/networkscanner.cpp.o"
@@ -32,11 +34,15 @@ file(REMOVE_RECURSE
   "CMakeFiles/FileDuper.dir/src/tree_view.cpp.o.d"
   "CMakeFiles/FileDuper.dir/src/ultraspeedengine.cpp.o"
   "CMakeFiles/FileDuper.dir/src/ultraspeedengine.cpp.o.d"
+  "CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.o"
+  "CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.o.d"
+  "CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o"
+  "CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o.d"
   "FileDuper"
   "FileDuper.pdb"
 )
 
 # Per-language clean rules from dependency scanning.
-foreach(lang CXX)
+foreach(lang C CXX)
   include(CMakeFiles/FileDuper.dir/cmake_clean_${lang}.cmake OPTIONAL)
 endforeach()

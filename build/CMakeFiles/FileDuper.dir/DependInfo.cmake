@@ -8,6 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/home/nex/c++/src/libnfs_wrapper.c" "CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.o" "gcc" "CMakeFiles/FileDuper.dir/src/libnfs_wrapper.c.o.d"
   "/home/nex/c++/src/arp_utils.cpp" "CMakeFiles/FileDuper.dir/src/arp_utils.cpp.o" "gcc" "CMakeFiles/FileDuper.dir/src/arp_utils.cpp.o.d"
   "/home/nex/c++/src/ftpclient.cpp" "CMakeFiles/FileDuper.dir/src/ftpclient.cpp.o" "gcc" "CMakeFiles/FileDuper.dir/src/ftpclient.cpp.o.d"
   "/home/nex/c++/src/ftpdeleteworker.cpp" "CMakeFiles/FileDuper.dir/src/ftpdeleteworker.cpp.o" "gcc" "CMakeFiles/FileDuper.dir/src/ftpdeleteworker.cpp.o.d"
@@ -24,6 +25,8 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/nex/c++/src/smbclient.cpp" "CMakeFiles/FileDuper.dir/src/smbclient.cpp.o" "gcc" "CMakeFiles/FileDuper.dir/src/smbclient.cpp.o.d"
   "/home/nex/c++/src/tree_view.cpp" "CMakeFiles/FileDuper.dir/src/tree_view.cpp.o" "gcc" "CMakeFiles/FileDuper.dir/src/tree_view.cpp.o.d"
   "/home/nex/c++/src/ultraspeedengine.cpp" "CMakeFiles/FileDuper.dir/src/ultraspeedengine.cpp.o" "gcc" "CMakeFiles/FileDuper.dir/src/ultraspeedengine.cpp.o.d"
+  "/home/nex/c++/src/unified_directory_browser.cpp" "CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.o" "gcc" "CMakeFiles/FileDuper.dir/src/unified_directory_browser.cpp.o.d"
+  "/home/nex/c++/src/unified_directory_browser_ui.cpp" "CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o" "gcc" "CMakeFiles/FileDuper.dir/src/unified_directory_browser_ui.cpp.o.d"
   "" "FileDuper" "gcc" "CMakeFiles/FileDuper.dir/link.d"
   )
 

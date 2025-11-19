@@ -1,2 +1,2 @@
-"/usr/bin/gcc-ar" qc libnet_utils.a CMakeFiles/net_utils.dir/src/net_utils.cpp.o
-"/usr/bin/gcc-ranlib" libnet_utils.a
+/usr/bin/ar qc libnet_utils.a CMakeFiles/net_utils.dir/src/net_utils.cpp.o
+/usr/bin/ranlib libnet_utils.a

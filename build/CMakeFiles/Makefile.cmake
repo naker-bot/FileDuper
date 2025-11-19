@@ -27,15 +27,11 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/share/cmake/Modules/CMakePushCheckState.cmake"
   "/usr/share/cmake/Modules/CMakeSystemSpecificInformation.cmake"
   "/usr/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake"
+  "/usr/share/cmake/Modules/CheckCSourceCompiles.cmake"
   "/usr/share/cmake/Modules/CheckCXXCompilerFlag.cmake"
   "/usr/share/cmake/Modules/CheckCXXSourceCompiles.cmake"
   "/usr/share/cmake/Modules/CheckFunctionExists.cmake"
-  "/usr/share/cmake/Modules/CheckIPOSupported.cmake"
-  "/usr/share/cmake/Modules/CheckIPOSupported/CMakeLists-CXX.txt.in"
-  "/usr/share/cmake/Modules/CheckIPOSupported/foo.cpp"
-  "/usr/share/cmake/Modules/CheckIPOSupported/main.cpp"
   "/usr/share/cmake/Modules/CheckIncludeFile.cmake"
-  "/usr/share/cmake/Modules/CheckIncludeFileCXX.cmake"
   "/usr/share/cmake/Modules/CheckLibraryExists.cmake"
   "/usr/share/cmake/Modules/CheckSymbolExists.cmake"
   "/usr/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
@@ -83,9 +79,6 @@ set(CMAKE_MAKEFILE_OUTPUTS
 
 # Byproducts of CMake generate step:
 set(CMAKE_MAKEFILE_PRODUCTS
-  "CMakeFiles/_CMakeLTOTest-CXX/src/CMakeLists.txt"
-  "CMakeFiles/_CMakeLTOTest-CXX/src/foo.cpp"
-  "CMakeFiles/_CMakeLTOTest-CXX/src/main.cpp"
   "CMakeFiles/CMakeDirectoryInformation.cmake"
   "lib/imgui/CMakeFiles/CMakeDirectoryInformation.cmake"
   )

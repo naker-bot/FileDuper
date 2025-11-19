@@ -1,0 +1,273 @@
+/*
+ * Unified Directory Browser UI Implementation
+ */
+
+#include "unified_directory_browser_ui.h"
+#include <imgui.h>
+#include <iomanip>
+#include <sstream>
+#include <ctime>
+#include <cstring>
+
+const char* UnifiedDirectoryBrowserUI::getSourceIcon(const std::string& source) {
+    if (source == "Local") return "📁";
+    if (source == "FTP") return "📡";
+    if (source == "NFS") return "🌐";
+    if (source == "NFS Server") return "🖥️";
+    if (source == "SMB") return "🗂️";
+    if (source == "WebDAV") return "☁️";
+    return "❓";
+}
+
+ImVec4 UnifiedDirectoryBrowserUI::getSourceColor(const std::string& source) {
+    if (source == "Local") return ImVec4(0.2f, 0.8f, 0.2f, 1.0f);  // Green
+    if (source == "FTP") return ImVec4(0.2f, 0.6f, 1.0f, 1.0f);     // Blue
+    if (source == "NFS") return ImVec4(1.0f, 0.7f, 0.2f, 1.0f);     // Orange
+    if (source == "NFS Server") return ImVec4(1.0f, 0.5f, 0.2f, 1.0f); // Dark Orange
+    if (source == "SMB") return ImVec4(0.8f, 0.2f, 0.8f, 1.0f);     // Purple
+    if (source == "WebDAV") return ImVec4(0.2f, 0.8f, 0.8f, 1.0f);  // Cyan
+    return ImVec4(0.7f, 0.7f, 0.7f, 1.0f);                          // Gray
+}
+
+void UnifiedDirectoryBrowserUI::render(UnifiedDirectoryBrowser& browser, bool& isOpen) {
+    if (!isOpen) return;
+    
+    auto& state = browser.getState();
+    
+    ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse;
+    ImGui::SetNextWindowSize(ImVec2(1200, 700), ImGuiCond_FirstUseEver);
+    
+    if (ImGui::Begin("🔍 Unified Directory Browser", &isOpen, flags)) {
+        // Top bar with source selector and navigation
+        if (ImGui::BeginChild("##TopBar", ImVec2(0, 80), true)) {
+            ImGui::Text("📍 Current Location: ");
+            ImGui::SameLine();
+            ImGui::TextColored(getSourceColor(state.currentSource), "%s %s",
+                             getSourceIcon(state.currentSource), state.currentSource.c_str());
+            
+            if (!state.currentSourceHost.empty()) {
+                ImGui::SameLine();
+                ImGui::Text("@ %s", state.currentSourceHost.c_str());
+            }
+            
+            ImGui::SameLine();
+            ImGui::Text(" → %s", state.currentPath.c_str());
+            
+            ImGui::Separator();
+            
+            // Source selector buttons
+            ImGui::Text("Quick Access: ");
+            
+            static const std::vector<std::string> sources = {"Local", "FTP", "NFS", "SMB", "WebDAV"};
+            for (const auto& src : sources) {
+                if (ImGui::SmallButton((getSourceIcon(src) + std::string(" ") + src).c_str())) {
+                    // Would open source selection dialog
+                }
+                ImGui::SameLine();
+            }
+            
+            ImGui::EndChild();
+        }
+        
+        // Main content area
+        if (ImGui::BeginChild("##MainContent", ImVec2(0, 0), true)) {
+            ImGui::Columns(3, "##BrowserColumns", true);
+            
+            // Left: Directory tree
+            ImGui::SetColumnWidth(-1, 300);
+            renderDirectoryTree(browser);
+            
+            ImGui::NextColumn();
+            
+            // Middle: File list
+            ImGui::SetColumnWidth(-1, 400);
+            renderSearchBar(browser);
+            renderFileList(browser);
+            
+            ImGui::NextColumn();
+            
+            // Right: Comparison/Details
+            if (state.comparisonMode) {
+                ImGui::Text("📊 Comparison Results");
+                ImGui::Separator();
+                renderComparisonView(browser);
+            } else if (state.syncMode) {
+                ImGui::Text("🔄 Sync Status");
+                ImGui::Separator();
+                renderSyncDialog(browser);
+            } else {
+                ImGui::Text("ℹ️ Information");
+                ImGui::Separator();
+                
+                if (selectedIndex >= 0 && selectedIndex < (int)state.filteredEntries.size()) {
+                    const auto& entry = state.filteredEntries[selectedIndex];
+                    ImGui::Text("Name: %s", entry.name.c_str());
+                    ImGui::Text("Size: %llu bytes", entry.size);
+                    ImGui::Text("Type: %s", entry.isDirectory ? "Directory" : "File");
+                    ImGui::Text("Modified: %s", std::ctime(&entry.modified));
+                    
+                    if (ImGui::Button("📋 Copy Path")) {
+                        ImGui::SetClipboardText(entry.fullPath.c_str());
+                    }
+                }
+            }
+            
+            ImGui::EndChild();
+        }
+    }
+    ImGui::End();
+}
+
+void UnifiedDirectoryBrowserUI::renderDirectoryTree(UnifiedDirectoryBrowser& browser) {
+    ImGui::Text("📂 Locations");
+    ImGui::Separator();
+    
+    static bool expandLocal = true;
+    if (ImGui::TreeNodeEx("📁 Local", expandLocal ? ImGuiTreeNodeFlags_DefaultOpen : 0)) {
+        if (ImGui::Selectable("/home", false)) {
+            browser.loadDirectory("Local", "", "/home");
+        }
+        if (ImGui::Selectable("/mnt", false)) {
+            browser.loadDirectory("Local", "", "/mnt");
+        }
+        ImGui::TreePop();
+    }
+}
+
+void UnifiedDirectoryBrowserUI::renderSearchBar(UnifiedDirectoryBrowser& browser) {
+    auto& state = browser.getState();
+    
+    ImGui::Text("🔍 Search");
+    ImGui::Separator();
+    
+    if (ImGui::InputText("##SearchFilter", state.searchFilter, 
+                         sizeof(state.searchFilter), 
+                         ImGuiInputTextFlags_CallbackAlways)) {
+        browser.searchEntries(state.searchFilter);
+    }
+    
+    ImGui::SameLine();
+    if (ImGui::SmallButton("Clear")) {
+        state.searchFilter[0] = '\0';
+        browser.searchEntries("");
+    }
+    
+    ImGui::Checkbox("Case Sensitive", &state.searchCaseSensitive);
+    ImGui::Checkbox("Show Hidden Files", &state.showHiddenFiles);
+    
+    // Sort options
+    if (ImGui::RadioButton("Sort by Name", state.sortBy == 0)) {
+        browser.getState().sortBy = 0;
+    }
+    ImGui::SameLine();
+    if (ImGui::RadioButton("Sort by Size", state.sortBy == 1)) {
+        browser.getState().sortBy = 1;
+    }
+    ImGui::SameLine();
+    if (ImGui::RadioButton("Sort by Date", state.sortBy == 2)) {
+        browser.getState().sortBy = 2;
+    }
+}
+
+void UnifiedDirectoryBrowserUI::renderFileList(UnifiedDirectoryBrowser& browser) {
+    auto& state = browser.getState();
+    
+    ImGui::Text("📄 Files (%zu)", state.filteredEntries.size());
+    ImGui::Separator();
+    
+    if (ImGui::BeginTable("##FileList", 4, 
+                         ImGuiTableFlags_ScrollY | ImGuiTableFlags_Sortable)) {
+        ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_DefaultSort);
+        ImGui::TableSetupColumn("Type");
+        ImGui::TableSetupColumn("Size");
+        ImGui::TableSetupColumn("Modified");
+        ImGui::TableHeadersRow();
+        
+        for (int i = 0; i < (int)state.filteredEntries.size(); i++) {
+            const auto& entry = state.filteredEntries[i];
+            
+            ImGui::TableNextRow();
+            
+            // Name column
+            ImGui::TableSetColumnIndex(0);
+            ImGuiSelectableFlags flags = ImGuiSelectableFlags_SpanAllColumns;
+            if (ImGui::Selectable((getSourceIcon(entry.source) + std::string(" ") + entry.name).c_str(),
+                                 selectedIndex == i, flags)) {
+                selectedIndex = i;
+            }
+            
+            // Type column
+            ImGui::TableSetColumnIndex(1);
+            ImGui::Text("%s", entry.isDirectory ? "Dir" : "File");
+            
+            // Size column
+            ImGui::TableSetColumnIndex(2);
+            ImGui::Text("%llu B", entry.size);
+            
+            // Modified column
+            ImGui::TableSetColumnIndex(3);
+            char timeBuf[32];
+            std::strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%d", std::localtime(&entry.modified));
+            ImGui::Text("%s", timeBuf);
+        }
+        
+        ImGui::EndTable();
+    }
+}
+
+void UnifiedDirectoryBrowserUI::renderComparisonView(UnifiedDirectoryBrowser& browser) {
+    auto& state = browser.getState();
+    
+    ImGui::Text("Path 1: %s", state.comparePath1.c_str());
+    ImGui::Text("Path 2: %s", state.comparePath2.c_str());
+    ImGui::Separator();
+    
+    ImGui::Text("Differences found: %zu", state.comparisonResult.size());
+    
+    if (ImGui::BeginTable("##ComparisonResults", 3)) {
+        ImGui::TableSetupColumn("Item");
+        ImGui::TableSetupColumn("Status");
+        ImGui::TableSetupColumn("Action");
+        ImGui::TableHeadersRow();
+        
+        for (const auto& item : state.comparisonResult) {
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("%s", item.name.c_str());
+            
+            ImGui::TableSetColumnIndex(1);
+            ImGui::Text("Different");
+            
+            ImGui::TableSetColumnIndex(2);
+            if (ImGui::SmallButton(("Sync##" + item.name).c_str())) {
+                // Trigger sync
+            }
+        }
+        
+        ImGui::EndTable();
+    }
+}
+
+void UnifiedDirectoryBrowserUI::renderSyncDialog(UnifiedDirectoryBrowser& browser) {
+    auto& state = browser.getState();
+    
+    ImGui::Text("Source: %s", state.comparePath1.c_str());
+    ImGui::Text("Destination: %s", state.comparePath2.c_str());
+    ImGui::Separator();
+    
+    ImGui::Checkbox("Preserve Directory Structure", &state.preserveStructure);
+    ImGui::Checkbox("Overwrite Existing Files", &state.overwriteExisting);
+    
+    ImGui::SliderInt("Max Concurrent Transfers", &state.maxConcurrentTransfers, 1, 16);
+    
+    ImGui::Text("Progress: %.1f%%", state.loadingProgress * 100.0f);
+    ImGui::ProgressBar(state.loadingProgress, ImVec2(-1, 0), state.loadingStatus.c_str());
+    
+    if (ImGui::Button("Start Sync", ImVec2(100, 0))) {
+        // Start synchronization
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Cancel", ImVec2(100, 0))) {
+        state.syncMode = false;
+    }
+}

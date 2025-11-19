@@ -6,5 +6,5 @@ CXX_DEFINES = -DHAVE_LIBNFS -DWITH_LIBURING -DWITH_OPENCL
 
 CXX_INCLUDES = -I/home/nex/c++/lib/imgui -I/home/nex/c++/lib/imgui/backends
 
-CXX_FLAGS =  -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -O3 -DNDEBUG -march=x86-64 -mtune=generic -std=gnu++17 -flto=auto -fno-fat-lto-objects
+CXX_FLAGS =  -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -O3 -DNDEBUG -march=x86-64 -mtune=generic -std=gnu++17
 
