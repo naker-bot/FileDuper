@@ -6811,6 +6811,12 @@ void renderNetworkScanner() {
         // Network Discovery Tab (NOW FIFTH!)
         if (ImGui::BeginTabItem("[SCAN] Netzwerk-Scan")) {
             ImGui::TextColored(ImVec4(0.0f, 1.0f, 1.0f, 1.0f), "Netzwerk durchsuchen");
+            // Small safety: if UI is marked scanning but the scan thread is no longer running
+            // (thread aborted or crashed), reset the flag so new scans can be started.
+            if (appState.scanningNetwork && !appState.scanThreadRunning) {
+                std::cout << "[Network UI] Warning: scanning flag set but no thread running; resetting state" << std::endl;
+                appState.scanningNetwork = false;
+            }
             ImGui::Separator();
             
             // Subnet Presets (NEW)
@@ -6818,6 +6824,20 @@ void renderNetworkScanner() {
             static char subnet[64] = ""; // moved up so presets can copy into it
             if (!appState.subnetPresets.empty()) {
                 ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "📁 Gespeicherte Subnet-Presets:");
+                // Add preset/edit buttons in the header so they are visible even if
+                // the discovered host list is empty or the bottom controls are hidden.
+                ImGui::SameLine();
+                if (ImGui::Button("➕ Preset hinzufügen", ImVec2(160, 0))) {
+                    appState.showAddSubnetPreset = true;
+                }
+                ImGui::SameLine();
+                // Edit currently selected preset if any
+                if (selectedPresetIndex >= 0) {
+                    if (ImGui::Button("✏️ Preset bearbeiten", ImVec2(140, 0))) {
+                        appState.showEditSubnetPreset = true;
+                        appState.editPresetIndex = selectedPresetIndex;
+                    }
+                }
                 ImGui::BeginChild("SubnetPresets", ImVec2(0, 120), true);
                 
                 static int presetToDelete = -1;
@@ -6895,7 +6915,76 @@ void renderNetworkScanner() {
             ImGui::Spacing();
             
             // subnet declared above for presets
-            ImGui::InputText("Subnetz", subnet, sizeof(subnet));
+            // Use EnterReturnsTrue so pressing Enter can start a scan quickly
+            if (ImGui::InputText("Subnetz##scan", subnet, sizeof(subnet), ImGuiInputTextFlags_EnterReturnsTrue)) {
+                // Start a scan on Enter if not already scanning
+                if (!appState.scanningNetwork && strlen(subnet) > 0) {
+                    appState.scanningNetwork = true;
+                    if (appState.useLightningSpeed) {
+                        startLightningScan(std::string(subnet));
+                    } else {
+                        // Launch ARP-based scan in a background thread (copy the string)
+                        std::thread([s = std::string(subnet)]() {
+                            appState.discoveredHosts.clear();
+                            appState.scanStatus = "Scanne Netzwerk mit ARP...";
+                            std::cout << "[Network] Scanning " << s << " with ARP service detection..." << std::endl;
+                            std::vector<std::string> liveHosts;
+                            FILE *arpPipe = popen("arp -a 2>/dev/null | grep -oE '([0-9]{1,3}\\.){3}[0-9]{1,3}' | sort -u", "r");
+                            if (arpPipe) {
+                                char ipBuf[256];
+                                while (fgets(ipBuf, sizeof(ipBuf), arpPipe)) {
+                                    std::string ip(ipBuf);
+                                    ip.erase(ip.find_last_not_of("\n\r") + 1);
+                                    if (!ip.empty()) {
+                                        liveHosts.push_back(ip);
+                                    }
+                                }
+                                pclose(arpPipe);
+                            }
+                            std::cout << "[Network] Found " << liveHosts.size() << " live hosts via ARP" << std::endl;
+                            // Port scanning
+                            const int ports[] = {21, 22, 139, 445, 2049};
+                            const std::string services[] = {"FTP", "SSH", "SMB-NetBIOS", "SMB-CIFS", "NFS"};
+                            for (const auto& host : liveHosts) {
+                                appState.scannedHosts++;
+                                std::vector<std::string> foundServices;
+                                for (size_t i = 0; i < 5; i++) {
+                                    int sock = socket(AF_INET, SOCK_STREAM, 0);
+                                    if (sock < 0) continue;
+                                    fcntl(sock, F_SETFL, O_NONBLOCK);
+                                    struct sockaddr_in addr;
+                                    addr.sin_family = AF_INET;
+                                    addr.sin_port = htons(ports[i]);
+                                    inet_pton(AF_INET, host.c_str(), &addr.sin_addr);
+                                    connect(sock, (struct sockaddr*)&addr, sizeof(addr));
+                                    fd_set fdset;
+                                    FD_ZERO(&fdset);
+                                    FD_SET(sock, &fdset);
+                                    struct timeval tv;
+                                    tv.tv_sec = 0;
+                                    tv.tv_usec = 500000; // 500ms
+                                    if (select(sock + 1, nullptr, &fdset, nullptr, &tv) > 0) {
+                                        foundServices.push_back(services[i]);
+                                        std::cout << "[Service] " << host << ":" << ports[i] << " (" << services[i] << ")" << std::endl;
+                                    }
+                                    close(sock);
+                                }
+                                if (!foundServices.empty()) {
+                                    std::string serviceStr;
+                                    for (size_t i = 0; i < foundServices.size(); i++) {
+                                        if (i > 0) serviceStr += ", ";
+                                        serviceStr += foundServices[i];
+                                    }
+                                    appState.discoveredHosts.push_back(host + " [" + serviceStr + "]");
+                                }
+                            }
+                            appState.scanningNetwork = false;
+                            std::cout << "[Network] Found " << appState.discoveredHosts.size() << " servers with services" << std::endl;
+                            appState.scanStatus = "Netzwerk-Scan abgeschlossen";
+                        }).detach();
+                    }
+                }
+            }
             ImGui::SameLine();
             ImGui::TextDisabled("(z.B. 192.168.1.0/24)");
             
