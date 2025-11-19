@@ -1324,8 +1324,22 @@ bool loadScanState(const std::string& filename) {
 
 // Helper function to check if a filepath is an FTP URL
 bool isFtpFile(const std::string& filepath) {
-    return (filepath.length() >= 6 && 
-            (filepath.substr(0, 6) == "ftp://" || filepath.substr(0, 6) == "FTP://"));
+    // OPTIMIZATION: Check length first, then use memcmp for faster comparison
+    if (filepath.length() < 6) return false;
+    
+    // Check for "ftp://" (lowercase)
+    if (filepath[0] == 'f' && filepath[1] == 't' && filepath[2] == 'p' && 
+        filepath[3] == ':' && filepath[4] == '/' && filepath[5] == '/') {
+        return true;
+    }
+    
+    // Check for "FTP://" (uppercase)
+    if (filepath[0] == 'F' && filepath[1] == 'T' && filepath[2] == 'P' && 
+        filepath[3] == ':' && filepath[4] == '/' && filepath[5] == '/') {
+        return true;
+    }
+    
+    return false;
 }
 
 // Helper function to check if a path is a network mount point
