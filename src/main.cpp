@@ -293,6 +293,7 @@ struct AppState {
     int scanTimeout = 1; // Timeout in Sekunden pro Host
     bool useLightningSpeed = true;
     bool useArpDiscovery = true; // Use ARP-based discovery by default
+    bool usePingDiscovery = false; // Option to also use ICMP ping discovery
     int minFileSize = 0; // Geändert von 1024 auf 0 - ALLE Dateien scannen (auch kleinste)
     bool scanHiddenFiles = true;  // Default: AN - versteckte Dateien einbeziehen
     bool followSymlinks = true;   // Default: AN - symbolischen Links folgen
@@ -3509,6 +3510,93 @@ std::vector<std::string> getActiveHostsViaARP() {
     
     std::cout << "[ARP] Total active hosts found: " << activeHosts.size() << std::endl;
     return activeHosts;
+}
+
+// List local interface subnets using 'ip' command
+std::vector<std::string> getLocalInterfaceSubnets() {
+    std::vector<std::string> subs;
+    // Use the ip tool to list IPv4 addresses with prefixes
+    FILE* pipe = popen("ip -o -4 addr show | awk '{print $4}'", "r");
+    if (!pipe) return subs;
+
+    char buf[256];
+    while (fgets(buf, sizeof(buf), pipe)) {
+        std::string line(buf);
+        line.erase(line.find_last_not_of("\n\r") + 1);
+        // line format: 192.168.1.10/24
+        if (line.empty()) continue;
+        // Compute network base
+        std::string ip = line;
+        size_t slash = ip.find('/');
+        if (slash == std::string::npos) continue;
+        std::string prefixStr = ip.substr(slash + 1);
+        std::string ipStr = ip.substr(0, slash);
+        int prefix = std::stoi(prefixStr);
+
+        struct in_addr addr;
+        if (inet_pton(AF_INET, ipStr.c_str(), &addr) != 1) continue;
+        uint32_t ipnum = ntohl(addr.s_addr);
+        uint64_t mask = (prefix == 0) ? 0 : (~0ULL << (32 - prefix)) & 0xFFFFFFFFULL;
+        uint32_t net = ipnum & (uint32_t)mask;
+
+        struct in_addr s; s.s_addr = htonl(net);
+        char out[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &s, out, sizeof(out));
+        std::string base = std::string(out) + "/" + std::to_string(prefix);
+        // Avoid duplicates
+        if (std::find(subs.begin(), subs.end(), base) == subs.end()) subs.push_back(base);
+    }
+    pclose(pipe);
+    return subs;
+}
+
+// Ping a single host via system 'ping -c 1 -W <sec>' (returns true if reachable)
+bool pingHost(const std::string &ip, int timeoutSeconds) {
+    // Build ping command; -n for numeric output
+    std::string cmd = "ping -c 1 -W " + std::to_string(timeoutSeconds) + " -n " + ip + " >/dev/null 2>&1";
+    int res = system(cmd.c_str());
+    return (res == 0);
+}
+
+// Ping-based range scan (fast but ICMP-only)
+void pingHostRange(const std::string &startIpStr, const std::string &endIpStr, int timeoutSeconds, std::vector<std::string> *results) {
+    auto ip2int = [](const std::string &ip) -> uint32_t {
+        struct in_addr addr;
+        if (inet_pton(AF_INET, ip.c_str(), &addr) != 1) return 0;
+        return ntohl(addr.s_addr);
+    };
+    auto int2ip = [](uint32_t v) -> std::string {
+        struct in_addr s; s.s_addr = htonl(v);
+        char buf[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &s, buf, sizeof(buf));
+        return std::string(buf);
+    };
+
+    uint32_t start = ip2int(startIpStr);
+    uint32_t end = ip2int(endIpStr);
+    if (start == 0 || end == 0 || end < start) return;
+
+    const int BATCH_SIZE = 100; // ping a batch of hosts in parallel
+    std::vector<std::future<bool>> futures;
+    for (uint32_t ip = start; ip <= end; ++ip) {
+        std::string ipStr = int2ip(ip);
+        futures.push_back(std::async(std::launch::async, [ipStr, timeoutSeconds]() {
+            return pingHost(ipStr, timeoutSeconds);
+        }));
+
+        if ((int)futures.size() >= BATCH_SIZE || ip == end) {
+            uint32_t cur = ip - (futures.size()-1);
+            for (auto &f : futures) {
+                bool ok = f.get();
+                if (ok) {
+                    std::lock_guard<std::mutex> lock(hostsMutex);
+                    results->push_back(int2ip(cur));
+                }
+                cur++;
+            }
+            futures.clear();
+        }
+    }
 }
 
 // Convert CIDR to numeric start and end IPs (inclusive host range), returns false on error
@@ -7008,9 +7096,19 @@ void renderNetworkScanner() {
             if (!currentIp.empty() && currentIp.find('.') != std::string::npos) {
                 size_t lastDot = currentIp.rfind('.');
                 std::string subnet24 = currentIp.substr(0, lastDot) + ".0/24";
-                
+
                 if (ImGui::Button(("🔍 " + subnet24).c_str())) {
                     strcpy(subnet, subnet24.c_str());
+                }
+            }
+
+            // Also show detected local interface subnets (from ip -4)
+            auto localSubs = getLocalInterfaceSubnets();
+            for (const auto &ls : localSubs) {
+                ImGui::SameLine();
+                std::string label = "🌐 " + ls;
+                if (ImGui::Button(label.c_str())) {
+                    strcpy(subnet, ls.c_str());
                 }
             }
             
@@ -7031,6 +7129,9 @@ void renderNetworkScanner() {
             ImGui::InputInt("Threads##scannerThreads", &appState.scannerThreads, 1, 32);
             ImGui::InputInt("Timeout (s)##scanTimeout", &appState.scanTimeout);
             ImGui::Checkbox("🔎 ARP-Discovery verwenden", &appState.useArpDiscovery);
+            // Optional ICMP Ping discovery
+            ImGui::SameLine();
+            ImGui::Checkbox("📟 ICMP-Ping verwenden", &appState.usePingDiscovery);
             
             if (!appState.scanningNetwork) {
                 if (ImGui::Button(appState.useLightningSpeed ? 
@@ -7040,6 +7141,7 @@ void renderNetworkScanner() {
                     
                     if (appState.useLightningSpeed) {
                         // Lightning Speed: Asynchroner Multi-Thread-Scan
+                        // Start Lightning Scan which may use ARP discovery by default
                         startLightningScan(std::string(subnet));
                     } else {
                         // ARP-basierter Service-Scanner: Findet nur Live-Hosts mit Services
@@ -7048,7 +7150,25 @@ void renderNetworkScanner() {
                             appState.scanStatus = "Scanne Netzwerk mit ARP...";
                             std::cout << "[Network] Scanning " << subnet << " with ARP service detection..." << std::endl;
                             
-                            // Step 1: Get live hosts from ARP
+                            // Step 1: Get live hosts using selected discovery method
+                            std::vector<std::string> liveHosts;
+                            if (appState.useArpDiscovery) {
+                                liveHosts = getActiveHostsViaARP();
+                            }
+                            if (appState.usePingDiscovery) {
+                                // If ping provided, also try a numeric ping scan of the CIDR (short)
+                                uint32_t startIpNumeric = 0, endIpNumeric = 0;
+                                if (cidrToRange(std::string(subnet), startIpNumeric, endIpNumeric)) {
+                                    std::string startIp; char buf[INET_ADDRSTRLEN]; struct in_addr a;
+                                    a.s_addr = htonl(startIpNumeric); inet_ntop(AF_INET, &a, buf, sizeof(buf)); startIp = buf;
+                                    a.s_addr = htonl(endIpNumeric); inet_ntop(AF_INET, &a, buf, sizeof(buf)); std::string endIp = buf;
+                                    std::vector<std::string> pingResults;
+                                    pingHostRange(startIp, endIp, appState.scanTimeout, &pingResults);
+                                    for (const auto &p : pingResults) {
+                                        liveHosts.push_back(p);
+                                    }
+                                }
+                            }
                             std::vector<std::string> liveHosts;
                             // OPTIMIZED: Use popen instead of system() for piped commands
                             FILE *arpPipe = popen("arp -a 2>/dev/null | grep -oE '([0-9]{1,3}\\.){3}[0-9]{1,3}' | sort -u", "r");
