@@ -86,6 +86,21 @@ struct FtpPreset {
     bool davMounted = false; // Aktueller Mount-Status
 };
 
+// Subnet Scan Preset
+struct SubnetPreset {
+    std::string name;           // z.B. "Büro Netzwerk"
+    std::string subnet;         // z.B. "192.168.1.0/24"
+    time_t createdAt;
+    time_t lastScannedAt = 0;
+    int lastFoundHosts = 0;
+    std::vector<std::string> lastResults; // Cache der letzten Ergebnisse
+    // Scanner options
+    bool useLightning = false;     // Use Lightning parallel scan
+    int scannerThreads = 128;      // Parallel threads to use
+    int scanTimeout = 1;           // Timeout (s) per host
+    bool useARP = true;            // Use ARP discovery (true) or full range
+};
+
 // Duplicate File Group
 struct DuplicateGroup {
     std::string hash;
@@ -123,6 +138,9 @@ struct AppState {
     std::string connectionStatus = ""; // Status-Meldung während Verbindungsaufbau
     std::mutex serverDirectoriesMutex; // Mutex für Thread-sicheren Zugriff auf serverDirectories
     bool isScanningFtp = false; // Flag ob FTP-Scan läuft
+    
+    // Subnet Scanner Presets (NEW)
+    std::vector<SubnetPreset> subnetPresets; // Gespeicherte Subnet-Scan-Konfigurationen
     
     // NFS Local Browser
     std::string selectedNfsMountPath = ""; // Welches NFS-Mount wird gerade angezeigt
@@ -270,6 +288,7 @@ struct AppState {
     int scannerThreads = 128; // Lightning Speed: Anzahl paralleler IP-Scans (erhöht für mehr Speed)
     int scanTimeout = 1; // Timeout in Sekunden pro Host
     bool useLightningSpeed = true;
+    bool useArpDiscovery = true; // Use ARP-based discovery by default
     int minFileSize = 0; // Geändert von 1024 auf 0 - ALLE Dateien scannen (auch kleinste)
     bool scanHiddenFiles = true;  // Default: AN - versteckte Dateien einbeziehen
     bool followSymlinks = true;   // Default: AN - symbolischen Links folgen
@@ -604,6 +623,7 @@ void restoreDefaultSettings() {
     appState.scannerThreads = 128;
     appState.scanTimeout = 1;
     appState.useLightningSpeed = true;
+    appState.useArpDiscovery = true;
     appState.hashAlgorithm = "AUTO";
     appState.hashPreset = "AUTO";
     appState.useHardwareAcceleration = true;
@@ -1166,6 +1186,74 @@ void removeFtpPreset(const std::string& ip) {
     );
     
     saveFtpPresets();
+}
+
+// Save Subnet Scanner Presets (NEW)
+void saveSubnetPresets() {
+    json j = json::array();
+    
+    for (const auto& preset : appState.subnetPresets) {
+        json presetObj;
+        presetObj["name"] = preset.name;
+        presetObj["subnet"] = preset.subnet;
+        presetObj["createdAt"] = preset.createdAt;
+        presetObj["lastScannedAt"] = preset.lastScannedAt;
+        presetObj["lastFoundHosts"] = preset.lastFoundHosts;
+        presetObj["lastResults"] = preset.lastResults;
+        // Scanner options
+        presetObj["useLightning"] = preset.useLightning;
+        presetObj["scannerThreads"] = preset.scannerThreads;
+        presetObj["scanTimeout"] = preset.scanTimeout;
+        presetObj["useARP"] = preset.useARP;
+        j.push_back(presetObj);
+    }
+    
+    std::ofstream file(std::string(getenv("HOME")) + "/.fileduper_subnet_presets.json");
+    if (file.is_open()) {
+        file << j.dump(2);
+        file.close();
+        std::cout << "[Subnet Presets] Saved " << appState.subnetPresets.size() << " presets" << std::endl;
+    }
+}
+
+// Load Subnet Scanner Presets (NEW)
+void loadSubnetPresets() {
+    std::string jsonPath = std::string(getenv("HOME")) + "/.fileduper_subnet_presets.json";
+    
+    appState.subnetPresets.clear();
+    
+    std::ifstream jsonFile(jsonPath);
+    if (jsonFile.is_open()) {
+        try {
+            json j;
+            jsonFile >> j;
+            jsonFile.close();
+            
+            for (const auto& presetObj : j) {
+                SubnetPreset preset;
+                preset.name = presetObj.value("name", "");
+                preset.subnet = presetObj.value("subnet", "");
+                preset.createdAt = presetObj.value("createdAt", (time_t)0);
+                preset.lastScannedAt = presetObj.value("lastScannedAt", (time_t)0);
+                preset.lastFoundHosts = presetObj.value("lastFoundHosts", 0);
+                // Scanner options (defaults)
+                preset.useLightning = presetObj.value("useLightning", false);
+                preset.scannerThreads = presetObj.value("scannerThreads", 128);
+                preset.scanTimeout = presetObj.value("scanTimeout", 1);
+                preset.useARP = presetObj.value("useARP", true);
+                
+                if (presetObj.contains("lastResults") && presetObj["lastResults"].is_array()) {
+                    preset.lastResults = presetObj["lastResults"].get<std::vector<std::string>>();
+                }
+                
+                appState.subnetPresets.push_back(preset);
+            }
+            
+            std::cout << "[Subnet Presets] Loaded " << appState.subnetPresets.size() << " presets" << std::endl;
+        } catch (const std::exception& e) {
+            std::cerr << "[Subnet Presets] Load error: " << e.what() << std::endl;
+        }
+    }
 }
 
 // Save Scan State (kompletter Scan-Fortschritt)
@@ -3485,6 +3573,29 @@ PortScanResult scanHostPorts(const std::string& ip, int timeout_ms) {
     return result;
 }
 
+// Ping/Service scan a range of IPs (full-range fallback)
+void scanIPRange(const std::string &baseIP, int start, int end, int timeout_ms, std::vector<std::string> *results) {
+    const int BATCH_SIZE = 80; // how many futures in-flight
+    std::vector<std::future<PortScanResult>> futures;
+    for (int i = start; i <= end; ++i) {
+        std::string ip = baseIP + std::to_string(i);
+        futures.push_back(std::async(std::launch::async, [ip, timeout_ms]() {
+            return scanHostPorts(ip, timeout_ms);
+        }));
+
+        if ((int)futures.size() >= BATCH_SIZE || i == end) {
+            for (auto &f : futures) {
+                PortScanResult res = f.get();
+                if (!res.openPorts.empty()) {
+                    std::lock_guard<std::mutex> lock(hostsMutex);
+                    results->push_back(res.ip + " [" + std::to_string((int)res.openPorts.size()) + " services]");
+                }
+            }
+            futures.clear();
+        }
+    }
+}
+
 // (removed - replaced by ARP + PortScan approach)
 
 void startLightningScan(const std::string& subnet) {
@@ -3494,9 +3605,24 @@ void startLightningScan(const std::string& subnet) {
     appState.scanningNetwork = true;
     
     std::cout << "[Lightning Scanner] Starting ARP-based host discovery + port scanning" << std::endl;
+    // Normalise quick notations -> e.g. "10.0" -> "10.0.0.0/24"
+    std::string normalizedSubnet = subnet;
+    if (normalizedSubnet.find('/') == std::string::npos) {
+        std::vector<std::string> parts;
+        std::istringstream iss(normalizedSubnet);
+        std::string tok;
+        while (std::getline(iss, tok, '.')) {
+            if (!tok.empty()) parts.push_back(tok);
+        }
+        if (parts.size() == 2) {
+            normalizedSubnet = parts[0] + "." + parts[1] + ".0/24";
+        } else if (parts.size() == 3) {
+            normalizedSubnet = parts[0] + "." + parts[1] + "." + parts[2] + ".0/24";
+        }
+    }
     
     // Starte ARP-Scan in separatem Thread (non-blocking)
-    std::thread([subnet]() {
+    std::thread([subnet, normalizedSubnet]() {
         // Phase 1: ARP-basierte aktive Host-Erkennung (sehr schnell!)
         auto activeHosts = getActiveHostsViaARP();
         appState.totalHostsToScan = activeHosts.size();
@@ -3504,11 +3630,27 @@ void startLightningScan(const std::string& subnet) {
         std::cout << "[Lightning Scanner] Phase 1 complete: " << activeHosts.size() 
                   << " active hosts found via ARP" << std::endl;
         
-        if (activeHosts.empty()) {
+        if (activeHosts.empty() || !appState.useArpDiscovery) {
             std::cout << "[Warning] No active hosts found via ARP, scanning anyway..." << std::endl;
-            appState.scanningNetwork = false;
-            appState.scanThreadRunning = false;
-            return;
+            // Fallback: full-range scan for /24 networks
+            if (normalizedSubnet.find("/24") != std::string::npos) {
+                std::string baseIP = normalizedSubnet.substr(0, normalizedSubnet.find_last_of('.') + 1);
+                std::vector<std::string> fallbackResults;
+                scanIPRange(baseIP, 1, 254, 50, &fallbackResults); // 50ms per port
+                for (const auto &r : fallbackResults) {
+                    std::lock_guard<std::mutex> l(hostsMutex);
+                    appState.discoveredHosts.push_back(r);
+                }
+                appState.scanningNetwork = false;
+                appState.scanThreadRunning = false;
+                std::cout << "[Fallback] Full-range scan complete: " << appState.discoveredHosts.size() << " hosts" << std::endl;
+                return;
+            } else {
+                std::cout << "[Warning] Fallback full-range scan only implemented for /24 networks" << std::endl;
+                appState.scanningNetwork = false;
+                appState.scanThreadRunning = false;
+                return;
+            }
         }
         
         // Phase 2: Port-Scan auf allen aktiven Hosts (mit Parallelisierung)
@@ -6606,9 +6748,129 @@ void renderNetworkScanner() {
             ImGui::TextColored(ImVec4(0.0f, 1.0f, 1.0f, 1.0f), "Netzwerk durchsuchen");
             ImGui::Separator();
             
-            static char subnet[64] = "";
+            // Subnet Presets (NEW)
+            static int selectedPresetIndex = -1;
+            static char subnet[64] = ""; // moved up so presets can copy into it
+            if (!appState.subnetPresets.empty()) {
+                ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "📁 Gespeicherte Subnet-Presets:");
+                ImGui::BeginChild("SubnetPresets", ImVec2(0, 120), true);
+                
+                static int presetToDelete = -1;
+                
+                for (size_t i = 0; i < appState.subnetPresets.size(); i++) {
+                    const auto& preset = appState.subnetPresets[i];
+                    
+                    std::string displayText = preset.name + " (" + preset.subnet + ")";
+                    if (preset.lastScannedAt > 0) {
+                        displayText += " - " + std::to_string(preset.lastFoundHosts) + " Hosts";
+                    }
+                    
+                    bool isSelected = (selectedPresetIndex == (int)i);
+                    if (ImGui::Selectable(displayText.c_str(), isSelected, ImGuiSelectableFlags_AllowDoubleClick)) {
+                        selectedPresetIndex = i;
+                        strcpy(subnet, preset.subnet.c_str());
+                        
+                        // Double-click: Load and scan
+                        if (ImGui::IsMouseDoubleClicked(0)) {
+                            appState.scanningNetwork = true;
+                            startLightningScan(preset.subnet);
+                        }
+                    }
+                    
+                    // Context menu
+                    if (ImGui::BeginPopupContextItem(("subnet_preset_ctx_" + std::to_string(i)).c_str())) {
+                        if (ImGui::MenuItem("▶️ Jetzt scannen")) {
+                            selectedPresetIndex = i;
+                            strcpy(subnet, preset.subnet.c_str());
+                            // Apply saved options for this preset
+                            appState.useLightningSpeed = preset.useLightning;
+                            appState.scannerThreads = preset.scannerThreads;
+                            appState.scanTimeout = preset.scanTimeout;
+                            appState.useArpDiscovery = preset.useARP;
+                            appState.scanningNetwork = true;
+                            startLightningScan(preset.subnet);
+                        }
+                        if (ImGui::MenuItem("📋 Laden")) {
+                            selectedPresetIndex = i;
+                            strcpy(subnet, preset.subnet.c_str());
+                            // Load preset options into the UI values
+                            appState.useLightningSpeed = preset.useLightning;
+                            appState.scannerThreads = preset.scannerThreads;
+                            appState.scanTimeout = preset.scanTimeout;
+                            appState.useArpDiscovery = preset.useARP;
+                        }
+                        ImGui::Separator();
+                        if (ImGui::MenuItem("🗑️ Löschen")) {
+                            presetToDelete = i;
+                        }
+                        ImGui::EndPopup();
+                    }
+                }
+                
+                // Delete preset
+                if (presetToDelete >= 0 && presetToDelete < (int)appState.subnetPresets.size()) {
+                    appState.subnetPresets.erase(appState.subnetPresets.begin() + presetToDelete);
+                    saveSubnetPresets();
+                    presetToDelete = -1;
+                    selectedPresetIndex = -1;
+                }
+                
+                ImGui::EndChild();
+            }
+            
+            ImGui::Spacing();
+            ImGui::Separator();
+            ImGui::TextColored(ImVec4(0.0f, 1.0f, 1.0f, 1.0f), "Neuer Scan:");
+            ImGui::Spacing();
+            
+            // subnet declared above for presets
             ImGui::InputText("Subnetz", subnet, sizeof(subnet));
             ImGui::SameLine();
+            ImGui::TextDisabled("(z.B. 192.168.1.0/24)");
+            
+            // Quick preset suggestions (NEW)
+            ImGui::TextColored(ImVec4(0.5f, 1.0f, 0.5f, 1.0f), "💡 Vorschläge:");
+            ImGui::SameLine();
+            
+            // Get current network
+            FILE *ifconfigPipe = popen("hostname -I 2>/dev/null | awk '{print $1}'", "r");
+            static std::string currentIp = "";
+            if (ifconfigPipe) {
+                char ipBuf[256];
+                if (fgets(ipBuf, sizeof(ipBuf), ifconfigPipe)) {
+                    currentIp = ipBuf;
+                    currentIp.erase(currentIp.find_last_not_of("\n\r") + 1);
+                }
+                pclose(ifconfigPipe);
+            }
+            
+            // Auto-generate subnet suggestions
+            if (!currentIp.empty() && currentIp.find('.') != std::string::npos) {
+                size_t lastDot = currentIp.rfind('.');
+                std::string subnet24 = currentIp.substr(0, lastDot) + ".0/24";
+                
+                if (ImGui::Button(("🔍 " + subnet24).c_str())) {
+                    strcpy(subnet, subnet24.c_str());
+                }
+            }
+            
+            ImGui::SameLine();
+            if (ImGui::Button("🔍 192.168.1.0/24")) {
+                strcpy(subnet, "192.168.1.0/24");
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("🔍 10.0.0.0/24")) {
+                strcpy(subnet, "10.0.0.0/24");
+            }
+            
+            ImGui::Spacing();
+            // Scanner options for custom presets
+            ImGui::Text("Scanner Optionen:");
+            ImGui::Checkbox("🔋 Lightning Mode (parallel)", &appState.useLightningSpeed);
+            ImGui::SameLine();
+            ImGui::InputInt("Threads##scannerThreads", &appState.scannerThreads, 1, 32);
+            ImGui::InputInt("Timeout (s)##scanTimeout", &appState.scanTimeout);
+            ImGui::Checkbox("🔎 ARP-Discovery verwenden", &appState.useArpDiscovery);
             
             if (!appState.scanningNetwork) {
                 if (ImGui::Button(appState.useLightningSpeed ? 
@@ -6803,6 +7065,42 @@ void renderNetworkScanner() {
                 }
             }
             ImGui::EndChild();
+            
+            ImGui::Spacing();
+            
+            // Save Preset Button (NEW)
+            if (!appState.discoveredHosts.empty() && !appState.scanningNetwork) {
+                ImGui::TextColored(ImVec4(0.0f, 1.0f, 1.0f, 1.0f), "💾 Diesen Scan speichern:");
+                ImGui::SameLine();
+                
+                static char presetName[256] = "";
+                ImGui::InputText("Preset-Name##subnet", presetName, sizeof(presetName), ImGuiInputTextFlags_AutoSelectAll);
+                ImGui::SameLine();
+                
+                if (ImGui::Button("💾 Speichern", ImVec2(100, 0))) {
+                    if (strlen(presetName) > 0 && strlen(subnet) > 0) {
+                        SubnetPreset newPreset;
+                        newPreset.name = presetName;
+                        newPreset.subnet = subnet;
+                        newPreset.createdAt = time(nullptr);
+                        newPreset.lastScannedAt = time(nullptr);
+                        newPreset.lastFoundHosts = appState.discoveredHosts.size();
+                        newPreset.lastResults = appState.discoveredHosts;
+                        // Also store scanner options
+                        newPreset.useLightning = appState.useLightningSpeed;
+                        newPreset.scannerThreads = appState.scannerThreads;
+                        newPreset.scanTimeout = appState.scanTimeout;
+                        newPreset.useARP = appState.useArpDiscovery;
+                        
+                        appState.subnetPresets.push_back(newPreset);
+                        saveSubnetPresets();
+                        
+                        strcpy(presetName, ""); // Clear input
+                        std::cout << "[Subnet] Saved preset: " << newPreset.name << " with " 
+                                 << newPreset.lastFoundHosts << " hosts" << std::endl;
+                    }
+                }
+            }
             
             ImGui::Text("[TIP] Tipp: Doppelklick auf einen Host zum Verbinden");
             
@@ -13398,6 +13696,7 @@ int main(int argc, char* argv[]) {
     saveScannerSettings();
     
     loadFtpPresets();
+    loadSubnetPresets();  // Load subnet scan presets (NEW)
     loadSearchHistory(); // Lade Such-History
     applyTheme(appState.currentTheme);
 
