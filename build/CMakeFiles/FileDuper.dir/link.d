@@ -61,11 +61,8 @@ FileDuper: \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/libgcc.a \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o \
-  /usr/lib32/libuuid.so.1 \
-  /usr/lib/libuuid.so.1 \
   /usr/lib32/libxcb.so.1 \
   /usr/lib/libxcb.so.1 \
-  /usr/lib/ld-linux-x86-64.so.2 \
   /usr/lib32/libnghttp3.so.9 \
   /usr/lib/libnghttp3.so.9 \
   /usr/lib32/libnghttp2.so.14 \
@@ -76,6 +73,7 @@ FileDuper: \
   /usr/lib/libssh2.so.1 \
   /usr/lib32/libpsl.so.5 \
   /usr/lib/libpsl.so.5 \
+  /usr/lib/libssl.so \
   /usr/lib32/libgssapi_krb5.so.2 \
   /usr/lib/libgssapi_krb5.so.2 \
   /usr/lib32/libzstd.so.1 \
@@ -88,6 +86,7 @@ FileDuper: \
   /usr/lib/libgnutls.so.30 \
   /usr/lib32/libGLdispatch.so.0 \
   /usr/lib/libGLdispatch.so.0 \
+  /usr/lib/ld-linux-x86-64.so.2 \
   /usr/lib32/libXau.so.6 \
   /usr/lib/libXau.so.6 \
   /usr/lib32/libXdmcp.so.6 \
@@ -246,15 +245,9 @@ libnet_utils.a:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o:
 
-/usr/lib32/libuuid.so.1:
-
-/usr/lib/libuuid.so.1:
-
 /usr/lib32/libxcb.so.1:
 
 /usr/lib/libxcb.so.1:
-
-/usr/lib/ld-linux-x86-64.so.2:
 
 /usr/lib32/libnghttp3.so.9:
 
@@ -275,6 +268,8 @@ libnet_utils.a:
 /usr/lib32/libpsl.so.5:
 
 /usr/lib/libpsl.so.5:
+
+/usr/lib/libssl.so:
 
 /usr/lib32/libgssapi_krb5.so.2:
 
@@ -299,6 +294,8 @@ libnet_utils.a:
 /usr/lib32/libGLdispatch.so.0:
 
 /usr/lib/libGLdispatch.so.0:
+
+/usr/lib/ld-linux-x86-64.so.2:
 
 /usr/lib32/libXau.so.6:
 

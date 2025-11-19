@@ -205,6 +205,7 @@ struct FtpPreset {
     // SMB/CIFS-specific fields
     std::string smbSharePath; // z.B. "//192.168.1.100/shared"
     std::string smbMountPoint; // z.B. "/mnt/smb_share"
+    std::string smbExportPath; // Root-Pfad für Verzeichnisbaum
     std::string smbDomain; // Windows Domain (optional)
     std::string smbWorkgroup; // Workgroup (optional)
     std::string smbOptions; // z.B. "vers=3.0,uid=1000,gid=1000"
@@ -214,6 +215,7 @@ struct FtpPreset {
     // WebDAV-specific fields
     std::string davUrl; // z.B. "https://cloud.example.com/remote.php/dav/files/username/"
     std::string davMountPoint; // z.B. "/mnt/webdav"
+    std::string davExportPath; // Root-Pfad für Verzeichnisbaum
     std::string davOptions; // z.B. "uid=1000,gid=1000,file_mode=0600,dir_mode=0700"
     bool davUseSSL = true; // HTTPS vs HTTP
     bool davAutoMount = false; // Auto-mount beim Start
@@ -763,6 +765,11 @@ void createDefaultConfigs() {
             imgui << "Size=1800,900" << std::endl;
             imgui << "Collapsed=0" << std::endl;
             imgui << std::endl;
+            imgui << "[Window][FileDuper - Hilfe]" << std::endl;
+            imgui << "Pos=200,100" << std::endl;
+            imgui << "Size=1000,700" << std::endl;
+            imgui << "Collapsed=0" << std::endl;
+            imgui << std::endl;
             imgui.close();
             std::cout << "[Config] Created default imgui.ini with optimal window size" << std::endl;
         }
@@ -1203,6 +1210,7 @@ void saveFtpPresets() {
         if (preset.serviceType == "SMB") {
             presetObj["smbSharePath"] = preset.smbSharePath;
             presetObj["smbMountPoint"] = preset.smbMountPoint;
+            presetObj["smbExportPath"] = preset.smbExportPath;
             presetObj["smbDomain"] = preset.smbDomain;
             presetObj["smbWorkgroup"] = preset.smbWorkgroup;
             presetObj["smbOptions"] = preset.smbOptions;
@@ -1214,6 +1222,7 @@ void saveFtpPresets() {
         if (preset.serviceType == "WebDAV") {
             presetObj["davUrl"] = preset.davUrl;
             presetObj["davMountPoint"] = preset.davMountPoint;
+            presetObj["davExportPath"] = preset.davExportPath;
             presetObj["davOptions"] = preset.davOptions;
             presetObj["davUseSSL"] = preset.davUseSSL;
             presetObj["davAutoMount"] = preset.davAutoMount;
@@ -1273,6 +1282,7 @@ void loadFtpPresets() {
                 if (preset.serviceType == "SMB") {
                     preset.smbSharePath = presetObj.value("smbSharePath", "");
                     preset.smbMountPoint = presetObj.value("smbMountPoint", "");
+                    preset.smbExportPath = presetObj.value("smbExportPath", "");
                     preset.smbDomain = presetObj.value("smbDomain", "");
                     preset.smbWorkgroup = presetObj.value("smbWorkgroup", "WORKGROUP");
                     preset.smbOptions = presetObj.value("smbOptions", "vers=3.0");
@@ -1290,6 +1300,7 @@ void loadFtpPresets() {
                 if (preset.serviceType == "WebDAV") {
                     preset.davUrl = presetObj.value("davUrl", "");
                     preset.davMountPoint = presetObj.value("davMountPoint", "");
+                    preset.davExportPath = presetObj.value("davExportPath", "");
                     preset.davOptions = presetObj.value("davOptions", "");
                     preset.davUseSSL = presetObj.value("davUseSSL", true);
                     preset.davAutoMount = presetObj.value("davAutoMount", false);
@@ -2745,10 +2756,10 @@ bool executeSudoCommand(const std::string& command) {
         waitpid(pid, &status, 0);
         if (WIFEXITED(status) && WEXITSTATUS(status) == 0) {
             std::cout << "[SUDO] Passwordless sudo available" << std::endl;
-            // Execute actual command without password
+            // Execute actual command with sudo (without password)
             pid = fork();
             if (pid == 0) {
-                execl("/bin/sh", "sh", "-c", command.c_str(), nullptr);
+                execl("/bin/sh", "sh", "-c", ("sudo " + command).c_str(), nullptr);
                 _exit(1);
             }
             waitpid(pid, &status, 0);
@@ -2993,6 +3004,29 @@ bool isSmbMounted(const std::string& mountPoint) {
 
 // Mount SMB/CIFS share
 bool mountSMB(FtpPreset& preset) {
+    // Check if CIFS module is available
+    if (access("/proc/filesystems", R_OK) == 0) {
+        std::ifstream fsFile("/proc/filesystems");
+        std::string line;
+        bool cifsSupported = false;
+        while (std::getline(fsFile, line)) {
+            if (line.find("cifs") != std::string::npos) {
+                cifsSupported = true;
+                break;
+            }
+        }
+        fsFile.close();
+        
+        if (!cifsSupported) {
+            std::cerr << "[SMB] CIFS filesystem not supported by the kernel!" << std::endl;
+            std::cerr << "[SMB] Please install cifs-utils: sudo pacman -S cifs-utils (Arch)" << std::endl;
+            std::cerr << "[SMB] Or: sudo apt install cifs-utils (Ubuntu/Debian)" << std::endl;
+            showStatusNotification("❌ SMB: CIFS nicht vom System unterstützt\nBitte cifs-utils installieren", 
+                                 ImVec4(1.0f, 0.3f, 0.3f, 1.0f));
+            return false;
+        }
+    }
+    
     // Fallback: wenn smbSharePath nicht gesetzt, baue ihn aus ip
     if (preset.smbSharePath.empty() && !preset.ip.empty()) {
         preset.smbSharePath = "//" + preset.ip + "/" + preset.name;
@@ -6348,6 +6382,7 @@ void renderNetworkScanner() {
             static char smbServer[256] = "192.168.1.100";
             static char smbShareName[256] = "shared";
             static char smbMountPoint[256] = "/mnt/smb_share";
+            static char smbExportPath[512] = "/"; // Root path for directory tree
             static char smbUsername[128] = "user";
             static char smbPassword[128] = "";
             static char smbDomain[128] = "";
@@ -6410,6 +6445,11 @@ void renderNetworkScanner() {
                         }
                         ImGui::PopStyleColor();
                         
+                        // Right-click context menu on the selectable item
+                        if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+                            ImGui::OpenPopup(("smb_preset_ctx_" + std::to_string(i)).c_str());
+                        }
+                        
                         // Mount/Unmount Button
                         ImGui::SameLine();
                         if (preset->smbMounted) {
@@ -6450,7 +6490,7 @@ void renderNetworkScanner() {
                         }
                         
                         // Context menu
-                        if (ImGui::BeginPopupContextItem(("smb_preset_ctx_" + std::to_string(i)).c_str())) {
+                        if (ImGui::BeginPopup(("smb_preset_ctx_" + std::to_string(i)).c_str())) {
                             if (ImGui::MenuItem("📂 Verzeichnisbaum öffnen")) {
                                 if (preset->smbMounted) {
                                     appState.showLocalBrowser = true;
@@ -6553,6 +6593,15 @@ void renderNetworkScanner() {
             }
             ImGui::NextColumn();
             
+            ImGui::Text("Export Pfad:");
+            ImGui::NextColumn();
+            ImGui::SetNextItemWidth(-1);
+            ImGui::InputText("##SmbExportPath", smbExportPath, sizeof(smbExportPath));
+            if (ImGui::IsItemHovered()) {
+                ImGui::SetTooltip("Root-Pfad für Verzeichnisbaum (z.B. / oder /documents)");
+            }
+            ImGui::NextColumn();
+            
             ImGui::Text("Benutzername:");
             ImGui::NextColumn();
             ImGui::SetNextItemWidth(-1);
@@ -6617,6 +6666,7 @@ void renderNetworkScanner() {
                     // Build share path: //server/share
                     newPreset.smbSharePath = "//" + std::string(smbServer) + "/" + std::string(smbShareName);
                     newPreset.smbMountPoint = smbMountPoint;
+                    newPreset.smbExportPath = smbExportPath;
                     newPreset.smbDomain = smbDomain;
                     newPreset.smbWorkgroup = smbWorkgroup;
                     newPreset.smbOptions = smbOptions;
@@ -6662,7 +6712,12 @@ void renderNetworkScanner() {
             // Success/Failure popups
             if (ImGui::BeginPopupModal("SmbMountSuccess", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
                 ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "✅ SMB Share erfolgreich gemountet!");
-                ImGui::Text("Mount Point: %s", smbMountPoint);
+                
+                // Make mount point selectable and copyable
+                static char displayMount[512] = "";
+                snprintf(displayMount, sizeof(displayMount), "Mount Point: %s", smbMountPoint);
+                ImGui::InputText("##MountInfo", displayMount, sizeof(displayMount), ImGuiInputTextFlags_ReadOnly);
+                
                 ImGui::Spacing();
                 if (ImGui::Button("OK", ImVec2(120, 0))) {
                     ImGui::CloseCurrentPopup();
@@ -6710,6 +6765,7 @@ void renderNetworkScanner() {
             static char davName[128] = "Mein WebDAV";
             static char davUrl[512] = "https://cloud.example.com/remote.php/dav/files/user/";
             static char davMountPoint[256] = "/mnt/webdav";
+            static char davExportPath[512] = "/"; // Root path for directory tree
             static char davUsername[128] = "user";
             static char davPassword[128] = "";
             static char davOptions[256] = "";
@@ -6769,6 +6825,11 @@ void renderNetworkScanner() {
                         }
                         ImGui::PopStyleColor();
                         
+                        // Right-click context menu on the selectable item
+                        if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+                            ImGui::OpenPopup(("dav_preset_ctx_" + std::to_string(i)).c_str());
+                        }
+                        
                         // Mount/Unmount Button
                         ImGui::SameLine();
                         if (preset->davMounted) {
@@ -6808,7 +6869,7 @@ void renderNetworkScanner() {
                         }
                         
                         // Context menu
-                        if (ImGui::BeginPopupContextItem(("dav_preset_ctx_" + std::to_string(i)).c_str())) {
+                        if (ImGui::BeginPopup(("dav_preset_ctx_" + std::to_string(i)).c_str())) {
                             if (ImGui::MenuItem("📂 Verzeichnisbaum öffnen")) {
                                 if (preset->davMounted) {
                                     appState.showLocalBrowser = true;
@@ -6901,6 +6962,15 @@ void renderNetworkScanner() {
             }
             ImGui::NextColumn();
             
+            ImGui::Text("Export Pfad:");
+            ImGui::NextColumn();
+            ImGui::SetNextItemWidth(-1);
+            ImGui::InputText("##DavExportPath", davExportPath, sizeof(davExportPath));
+            if (ImGui::IsItemHovered()) {
+                ImGui::SetTooltip("Root-Pfad für Verzeichnisbaum (z.B. / oder /documents)");
+            }
+            ImGui::NextColumn();
+            
             ImGui::Text("Benutzername:");
             ImGui::NextColumn();
             ImGui::SetNextItemWidth(-1);
@@ -6953,6 +7023,7 @@ void renderNetworkScanner() {
                     
                     newPreset.davUrl = davUrl;
                     newPreset.davMountPoint = davMountPoint;
+                    newPreset.davExportPath = davExportPath;
                     newPreset.davOptions = davOptions;
                     newPreset.davUseSSL = davUseSSL;
                     newPreset.davAutoMount = davAutoMount;
@@ -10997,14 +11068,25 @@ void renderSmbMountDialog() {
 // ============================================================================
 // Render Help Dialog with comprehensive documentation
 void renderHelpDialog() {
-    if (!appState.showHelp) return;
+    static bool helpWindowFirstOpen = false;
     
-    // Help window starts large
-    ImGui::SetNextWindowSize(ImVec2(1200, 800), ImGuiCond_FirstUseEver);
+    if (!appState.showHelp) {
+        helpWindowFirstOpen = false;
+        return;
+    }
+    
+    // Help window - comfortable size
+    ImGui::SetNextWindowSize(ImVec2(1000, 700), ImGuiCond_Always);
     ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x * 0.5f, ImGui::GetIO().DisplaySize.y * 0.5f), 
-                            ImGuiCond_FirstUseEver, ImVec2(0.5f, 0.5f));
+                            ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
     
-    if (ImGui::Begin("FileDuper - Hilfe", &appState.showHelp, ImGuiWindowFlags_AlwaysAutoResize)) {
+    // Focus window on first open
+    if (!helpWindowFirstOpen) {
+        ImGui::SetNextWindowFocus();
+        helpWindowFirstOpen = true;
+    }
+    
+    if (ImGui::Begin("FileDuper - Hilfe", &appState.showHelp, ImGuiWindowFlags_NoCollapse)) {
         // Tab bar for different help sections
         if (ImGui::BeginTabBar("HelpTabs")) {
             
@@ -11102,7 +11184,11 @@ void renderHelpDialog() {
                 ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.5f, 1.0f), "Hash-Einstellungen");
                 ImGui::BulletText("Quick Hash: Vergleicht nur Start/Ende der Datei (schneller)");
                 ImGui::BulletText("Full Hash: Vergleicht gesamte Dateien (genauer)");
-                ImGui::BulletText("Algorithmus: MD5, SHA1, SHA256, SHA512");
+                ImGui::BulletText("Algorithmus: AUTO (Automatisch gewählt & optimiert nach Dateitypen)");
+                ImGui::BulletText("  → Bilder/Video: Schnelle Vorprüfung mit Quick Hash");
+                ImGui::BulletText("  → Dokumente/Archiv: Sichere Full Hash mit SHA256");
+                ImGui::BulletText("  → Große Dateien: Mehrfach-Chunk-Verarbeitung für Speichereffizienz");
+                ImGui::BulletText("Available: MD5, SHA1, SHA256, SHA512, xxHash, SHA3");
                 
                 ImGui::Spacing();
                 ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.5f, 1.0f), "Netzwerk-Einstellungen");

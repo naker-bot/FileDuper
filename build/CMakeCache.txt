@@ -83,7 +83,7 @@ CMAKE_C_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG
 CMAKE_DLLTOOL:FILEPATH=CMAKE_DLLTOOL-NOTFOUND
 
 //Flags used by the linker during all build types.
-CMAKE_EXE_LINKER_FLAGS:STRING=
+CMAKE_EXE_LINKER_FLAGS:STRING=-Wl,--as-needed
 
 //Flags used by the linker during DEBUG builds.
 CMAKE_EXE_LINKER_FLAGS_DEBUG:STRING=
@@ -151,7 +151,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=FileDuper
+CMAKE_PROJECT_NAME:STATIC=PFileDuper
 
 //Value Computed by CMake
 CMAKE_PROJECT_VERSION:STATIC=1.0.0
@@ -257,15 +257,6 @@ FREETYPE_LIBRARY_DEBUG:FILEPATH=FREETYPE_LIBRARY_DEBUG-NOTFOUND
 //Path to a library.
 FREETYPE_LIBRARY_RELEASE:FILEPATH=/usr/lib/libfreetype.so
 
-//Value Computed by CMake
-FileDuper_BINARY_DIR:STATIC=/home/nex/c++/build
-
-//Value Computed by CMake
-FileDuper_IS_TOP_LEVEL:STATIC=ON
-
-//Value Computed by CMake
-FileDuper_SOURCE_DIR:STATIC=/home/nex/c++
-
 //Path to a file.
 Fontconfig_INCLUDE_DIR:PATH=/usr/include
 
@@ -325,6 +316,15 @@ OpenCL_INCLUDE_DIR:PATH=/usr/include
 
 //Path to a library.
 OpenCL_LIBRARY:FILEPATH=/usr/lib/libOpenCL.so
+
+//Value Computed by CMake
+PFileDuper_BINARY_DIR:STATIC=/home/nex/c++/build
+
+//Value Computed by CMake
+PFileDuper_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+PFileDuper_SOURCE_DIR:STATIC=/home/nex/c++
 
 //Arguments to supply to pkg-config
 PKG_CONFIG_ARGN:STRING=

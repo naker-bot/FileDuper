@@ -1,16 +1,16 @@
 cmake_minimum_required(VERSION 3.16)
-project(FileDuper VERSION 1.0.0 LANGUAGES CXX)
+project(PFileDuper VERSION 1.0.0 LANGUAGES CXX)
 
 # Deaktiviere Warnungen-als-Fehler für deprecated OpenSSL 3.0 MD5 Funktionen
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=deprecated-declarations")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations -Wno-error=deprecated-declarations")
 string(REGEX REPLACE " -Werror" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
 # C++17 Standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Performance optimizations
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -march=native -mtune=native")
+# Performance optimizations (portable for Proxmox/VM)
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -march=x86-64 -mtune=generic")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
 
 # Link-Time Optimization (LTO) for Release builds

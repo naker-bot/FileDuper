@@ -1228,24 +1228,24 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-ONoqVr"
-      binary: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-ONoqVr"
+      source: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-oM6gYn"
+      binary: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-oM6gYn"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_SCAN_FOR_MODULES: "OFF"
-      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_EXE_LINKER_FLAGS: "-Wl,--as-needed"
     buildResult:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-ONoqVr'
+        Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-oM6gYn'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_d4706/fast
-        /usr/bin/make  -f CMakeFiles/cmTC_d4706.dir/build.make CMakeFiles/cmTC_d4706.dir/build
-        make[1]: Entering directory '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-ONoqVr'
-        Building CXX object CMakeFiles/cmTC_d4706.dir/CMakeCXXCompilerABI.cpp.o
-        /usr/bin/c++   -v -o CMakeFiles/cmTC_d4706.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_ccb72/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_ccb72.dir/build.make CMakeFiles/cmTC_ccb72.dir/build
+        make[1]: Entering directory '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-oM6gYn'
+        Building CXX object CMakeFiles/cmTC_ccb72.dir/CMakeCXXCompilerABI.cpp.o
+        /usr/bin/c++   -v -o CMakeFiles/cmTC_ccb72.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp
         Using built-in specs.
         COLLECT_GCC=/usr/bin/c++
         Target: x86_64-pc-linux-gnu
@@ -1253,8 +1253,8 @@ events:
         Thread model: posix
         Supported LTO compression algorithms: zlib zstd
         gcc version 15.2.1 20251112 (GCC) 
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_d4706.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_d4706.dir/'
-         /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/cc1plus -quiet -v -D_GNU_SOURCE /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_d4706.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -o /tmp/ccwSIiR3.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_ccb72.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_ccb72.dir/'
+         /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/cc1plus -quiet -v -D_GNU_SOURCE /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_ccb72.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -o /tmp/cc2cpCqL.s
         GNU C++17 (GCC) version 15.2.1 20251112 (x86_64-pc-linux-gnu)
         	compiled by GNU C version 15.2.1 20251112, GMP version 6.3.0, MPFR version 4.2.2, MPC version 1.3.1, isl version isl-0.27-GMP
         
@@ -1271,14 +1271,14 @@ events:
          /usr/include
         End of search list.
         Compiler executable checksum: 4f062beaae229dc32234f13ba259a70e
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_d4706.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_d4706.dir/'
-         as -v --64 -o CMakeFiles/cmTC_d4706.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccwSIiR3.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_ccb72.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_ccb72.dir/'
+         as -v --64 -o CMakeFiles/cmTC_ccb72.dir/CMakeCXXCompilerABI.cpp.o /tmp/cc2cpCqL.s
         GNU assembler version 2.45.1 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.45.1
         COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_d4706.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_d4706.dir/CMakeCXXCompilerABI.cpp.'
-        Linking CXX executable cmTC_d4706
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d4706.dir/link.txt --verbose=1
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_ccb72.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_ccb72.dir/CMakeCXXCompilerABI.cpp.'
+        Linking CXX executable cmTC_ccb72
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ccb72.dir/link.txt --verbose=1
         Using built-in specs.
         COLLECT_GCC=/usr/bin/c++
         COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper
@@ -1289,14 +1289,14 @@ events:
         gcc version 15.2.1 20251112 (GCC) 
         COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_d4706' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_d4706.'
-         /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cclKkCSR.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_d4706 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_d4706.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_ccb72' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_ccb72.'
+         /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccFRlgWZ.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_ccb72 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib --as-needed -v CMakeFiles/cmTC_ccb72.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o
         collect2 version 15.2.1 20251112
-        /usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cclKkCSR.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_d4706 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_d4706.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o
+        /usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccFRlgWZ.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_ccb72 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib --as-needed -v CMakeFiles/cmTC_ccb72.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o
         GNU ld (GNU Binutils) 2.45.1
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_d4706' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_d4706.'
-        /usr/bin/c++  -v -Wl,-v CMakeFiles/cmTC_d4706.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_d4706
-        make[1]: Leaving directory '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-ONoqVr'
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_ccb72' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_ccb72.'
+        /usr/bin/c++ -Wl,--as-needed -v -Wl,-v CMakeFiles/cmTC_ccb72.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_ccb72
+        make[1]: Leaving directory '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-oM6gYn'
         
       exitCode: 0
   -
@@ -1337,13 +1337,13 @@ events:
       Parsed CXX implicit link information:
         link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
         linker tool regex: [^[ 	]*(->|")?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)))("|,| |$)]
-        ignore line: [Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-ONoqVr']
+        ignore line: [Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-oM6gYn']
         ignore line: []
-        ignore line: [Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_d4706/fast]
-        ignore line: [/usr/bin/make  -f CMakeFiles/cmTC_d4706.dir/build.make CMakeFiles/cmTC_d4706.dir/build]
-        ignore line: [make[1]: Entering directory '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-ONoqVr']
-        ignore line: [Building CXX object CMakeFiles/cmTC_d4706.dir/CMakeCXXCompilerABI.cpp.o]
-        ignore line: [/usr/bin/c++   -v -o CMakeFiles/cmTC_d4706.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_ccb72/fast]
+        ignore line: [/usr/bin/make  -f CMakeFiles/cmTC_ccb72.dir/build.make CMakeFiles/cmTC_ccb72.dir/build]
+        ignore line: [make[1]: Entering directory '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-oM6gYn']
+        ignore line: [Building CXX object CMakeFiles/cmTC_ccb72.dir/CMakeCXXCompilerABI.cpp.o]
+        ignore line: [/usr/bin/c++   -v -o CMakeFiles/cmTC_ccb72.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/c++]
         ignore line: [Target: x86_64-pc-linux-gnu]
@@ -1351,8 +1351,8 @@ events:
         ignore line: [Thread model: posix]
         ignore line: [Supported LTO compression algorithms: zlib zstd]
         ignore line: [gcc version 15.2.1 20251112 (GCC) ]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_d4706.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_d4706.dir/']
-        ignore line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/cc1plus -quiet -v -D_GNU_SOURCE /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_d4706.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -o /tmp/ccwSIiR3.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_ccb72.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_ccb72.dir/']
+        ignore line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/cc1plus -quiet -v -D_GNU_SOURCE /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_ccb72.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -o /tmp/cc2cpCqL.s]
         ignore line: [GNU C++17 (GCC) version 15.2.1 20251112 (x86_64-pc-linux-gnu)]
         ignore line: [	compiled by GNU C version 15.2.1 20251112  GMP version 6.3.0  MPFR version 4.2.2  MPC version 1.3.1  isl version isl-0.27-GMP]
         ignore line: []
@@ -1369,14 +1369,14 @@ events:
         ignore line: [ /usr/include]
         ignore line: [End of search list.]
         ignore line: [Compiler executable checksum: 4f062beaae229dc32234f13ba259a70e]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_d4706.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_d4706.dir/']
-        ignore line: [ as -v --64 -o CMakeFiles/cmTC_d4706.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccwSIiR3.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_ccb72.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_ccb72.dir/']
+        ignore line: [ as -v --64 -o CMakeFiles/cmTC_ccb72.dir/CMakeCXXCompilerABI.cpp.o /tmp/cc2cpCqL.s]
         ignore line: [GNU assembler version 2.45.1 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.45.1]
         ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_d4706.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_d4706.dir/CMakeCXXCompilerABI.cpp.']
-        ignore line: [Linking CXX executable cmTC_d4706]
-        ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d4706.dir/link.txt --verbose=1]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_ccb72.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_ccb72.dir/CMakeCXXCompilerABI.cpp.']
+        ignore line: [Linking CXX executable cmTC_ccb72]
+        ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ccb72.dir/link.txt --verbose=1]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/c++]
         ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper]
@@ -1387,13 +1387,13 @@ events:
         ignore line: [gcc version 15.2.1 20251112 (GCC) ]
         ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_d4706' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_d4706.']
-        link line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cclKkCSR.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_d4706 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_d4706.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_ccb72' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_ccb72.']
+        link line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccFRlgWZ.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_ccb72 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib --as-needed -v CMakeFiles/cmTC_ccb72.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2] ==> ignore
           arg [-plugin] ==> ignore
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so] ==> ignore
           arg [-plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper] ==> ignore
-          arg [-plugin-opt=-fresolution=/tmp/cclKkCSR.res] ==> ignore
+          arg [-plugin-opt=-fresolution=/tmp/ccFRlgWZ.res] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
           arg [-plugin-opt=-pass-through=-lc] ==> ignore
@@ -1408,7 +1408,7 @@ events:
           arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
           arg [-pie] ==> ignore
           arg [-o] ==> ignore
-          arg [cmTC_d4706] ==> ignore
+          arg [cmTC_ccb72] ==> ignore
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o]
@@ -1419,8 +1419,9 @@ events:
           arg [-L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../..] ==> dir [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../..]
           arg [-L/lib] ==> dir [/lib]
           arg [-L/usr/lib] ==> dir [/usr/lib]
+          arg [--as-needed] ==> ignore
           arg [-v] ==> ignore
-          arg [CMakeFiles/cmTC_d4706.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+          arg [CMakeFiles/cmTC_ccb72.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
           arg [-lstdc++] ==> lib [stdc++]
           arg [-lm] ==> lib [m]
           arg [-lgcc_s] ==> lib [gcc_s]
@@ -1431,7 +1432,7 @@ events:
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
         ignore line: [collect2 version 15.2.1 20251112]
-        ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cclKkCSR.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_d4706 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_d4706.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
+        ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccFRlgWZ.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_ccb72 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib --as-needed -v CMakeFiles/cmTC_ccb72.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
         linker tool for 'CXX': /usr/bin/ld
         collapse obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o] ==> [/usr/lib/Scrt1.o]
         collapse obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o] ==> [/usr/lib/crti.o]
@@ -1527,27 +1528,27 @@ events:
     checks:
       - "Performing Test COMPILER_SUPPORTS_AVX2"
     directories:
-      source: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-SXyt5J"
-      binary: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-SXyt5J"
+      source: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-wCiNdY"
+      binary: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-wCiNdY"
     cmakeVariables:
-      CMAKE_CXX_FLAGS: " -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1"
+      CMAKE_CXX_FLAGS: " -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1"
       CMAKE_CXX_FLAGS_DEBUG: "-O0 -g"
-      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_EXE_LINKER_FLAGS: "-Wl,--as-needed"
     buildResult:
       variable: "COMPILER_SUPPORTS_AVX2"
       cached: true
       stdout: |
-        Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-SXyt5J'
+        Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-wCiNdY'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_94854/fast
-        /usr/bin/make  -f CMakeFiles/cmTC_94854.dir/build.make CMakeFiles/cmTC_94854.dir/build
-        make[1]: Entering directory '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-SXyt5J'
-        Building CXX object CMakeFiles/cmTC_94854.dir/src.cxx.o
-        /usr/bin/c++ -DCOMPILER_SUPPORTS_AVX2  -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1  -std=gnu++17   -mavx2 -o CMakeFiles/cmTC_94854.dir/src.cxx.o -c /home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-SXyt5J/src.cxx
-        Linking CXX executable cmTC_94854
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_94854.dir/link.txt --verbose=1
-        /usr/bin/c++  -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1  CMakeFiles/cmTC_94854.dir/src.cxx.o -o cmTC_94854
-        make[1]: Leaving directory '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-SXyt5J'
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_e4aac/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_e4aac.dir/build.make CMakeFiles/cmTC_e4aac.dir/build
+        make[1]: Entering directory '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-wCiNdY'
+        Building CXX object CMakeFiles/cmTC_e4aac.dir/src.cxx.o
+        /usr/bin/c++ -DCOMPILER_SUPPORTS_AVX2  -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1  -std=gnu++17   -mavx2 -o CMakeFiles/cmTC_e4aac.dir/src.cxx.o -c /home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-wCiNdY/src.cxx
+        Linking CXX executable cmTC_e4aac
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e4aac.dir/link.txt --verbose=1
+        /usr/bin/c++  -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1  -Wl,--as-needed  CMakeFiles/cmTC_e4aac.dir/src.cxx.o -o cmTC_e4aac
+        make[1]: Leaving directory '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-wCiNdY'
         
       exitCode: 0
   -
@@ -2458,32 +2459,32 @@ events:
       - "/usr/share/cmake/Modules/FindOpenCL.cmake:123 (_FIND_OPENCL_VERSION)"
       - "CMakeLists.txt:50 (find_package)"
     directories:
-      source: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-LiDPzf"
-      binary: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-LiDPzf"
+      source: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-hHuBuP"
+      binary: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-hHuBuP"
     cmakeVariables:
-      CMAKE_CXX_FLAGS: " -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2"
+      CMAKE_CXX_FLAGS: " -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2"
       CMAKE_CXX_FLAGS_DEBUG: "-O0 -g"
-      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_EXE_LINKER_FLAGS: "-Wl,--as-needed"
     buildResult:
       variable: "OPENCL_VERSION_3_0"
       cached: true
       stdout: |
-        Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-LiDPzf'
+        Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-hHuBuP'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_25a75/fast
-        /usr/bin/make  -f CMakeFiles/cmTC_25a75.dir/build.make CMakeFiles/cmTC_25a75.dir/build
-        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-LiDPzf“ wird betreten
-        Building CXX object CMakeFiles/cmTC_25a75.dir/CheckSymbolExists.cxx.o
-        /usr/bin/c++   -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2  -std=gnu++17 -o CMakeFiles/cmTC_25a75.dir/CheckSymbolExists.cxx.o -c /home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-LiDPzf/CheckSymbolExists.cxx
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_65862/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_65862.dir/build.make CMakeFiles/cmTC_65862.dir/build
+        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-hHuBuP“ wird betreten
+        Building CXX object CMakeFiles/cmTC_65862.dir/CheckSymbolExists.cxx.o
+        /usr/bin/c++   -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2  -std=gnu++17 -o CMakeFiles/cmTC_65862.dir/CheckSymbolExists.cxx.o -c /home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-hHuBuP/CheckSymbolExists.cxx
         In Datei, eingebunden von /usr/include/CL/cl.h:20,
-                         von /home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-LiDPzf/CheckSymbolExists.cxx:2:
+                         von /home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-hHuBuP/CheckSymbolExists.cxx:2:
         /usr/include/CL/cl_version.h:22:104: Anmerkung: »#pragma message: cl_version.h: CL_TARGET_OPENCL_VERSION is not defined. Defaulting to 300 (OpenCL 3.0)«
            22 | #pragma message("cl_version.h: CL_TARGET_OPENCL_VERSION is not defined. Defaulting to 300 (OpenCL 3.0)")
               |                                                                                                        ^
-        Linking CXX executable cmTC_25a75
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_25a75.dir/link.txt --verbose=1
-        /usr/bin/c++  -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2  CMakeFiles/cmTC_25a75.dir/CheckSymbolExists.cxx.o -o cmTC_25a75
-        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-LiDPzf“ wird verlassen
+        Linking CXX executable cmTC_65862
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_65862.dir/link.txt --verbose=1
+        /usr/bin/c++  -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2  -Wl,--as-needed  CMakeFiles/cmTC_65862.dir/CheckSymbolExists.cxx.o -o cmTC_65862
+        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-hHuBuP“ wird verlassen
         
       exitCode: 0
   -
@@ -4101,23 +4102,23 @@ events:
     checks:
       - "Detecting C compiler ABI info"
     directories:
-      source: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-J38zV0"
-      binary: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-J38zV0"
+      source: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-0eoBmn"
+      binary: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-0eoBmn"
     cmakeVariables:
       CMAKE_C_FLAGS: ""
       CMAKE_C_FLAGS_DEBUG: "-g"
-      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_EXE_LINKER_FLAGS: "-Wl,--as-needed"
     buildResult:
       variable: "CMAKE_C_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-J38zV0'
+        Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-0eoBmn'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_3629f/fast
-        /usr/bin/make  -f CMakeFiles/cmTC_3629f.dir/build.make CMakeFiles/cmTC_3629f.dir/build
-        make[1]: Entering directory '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-J38zV0'
-        Building C object CMakeFiles/cmTC_3629f.dir/CMakeCCompilerABI.c.o
-        /usr/bin/cc   -v -o CMakeFiles/cmTC_3629f.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake/Modules/CMakeCCompilerABI.c
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_a8fb6/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_a8fb6.dir/build.make CMakeFiles/cmTC_a8fb6.dir/build
+        make[1]: Entering directory '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-0eoBmn'
+        Building C object CMakeFiles/cmTC_a8fb6.dir/CMakeCCompilerABI.c.o
+        /usr/bin/cc   -v -o CMakeFiles/cmTC_a8fb6.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake/Modules/CMakeCCompilerABI.c
         Using built-in specs.
         COLLECT_GCC=/usr/bin/cc
         Target: x86_64-pc-linux-gnu
@@ -4125,8 +4126,8 @@ events:
         Thread model: posix
         Supported LTO compression algorithms: zlib zstd
         gcc version 15.2.1 20251112 (GCC) 
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_3629f.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_3629f.dir/'
-         /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/cc1 -quiet -v /usr/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_3629f.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -o /tmp/cco3khiR.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_a8fb6.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_a8fb6.dir/'
+         /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/cc1 -quiet -v /usr/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_a8fb6.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -o /tmp/ccm4oMKx.s
         GNU C23 (GCC) version 15.2.1 20251112 (x86_64-pc-linux-gnu)
         	compiled by GNU C version 15.2.1 20251112, GMP version 6.3.0, MPFR version 4.2.2, MPC version 1.3.1, isl version isl-0.27-GMP
         
@@ -4140,14 +4141,14 @@ events:
          /usr/include
         End of search list.
         Compiler executable checksum: e7e806b0d021308da32115a1780fef1e
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_3629f.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_3629f.dir/'
-         as -v --64 -o CMakeFiles/cmTC_3629f.dir/CMakeCCompilerABI.c.o /tmp/cco3khiR.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_a8fb6.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_a8fb6.dir/'
+         as -v --64 -o CMakeFiles/cmTC_a8fb6.dir/CMakeCCompilerABI.c.o /tmp/ccm4oMKx.s
         GNU assembler version 2.45.1 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.45.1
         COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_3629f.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_3629f.dir/CMakeCCompilerABI.c.'
-        Linking C executable cmTC_3629f
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_3629f.dir/link.txt --verbose=1
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_a8fb6.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_a8fb6.dir/CMakeCCompilerABI.c.'
+        Linking C executable cmTC_a8fb6
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a8fb6.dir/link.txt --verbose=1
         Using built-in specs.
         COLLECT_GCC=/usr/bin/cc
         COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper
@@ -4158,14 +4159,14 @@ events:
         gcc version 15.2.1 20251112 (GCC) 
         COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_3629f' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_3629f.'
-         /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cc7Gd1iS.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_3629f /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_3629f.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_a8fb6' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_a8fb6.'
+         /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cc7IaDCl.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_a8fb6 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib --as-needed -v CMakeFiles/cmTC_a8fb6.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o
         collect2 version 15.2.1 20251112
-        /usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cc7Gd1iS.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_3629f /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_3629f.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o
+        /usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cc7IaDCl.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_a8fb6 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib --as-needed -v CMakeFiles/cmTC_a8fb6.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o
         GNU ld (GNU Binutils) 2.45.1
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_3629f' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_3629f.'
-        /usr/bin/cc  -v -Wl,-v CMakeFiles/cmTC_3629f.dir/CMakeCCompilerABI.c.o -o cmTC_3629f
-        make[1]: Leaving directory '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-J38zV0'
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_a8fb6' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_a8fb6.'
+        /usr/bin/cc -Wl,--as-needed -v -Wl,-v CMakeFiles/cmTC_a8fb6.dir/CMakeCCompilerABI.c.o -o cmTC_a8fb6
+        make[1]: Leaving directory '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-0eoBmn'
         
       exitCode: 0
   -
@@ -4200,13 +4201,13 @@ events:
       Parsed C implicit link information:
         link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
         linker tool regex: [^[ 	]*(->|")?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)))("|,| |$)]
-        ignore line: [Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-J38zV0']
+        ignore line: [Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-0eoBmn']
         ignore line: []
-        ignore line: [Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_3629f/fast]
-        ignore line: [/usr/bin/make  -f CMakeFiles/cmTC_3629f.dir/build.make CMakeFiles/cmTC_3629f.dir/build]
-        ignore line: [make[1]: Entering directory '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-J38zV0']
-        ignore line: [Building C object CMakeFiles/cmTC_3629f.dir/CMakeCCompilerABI.c.o]
-        ignore line: [/usr/bin/cc   -v -o CMakeFiles/cmTC_3629f.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake/Modules/CMakeCCompilerABI.c]
+        ignore line: [Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_a8fb6/fast]
+        ignore line: [/usr/bin/make  -f CMakeFiles/cmTC_a8fb6.dir/build.make CMakeFiles/cmTC_a8fb6.dir/build]
+        ignore line: [make[1]: Entering directory '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-0eoBmn']
+        ignore line: [Building C object CMakeFiles/cmTC_a8fb6.dir/CMakeCCompilerABI.c.o]
+        ignore line: [/usr/bin/cc   -v -o CMakeFiles/cmTC_a8fb6.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake/Modules/CMakeCCompilerABI.c]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/cc]
         ignore line: [Target: x86_64-pc-linux-gnu]
@@ -4214,8 +4215,8 @@ events:
         ignore line: [Thread model: posix]
         ignore line: [Supported LTO compression algorithms: zlib zstd]
         ignore line: [gcc version 15.2.1 20251112 (GCC) ]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_3629f.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_3629f.dir/']
-        ignore line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/cc1 -quiet -v /usr/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_3629f.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -o /tmp/cco3khiR.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_a8fb6.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_a8fb6.dir/']
+        ignore line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/cc1 -quiet -v /usr/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_a8fb6.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -o /tmp/ccm4oMKx.s]
         ignore line: [GNU C23 (GCC) version 15.2.1 20251112 (x86_64-pc-linux-gnu)]
         ignore line: [	compiled by GNU C version 15.2.1 20251112  GMP version 6.3.0  MPFR version 4.2.2  MPC version 1.3.1  isl version isl-0.27-GMP]
         ignore line: []
@@ -4229,14 +4230,14 @@ events:
         ignore line: [ /usr/include]
         ignore line: [End of search list.]
         ignore line: [Compiler executable checksum: e7e806b0d021308da32115a1780fef1e]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_3629f.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_3629f.dir/']
-        ignore line: [ as -v --64 -o CMakeFiles/cmTC_3629f.dir/CMakeCCompilerABI.c.o /tmp/cco3khiR.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_a8fb6.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_a8fb6.dir/']
+        ignore line: [ as -v --64 -o CMakeFiles/cmTC_a8fb6.dir/CMakeCCompilerABI.c.o /tmp/ccm4oMKx.s]
         ignore line: [GNU assembler version 2.45.1 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.45.1]
         ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_3629f.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_3629f.dir/CMakeCCompilerABI.c.']
-        ignore line: [Linking C executable cmTC_3629f]
-        ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_3629f.dir/link.txt --verbose=1]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_a8fb6.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_a8fb6.dir/CMakeCCompilerABI.c.']
+        ignore line: [Linking C executable cmTC_a8fb6]
+        ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a8fb6.dir/link.txt --verbose=1]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/cc]
         ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper]
@@ -4247,13 +4248,13 @@ events:
         ignore line: [gcc version 15.2.1 20251112 (GCC) ]
         ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_3629f' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_3629f.']
-        link line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cc7Gd1iS.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_3629f /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_3629f.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_a8fb6' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_a8fb6.']
+        link line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cc7IaDCl.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_a8fb6 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib --as-needed -v CMakeFiles/cmTC_a8fb6.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2] ==> ignore
           arg [-plugin] ==> ignore
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so] ==> ignore
           arg [-plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper] ==> ignore
-          arg [-plugin-opt=-fresolution=/tmp/cc7Gd1iS.res] ==> ignore
+          arg [-plugin-opt=-fresolution=/tmp/cc7IaDCl.res] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
           arg [-plugin-opt=-pass-through=-lc] ==> ignore
@@ -4268,7 +4269,7 @@ events:
           arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
           arg [-pie] ==> ignore
           arg [-o] ==> ignore
-          arg [cmTC_3629f] ==> ignore
+          arg [cmTC_a8fb6] ==> ignore
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o]
@@ -4279,8 +4280,9 @@ events:
           arg [-L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../..] ==> dir [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../..]
           arg [-L/lib] ==> dir [/lib]
           arg [-L/usr/lib] ==> dir [/usr/lib]
+          arg [--as-needed] ==> ignore
           arg [-v] ==> ignore
-          arg [CMakeFiles/cmTC_3629f.dir/CMakeCCompilerABI.c.o] ==> ignore
+          arg [CMakeFiles/cmTC_a8fb6.dir/CMakeCCompilerABI.c.o] ==> ignore
           arg [-lgcc] ==> lib [gcc]
           arg [--push-state] ==> ignore
           arg [--as-needed] ==> ignore
@@ -4295,7 +4297,7 @@ events:
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
         ignore line: [collect2 version 15.2.1 20251112]
-        ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cc7Gd1iS.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_3629f /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_3629f.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
+        ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cc7IaDCl.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_a8fb6 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib --as-needed -v CMakeFiles/cmTC_a8fb6.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
         linker tool for 'C': /usr/bin/ld
         collapse obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o] ==> [/usr/lib/Scrt1.o]
         collapse obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o] ==> [/usr/lib/crti.o]
@@ -4336,27 +4338,27 @@ events:
     checks:
       - "Performing Test CMAKE_HAVE_LIBC_PTHREAD"
     directories:
-      source: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-DAVXE5"
-      binary: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-DAVXE5"
+      source: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-VLEJSz"
+      binary: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-VLEJSz"
     cmakeVariables:
-      CMAKE_CXX_FLAGS: " -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2"
+      CMAKE_CXX_FLAGS: " -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2"
       CMAKE_CXX_FLAGS_DEBUG: "-O0 -g"
-      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_EXE_LINKER_FLAGS: "-Wl,--as-needed"
     buildResult:
       variable: "CMAKE_HAVE_LIBC_PTHREAD"
       cached: true
       stdout: |
-        Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-DAVXE5'
+        Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-VLEJSz'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_19030/fast
-        /usr/bin/make  -f CMakeFiles/cmTC_19030.dir/build.make CMakeFiles/cmTC_19030.dir/build
-        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-DAVXE5“ wird betreten
-        Building CXX object CMakeFiles/cmTC_19030.dir/src.cxx.o
-        /usr/bin/c++ -DCMAKE_HAVE_LIBC_PTHREAD  -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2  -std=gnu++17 -o CMakeFiles/cmTC_19030.dir/src.cxx.o -c /home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-DAVXE5/src.cxx
-        Linking CXX executable cmTC_19030
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_19030.dir/link.txt --verbose=1
-        /usr/bin/c++  -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2  CMakeFiles/cmTC_19030.dir/src.cxx.o -o cmTC_19030
-        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-DAVXE5“ wird verlassen
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_335c4/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_335c4.dir/build.make CMakeFiles/cmTC_335c4.dir/build
+        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-VLEJSz“ wird betreten
+        Building CXX object CMakeFiles/cmTC_335c4.dir/src.cxx.o
+        /usr/bin/c++ -DCMAKE_HAVE_LIBC_PTHREAD  -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2  -std=gnu++17 -o CMakeFiles/cmTC_335c4.dir/src.cxx.o -c /home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-VLEJSz/src.cxx
+        Linking CXX executable cmTC_335c4
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_335c4.dir/link.txt --verbose=1
+        /usr/bin/c++  -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2  -Wl,--as-needed  CMakeFiles/cmTC_335c4.dir/src.cxx.o -o cmTC_335c4
+        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-VLEJSz“ wird verlassen
         
       exitCode: 0
   -
@@ -22244,27 +22246,27 @@ events:
     checks:
       - "Looking for XOpenDisplay in /usr/lib/libX11.so;/usr/lib/libXext.so"
     directories:
-      source: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-iuV4am"
-      binary: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-iuV4am"
+      source: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-hFdZTi"
+      binary: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-hFdZTi"
     cmakeVariables:
-      CMAKE_CXX_FLAGS: " -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2"
+      CMAKE_CXX_FLAGS: " -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2"
       CMAKE_CXX_FLAGS_DEBUG: "-O0 -g"
-      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_EXE_LINKER_FLAGS: "-Wl,--as-needed"
     buildResult:
       variable: "X11_LIB_X11_SOLO"
       cached: true
       stdout: |
-        Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-iuV4am'
+        Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-hFdZTi'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_fef41/fast
-        /usr/bin/make  -f CMakeFiles/cmTC_fef41.dir/build.make CMakeFiles/cmTC_fef41.dir/build
-        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-iuV4am“ wird betreten
-        Building CXX object CMakeFiles/cmTC_fef41.dir/CheckFunctionExists.cxx.o
-        /usr/bin/c++   -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -DCHECK_FUNCTION_EXISTS=XOpenDisplay -std=gnu++17 -o CMakeFiles/cmTC_fef41.dir/CheckFunctionExists.cxx.o -c /home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-iuV4am/CheckFunctionExists.cxx
-        Linking CXX executable cmTC_fef41
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_fef41.dir/link.txt --verbose=1
-        /usr/bin/c++  -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -DCHECK_FUNCTION_EXISTS=XOpenDisplay CMakeFiles/cmTC_fef41.dir/CheckFunctionExists.cxx.o -o cmTC_fef41  /usr/lib/libX11.so /usr/lib/libXext.so
-        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-iuV4am“ wird verlassen
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_cc9c3/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_cc9c3.dir/build.make CMakeFiles/cmTC_cc9c3.dir/build
+        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-hFdZTi“ wird betreten
+        Building CXX object CMakeFiles/cmTC_cc9c3.dir/CheckFunctionExists.cxx.o
+        /usr/bin/c++   -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -DCHECK_FUNCTION_EXISTS=XOpenDisplay -std=gnu++17 -o CMakeFiles/cmTC_cc9c3.dir/CheckFunctionExists.cxx.o -c /home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-hFdZTi/CheckFunctionExists.cxx
+        Linking CXX executable cmTC_cc9c3
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_cc9c3.dir/link.txt --verbose=1
+        /usr/bin/c++  -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -DCHECK_FUNCTION_EXISTS=XOpenDisplay -Wl,--as-needed  CMakeFiles/cmTC_cc9c3.dir/CheckFunctionExists.cxx.o -o cmTC_cc9c3  /usr/lib/libX11.so /usr/lib/libXext.so
+        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-hFdZTi“ wird verlassen
         
       exitCode: 0
   -
@@ -22276,27 +22278,27 @@ events:
     checks:
       - "Looking for gethostbyname"
     directories:
-      source: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-mjkcZJ"
-      binary: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-mjkcZJ"
+      source: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-of6iZz"
+      binary: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-of6iZz"
     cmakeVariables:
-      CMAKE_CXX_FLAGS: " -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2"
+      CMAKE_CXX_FLAGS: " -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2"
       CMAKE_CXX_FLAGS_DEBUG: "-O0 -g"
-      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_EXE_LINKER_FLAGS: "-Wl,--as-needed"
     buildResult:
       variable: "CMAKE_HAVE_GETHOSTBYNAME"
       cached: true
       stdout: |
-        Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-mjkcZJ'
+        Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-of6iZz'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_bb222/fast
-        /usr/bin/make  -f CMakeFiles/cmTC_bb222.dir/build.make CMakeFiles/cmTC_bb222.dir/build
-        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-mjkcZJ“ wird betreten
-        Building CXX object CMakeFiles/cmTC_bb222.dir/CheckFunctionExists.cxx.o
-        /usr/bin/c++   -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -DCHECK_FUNCTION_EXISTS=gethostbyname -std=gnu++17 -o CMakeFiles/cmTC_bb222.dir/CheckFunctionExists.cxx.o -c /home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-mjkcZJ/CheckFunctionExists.cxx
-        Linking CXX executable cmTC_bb222
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_bb222.dir/link.txt --verbose=1
-        /usr/bin/c++  -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -DCHECK_FUNCTION_EXISTS=gethostbyname CMakeFiles/cmTC_bb222.dir/CheckFunctionExists.cxx.o -o cmTC_bb222
-        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-mjkcZJ“ wird verlassen
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_1c884/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_1c884.dir/build.make CMakeFiles/cmTC_1c884.dir/build
+        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-of6iZz“ wird betreten
+        Building CXX object CMakeFiles/cmTC_1c884.dir/CheckFunctionExists.cxx.o
+        /usr/bin/c++   -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -DCHECK_FUNCTION_EXISTS=gethostbyname -std=gnu++17 -o CMakeFiles/cmTC_1c884.dir/CheckFunctionExists.cxx.o -c /home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-of6iZz/CheckFunctionExists.cxx
+        Linking CXX executable cmTC_1c884
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1c884.dir/link.txt --verbose=1
+        /usr/bin/c++  -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -DCHECK_FUNCTION_EXISTS=gethostbyname -Wl,--as-needed  CMakeFiles/cmTC_1c884.dir/CheckFunctionExists.cxx.o -o cmTC_1c884
+        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-of6iZz“ wird verlassen
         
       exitCode: 0
   -
@@ -22308,27 +22310,27 @@ events:
     checks:
       - "Looking for connect"
     directories:
-      source: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-Sc7kmO"
-      binary: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-Sc7kmO"
+      source: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-TKr98H"
+      binary: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-TKr98H"
     cmakeVariables:
-      CMAKE_CXX_FLAGS: " -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2"
+      CMAKE_CXX_FLAGS: " -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2"
       CMAKE_CXX_FLAGS_DEBUG: "-O0 -g"
-      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_EXE_LINKER_FLAGS: "-Wl,--as-needed"
     buildResult:
       variable: "CMAKE_HAVE_CONNECT"
       cached: true
       stdout: |
-        Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-Sc7kmO'
+        Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-TKr98H'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_28750/fast
-        /usr/bin/make  -f CMakeFiles/cmTC_28750.dir/build.make CMakeFiles/cmTC_28750.dir/build
-        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-Sc7kmO“ wird betreten
-        Building CXX object CMakeFiles/cmTC_28750.dir/CheckFunctionExists.cxx.o
-        /usr/bin/c++   -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -DCHECK_FUNCTION_EXISTS=connect -std=gnu++17 -o CMakeFiles/cmTC_28750.dir/CheckFunctionExists.cxx.o -c /home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-Sc7kmO/CheckFunctionExists.cxx
-        Linking CXX executable cmTC_28750
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_28750.dir/link.txt --verbose=1
-        /usr/bin/c++  -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -DCHECK_FUNCTION_EXISTS=connect CMakeFiles/cmTC_28750.dir/CheckFunctionExists.cxx.o -o cmTC_28750
-        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-Sc7kmO“ wird verlassen
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_9f3e5/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_9f3e5.dir/build.make CMakeFiles/cmTC_9f3e5.dir/build
+        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-TKr98H“ wird betreten
+        Building CXX object CMakeFiles/cmTC_9f3e5.dir/CheckFunctionExists.cxx.o
+        /usr/bin/c++   -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -DCHECK_FUNCTION_EXISTS=connect -std=gnu++17 -o CMakeFiles/cmTC_9f3e5.dir/CheckFunctionExists.cxx.o -c /home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-TKr98H/CheckFunctionExists.cxx
+        Linking CXX executable cmTC_9f3e5
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_9f3e5.dir/link.txt --verbose=1
+        /usr/bin/c++  -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -DCHECK_FUNCTION_EXISTS=connect -Wl,--as-needed  CMakeFiles/cmTC_9f3e5.dir/CheckFunctionExists.cxx.o -o cmTC_9f3e5
+        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-TKr98H“ wird verlassen
         
       exitCode: 0
   -
@@ -22340,27 +22342,27 @@ events:
     checks:
       - "Looking for remove"
     directories:
-      source: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-ZUVgsB"
-      binary: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-ZUVgsB"
+      source: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-Wiy4P6"
+      binary: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-Wiy4P6"
     cmakeVariables:
-      CMAKE_CXX_FLAGS: " -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2"
+      CMAKE_CXX_FLAGS: " -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2"
       CMAKE_CXX_FLAGS_DEBUG: "-O0 -g"
-      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_EXE_LINKER_FLAGS: "-Wl,--as-needed"
     buildResult:
       variable: "CMAKE_HAVE_REMOVE"
       cached: true
       stdout: |
-        Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-ZUVgsB'
+        Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-Wiy4P6'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_dca90/fast
-        /usr/bin/make  -f CMakeFiles/cmTC_dca90.dir/build.make CMakeFiles/cmTC_dca90.dir/build
-        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-ZUVgsB“ wird betreten
-        Building CXX object CMakeFiles/cmTC_dca90.dir/CheckFunctionExists.cxx.o
-        /usr/bin/c++   -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -DCHECK_FUNCTION_EXISTS=remove -std=gnu++17 -o CMakeFiles/cmTC_dca90.dir/CheckFunctionExists.cxx.o -c /home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-ZUVgsB/CheckFunctionExists.cxx
-        Linking CXX executable cmTC_dca90
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_dca90.dir/link.txt --verbose=1
-        /usr/bin/c++  -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -DCHECK_FUNCTION_EXISTS=remove CMakeFiles/cmTC_dca90.dir/CheckFunctionExists.cxx.o -o cmTC_dca90
-        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-ZUVgsB“ wird verlassen
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_58c4c/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_58c4c.dir/build.make CMakeFiles/cmTC_58c4c.dir/build
+        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-Wiy4P6“ wird betreten
+        Building CXX object CMakeFiles/cmTC_58c4c.dir/CheckFunctionExists.cxx.o
+        /usr/bin/c++   -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -DCHECK_FUNCTION_EXISTS=remove -std=gnu++17 -o CMakeFiles/cmTC_58c4c.dir/CheckFunctionExists.cxx.o -c /home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-Wiy4P6/CheckFunctionExists.cxx
+        Linking CXX executable cmTC_58c4c
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_58c4c.dir/link.txt --verbose=1
+        /usr/bin/c++  -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -DCHECK_FUNCTION_EXISTS=remove -Wl,--as-needed  CMakeFiles/cmTC_58c4c.dir/CheckFunctionExists.cxx.o -o cmTC_58c4c
+        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-Wiy4P6“ wird verlassen
         
       exitCode: 0
   -
@@ -22372,27 +22374,27 @@ events:
     checks:
       - "Looking for shmat"
     directories:
-      source: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-Xqyhvt"
-      binary: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-Xqyhvt"
+      source: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-EhqCVq"
+      binary: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-EhqCVq"
     cmakeVariables:
-      CMAKE_CXX_FLAGS: " -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2"
+      CMAKE_CXX_FLAGS: " -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2"
       CMAKE_CXX_FLAGS_DEBUG: "-O0 -g"
-      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_EXE_LINKER_FLAGS: "-Wl,--as-needed"
     buildResult:
       variable: "CMAKE_HAVE_SHMAT"
       cached: true
       stdout: |
-        Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-Xqyhvt'
+        Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-EhqCVq'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_4ac5b/fast
-        /usr/bin/make  -f CMakeFiles/cmTC_4ac5b.dir/build.make CMakeFiles/cmTC_4ac5b.dir/build
-        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-Xqyhvt“ wird betreten
-        Building CXX object CMakeFiles/cmTC_4ac5b.dir/CheckFunctionExists.cxx.o
-        /usr/bin/c++   -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -DCHECK_FUNCTION_EXISTS=shmat -std=gnu++17 -o CMakeFiles/cmTC_4ac5b.dir/CheckFunctionExists.cxx.o -c /home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-Xqyhvt/CheckFunctionExists.cxx
-        Linking CXX executable cmTC_4ac5b
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4ac5b.dir/link.txt --verbose=1
-        /usr/bin/c++  -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -DCHECK_FUNCTION_EXISTS=shmat CMakeFiles/cmTC_4ac5b.dir/CheckFunctionExists.cxx.o -o cmTC_4ac5b
-        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-Xqyhvt“ wird verlassen
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_39892/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_39892.dir/build.make CMakeFiles/cmTC_39892.dir/build
+        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-EhqCVq“ wird betreten
+        Building CXX object CMakeFiles/cmTC_39892.dir/CheckFunctionExists.cxx.o
+        /usr/bin/c++   -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -DCHECK_FUNCTION_EXISTS=shmat -std=gnu++17 -o CMakeFiles/cmTC_39892.dir/CheckFunctionExists.cxx.o -c /home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-EhqCVq/CheckFunctionExists.cxx
+        Linking CXX executable cmTC_39892
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_39892.dir/link.txt --verbose=1
+        /usr/bin/c++  -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -DCHECK_FUNCTION_EXISTS=shmat -Wl,--as-needed  CMakeFiles/cmTC_39892.dir/CheckFunctionExists.cxx.o -o cmTC_39892
+        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-EhqCVq“ wird verlassen
         
       exitCode: 0
   -
@@ -22404,27 +22406,27 @@ events:
     checks:
       - "Looking for IceConnectionNumber in ICE"
     directories:
-      source: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-1N61sC"
-      binary: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-1N61sC"
+      source: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-pnMxRh"
+      binary: "/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-pnMxRh"
     cmakeVariables:
-      CMAKE_CXX_FLAGS: " -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2"
+      CMAKE_CXX_FLAGS: " -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2"
       CMAKE_CXX_FLAGS_DEBUG: "-O0 -g"
-      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_EXE_LINKER_FLAGS: "-Wl,--as-needed"
     buildResult:
       variable: "CMAKE_LIB_ICE_HAS_ICECONNECTIONNUMBER"
       cached: true
       stdout: |
-        Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-1N61sC'
+        Change Dir: '/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-pnMxRh'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_87a9c/fast
-        /usr/bin/make  -f CMakeFiles/cmTC_87a9c.dir/build.make CMakeFiles/cmTC_87a9c.dir/build
-        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-1N61sC“ wird betreten
-        Building CXX object CMakeFiles/cmTC_87a9c.dir/CheckFunctionExists.cxx.o
-        /usr/bin/c++   -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -DCHECK_FUNCTION_EXISTS=IceConnectionNumber -std=gnu++17 -o CMakeFiles/cmTC_87a9c.dir/CheckFunctionExists.cxx.o -c /home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-1N61sC/CheckFunctionExists.cxx
-        Linking CXX executable cmTC_87a9c
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_87a9c.dir/link.txt --verbose=1
-        /usr/bin/c++  -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -DCHECK_FUNCTION_EXISTS=IceConnectionNumber CMakeFiles/cmTC_87a9c.dir/CheckFunctionExists.cxx.o -o cmTC_87a9c  -lICE
-        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-1N61sC“ wird verlassen
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_8a2f0/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_8a2f0.dir/build.make CMakeFiles/cmTC_8a2f0.dir/build
+        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-pnMxRh“ wird betreten
+        Building CXX object CMakeFiles/cmTC_8a2f0.dir/CheckFunctionExists.cxx.o
+        /usr/bin/c++   -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -DCHECK_FUNCTION_EXISTS=IceConnectionNumber -std=gnu++17 -o CMakeFiles/cmTC_8a2f0.dir/CheckFunctionExists.cxx.o -c /home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-pnMxRh/CheckFunctionExists.cxx
+        Linking CXX executable cmTC_8a2f0
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8a2f0.dir/link.txt --verbose=1
+        /usr/bin/c++  -Wno-deprecated-declarations -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -mavx2 -DCHECK_FUNCTION_EXISTS=IceConnectionNumber -Wl,--as-needed  CMakeFiles/cmTC_8a2f0.dir/CheckFunctionExists.cxx.o -o cmTC_8a2f0  -lICE
+        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/CMakeScratch/TryCompile-pnMxRh“ wird verlassen
         
       exitCode: 0
   -
@@ -22483,68 +22485,6 @@ events:
         - "/opt"
       CMAKE_SYSTEM_LIBRARY_PATH:
         - "/usr/lib/X11"
-...
-
----
-events:
-  -
-    kind: "try_compile-v1"
-    backtrace:
-      - "/usr/share/cmake/Modules/CheckIPOSupported.cmake:197 (try_compile)"
-      - "/usr/share/cmake/Modules/CheckIPOSupported.cmake:320 (_ipo_run_language_check)"
-      - "CMakeLists.txt:19 (check_ipo_supported)"
-    directories:
-      source: "/home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/src"
-      binary: "/home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin"
-    buildResult:
-      variable: "_IPO_LANGUAGE_CHECK_RESULT"
-      cached: true
-      stdout: |
-        Change Dir: '/home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin'
-        
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile
-        /usr/bin/cmake -S/home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/src -B/home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin --check-build-system CMakeFiles/Makefile.cmake 0
-        /usr/bin/cmake -E cmake_progress_start /home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles /home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin//CMakeFiles/progress.marks
-        /usr/bin/make  -f CMakeFiles/Makefile2 all
-        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin“ wird betreten
-        /usr/bin/make  -f CMakeFiles/foo.dir/build.make CMakeFiles/foo.dir/depend
-        make[2]: Verzeichnis „/home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin“ wird betreten
-        cd /home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin && /usr/bin/cmake -E cmake_depends "Unix Makefiles" /home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/src /home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/src /home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin /home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin /home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/foo.dir/DependInfo.cmake
-        Dependee "/home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/foo.dir/DependInfo.cmake" is newer than depender "/home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/foo.dir/depend.internal".
-        Dependee "/home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/CMakeDirectoryInformation.cmake" is newer than depender "/home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/foo.dir/depend.internal".
-        Scanning dependencies of target foo
-        make[2]: Verzeichnis „/home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin“ wird verlassen
-        /usr/bin/make  -f CMakeFiles/foo.dir/build.make CMakeFiles/foo.dir/build
-        make[2]: Verzeichnis „/home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin“ wird betreten
-        [ 25%] Building CXX object CMakeFiles/foo.dir/foo.cpp.o
-        /usr/bin/c++   -flto=auto -fno-fat-lto-objects -o CMakeFiles/foo.dir/foo.cpp.o -c /home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/src/foo.cpp
-        [ 50%] Linking CXX static library libfoo.a
-        /usr/bin/cmake -P CMakeFiles/foo.dir/cmake_clean_target.cmake
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/foo.dir/link.txt --verbose=1
-        "/usr/bin/gcc-ar" qc libfoo.a CMakeFiles/foo.dir/foo.cpp.o
-        "/usr/bin/gcc-ranlib" libfoo.a
-        make[2]: Verzeichnis „/home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin“ wird verlassen
-        [ 50%] Built target foo
-        /usr/bin/make  -f CMakeFiles/boo.dir/build.make CMakeFiles/boo.dir/depend
-        make[2]: Verzeichnis „/home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin“ wird betreten
-        cd /home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin && /usr/bin/cmake -E cmake_depends "Unix Makefiles" /home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/src /home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/src /home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin /home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin /home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/boo.dir/DependInfo.cmake
-        Dependee "/home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/boo.dir/DependInfo.cmake" is newer than depender "/home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/boo.dir/depend.internal".
-        Dependee "/home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/CMakeDirectoryInformation.cmake" is newer than depender "/home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/boo.dir/depend.internal".
-        Scanning dependencies of target boo
-        make[2]: Verzeichnis „/home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin“ wird verlassen
-        /usr/bin/make  -f CMakeFiles/boo.dir/build.make CMakeFiles/boo.dir/build
-        make[2]: Verzeichnis „/home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin“ wird betreten
-        [ 75%] Building CXX object CMakeFiles/boo.dir/main.cpp.o
-        /usr/bin/c++   -flto=auto -fno-fat-lto-objects -o CMakeFiles/boo.dir/main.cpp.o -c /home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/src/main.cpp
-        [100%] Linking CXX executable boo
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/boo.dir/link.txt --verbose=1
-        /usr/bin/c++ -flto=auto -fno-fat-lto-objects CMakeFiles/boo.dir/main.cpp.o -o boo  libfoo.a
-        make[2]: Verzeichnis „/home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin“ wird verlassen
-        [100%] Built target boo
-        make[1]: Verzeichnis „/home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin“ wird verlassen
-        /usr/bin/cmake -E cmake_progress_start /home/nex/c++/build/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles 0
-        
-      exitCode: 0
 ...
 
 ---
