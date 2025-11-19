@@ -1,0 +1,176 @@
+[
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/FileDuper_autogen/mocs_compilation.cpp.o -c /home/nex/c++/FileDuper_autogen/mocs_compilation.cpp",
+  "file": "/home/nex/c++/FileDuper_autogen/mocs_compilation.cpp",
+  "output": "CMakeFiles/FileDuper.dir/FileDuper_autogen/mocs_compilation.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/main.cpp.o -c /home/nex/c++/src/main.cpp",
+  "file": "/home/nex/c++/src/main.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/main.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/mainwindow.cpp.o -c /home/nex/c++/src/mainwindow.cpp",
+  "file": "/home/nex/c++/src/mainwindow.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/mainwindow.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/scanner.cpp.o -c /home/nex/c++/src/scanner.cpp",
+  "file": "/home/nex/c++/src/scanner.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/scanner.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/hardwarebenchmark.cpp.o -c /home/nex/c++/src/hardwarebenchmark.cpp",
+  "file": "/home/nex/c++/src/hardwarebenchmark.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/hardwarebenchmark.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/hashengine.cpp.o -c /home/nex/c++/src/hashengine.cpp",
+  "file": "/home/nex/c++/src/hashengine.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/hashengine.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/networkscanner.cpp.o -c /home/nex/c++/src/networkscanner.cpp",
+  "file": "/home/nex/c++/src/networkscanner.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/networkscanner.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/presetmanager.cpp.o -c /home/nex/c++/src/presetmanager.cpp",
+  "file": "/home/nex/c++/src/presetmanager.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/presetmanager.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/activityindicator.cpp.o -c /home/nex/c++/src/activityindicator.cpp",
+  "file": "/home/nex/c++/src/activityindicator.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/activityindicator.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/duplicateresultswidget.cpp.o -c /home/nex/c++/src/duplicateresultswidget.cpp",
+  "file": "/home/nex/c++/src/duplicateresultswidget.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/duplicateresultswidget.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/logindialog.cpp.o -c /home/nex/c++/src/logindialog.cpp",
+  "file": "/home/nex/c++/src/logindialog.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/logindialog.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/directoryselectiondialog.cpp.o -c /home/nex/c++/src/directoryselectiondialog.cpp",
+  "file": "/home/nex/c++/src/directoryselectiondialog.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/directoryselectiondialog.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/directoryselectordialog.cpp.o -c /home/nex/c++/src/directoryselectordialog.cpp",
+  "file": "/home/nex/c++/src/directoryselectordialog.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/directoryselectordialog.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/hierarchicaldialog.cpp.o -c /home/nex/c++/src/hierarchicaldialog.cpp",
+  "file": "/home/nex/c++/src/hierarchicaldialog.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/hierarchicaldialog.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/simpletreedialog.cpp.o -c /home/nex/c++/src/simpletreedialog.cpp",
+  "file": "/home/nex/c++/src/simpletreedialog.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/simpletreedialog.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/networkdirectorydialog.cpp.o -c /home/nex/c++/src/networkdirectorydialog.cpp",
+  "file": "/home/nex/c++/src/networkdirectorydialog.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/networkdirectorydialog.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/ftpdirectorydialog.cpp.o -c /home/nex/c++/src/ftpdirectorydialog.cpp",
+  "file": "/home/nex/c++/src/ftpdirectorydialog.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/ftpdirectorydialog.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/duplicatedeletedialog.cpp.o -c /home/nex/c++/src/duplicatedeletedialog.cpp",
+  "file": "/home/nex/c++/src/duplicatedeletedialog.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/duplicatedeletedialog.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/networkrangewidget.cpp.o -c /home/nex/c++/src/networkrangewidget.cpp",
+  "file": "/home/nex/c++/src/networkrangewidget.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/networkrangewidget.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/livebenchmarkmonitor.cpp.o -c /home/nex/c++/src/livebenchmarkmonitor.cpp",
+  "file": "/home/nex/c++/src/livebenchmarkmonitor.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/livebenchmarkmonitor.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/settingsdialog.cpp.o -c /home/nex/c++/src/settingsdialog.cpp",
+  "file": "/home/nex/c++/src/settingsdialog.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/settingsdialog.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/hardwarestatuswidget.cpp.o -c /home/nex/c++/src/hardwarestatuswidget.cpp",
+  "file": "/home/nex/c++/src/hardwarestatuswidget.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/hardwarestatuswidget.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/themesystem.cpp.o -c /home/nex/c++/src/themesystem.cpp",
+  "file": "/home/nex/c++/src/themesystem.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/themesystem.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/thememanagerwidget.cpp.o -c /home/nex/c++/src/thememanagerwidget.cpp",
+  "file": "/home/nex/c++/src/thememanagerwidget.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/thememanagerwidget.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/preferences.cpp.o -c /home/nex/c++/src/preferences.cpp",
+  "file": "/home/nex/c++/src/preferences.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/preferences.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/ftpclient.cpp.o -c /home/nex/c++/src/ftpclient.cpp",
+  "file": "/home/nex/c++/src/ftpclient.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/ftpclient.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/curlmultimanager.cpp.o -c /home/nex/c++/src/curlmultimanager.cpp",
+  "file": "/home/nex/c++/src/curlmultimanager.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/curlmultimanager.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/curlmulti_benchmark.cpp.o -c /home/nex/c++/src/curlmulti_benchmark.cpp",
+  "file": "/home/nex/c++/src/curlmulti_benchmark.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/curlmulti_benchmark.cpp.o"
+},
+{
+  "directory": "/home/nex/c++",
+  "command": "/usr/bin/c++ -DQT_CONCURRENT_LIB -DQT_CORE5COMPAT_LIB -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DWITH_CURL -DWITH_LIBURING -DWITH_OPENCL -I/home/nex/c++/FileDuper_autogen/include -I/home/nex/c++/include -isystem /usr/include/qt6/QtCore5Compat -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtCore -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtConcurrent -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-error=deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1 -O3 -DNDEBUG -std=gnu++17 -mno-direct-extern-access -o CMakeFiles/FileDuper.dir/src/npumanager.cpp.o -c /home/nex/c++/src/npumanager.cpp",
+  "file": "/home/nex/c++/src/npumanager.cpp",
+  "output": "CMakeFiles/FileDuper.dir/src/npumanager.cpp.o"
+}
+]

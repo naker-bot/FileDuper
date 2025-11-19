@@ -1,0 +1,2 @@
+Fehler: Hauptklasse assembleDebug konnte nicht gefunden oder geladen werden
+Ursache: java.lang.ClassNotFoundException: assembleDebug

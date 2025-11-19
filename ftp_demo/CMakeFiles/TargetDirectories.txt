@@ -1,0 +1,5 @@
+/home/nex/c++/ftp_demo/CMakeFiles/FileDuper_Demo.dir
+/home/nex/c++/ftp_demo/CMakeFiles/edit_cache.dir
+/home/nex/c++/ftp_demo/CMakeFiles/rebuild_cache.dir
+/home/nex/c++/ftp_demo/CMakeFiles/FileDuper_Demo_autogen_timestamp_deps.dir
+/home/nex/c++/ftp_demo/CMakeFiles/FileDuper_Demo_autogen.dir

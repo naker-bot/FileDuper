@@ -1,0 +1,1215 @@
+🚀 FileDuper wird gestartet...
+📁 Konfiguration: /home/nex/.config
+🚀 FileDuper Multi-Protocol Scanner wird gestartet...
+[Setup] 🎨 Erstelle GUI-Layout...
+🚨 DIRECTORY TREE Context Menu aktiviert!
+✅ DIRECTORY TREE IMMER AUSWÄHLBAR - ExtendedSelection aktiviert!
+✅ NetworkTree Context Menu aktiviert - RECHTE MAUSTASTE JETZT MÖGLICH!
+✅ NetworkTree IMMER AUSWÄHLBAR - ExtendedSelection aktiviert!
+Unknown property transform
+Unknown property transform
+Unknown property transform
+Unknown property transform
+Could not parse stylesheet of object MainWindow(0x7ffd25a51ff0)
+Unknown property transform
+Unknown property transform
+[Setup] ✅ GUI-Layout erstellt!
+[Setup] 🔧 Initialisiere Komponenten...
+[Scanner] 🔍 Scanner initialisiert
+[Scanner] 🚀 Initialisiere 8-Engine Parallel Processing System...
+[Scanner] 🧹 Bereinige Engine Pool...
+[Scanner] 🛑 Stoppe alle 0 Engines...
+[Scanner] ✅ Alle Engines gestoppt
+[Scanner] ✅ Engine Pool bereinigt
+[HashEngine] 🔧 Multi-Algorithm Hardware-Accelerated Engine wird initialisiert...
+[HashEngine] 📁 Cache-Verzeichnis erstellt: "/tmp/fileduper_cache"
+[HashEngine] 🧹 Cache-Bereinigung gestartet...
+[HashEngine] ℹ️ Cache-Bereinigung: Keine alten Dateien gefunden
+[HashEngine] 🔍 Intel-optimierte Hardware-Erkennung gestartet...
+[HashEngine] 🔍 Intel GPU Check - ExitCode: 0 Output: "00:02.0 VGA compatible controller: Intel Corporation Arrow Lake-S [Intel Graphics] (rev 06)\n"
+[HashEngine] 🔍 General GPU Check - ExitCode: 0 Output: "00:02.0 VGA compatible controller: Intel Corporation Arrow Lake-S [Intel Graphics] (rev 06)\n80:14.5 Non-VGA unclassified device: Intel Corporation Device 7f2f (rev 10)\n"
+[HashEngine] 🔍 NPU Check - ExitCode: 0 Output: "00:0b.0 Processing accelerators: Intel Corporation Arrow Lake NPU (rev 01)\n"
+🔍 Hardware-Capabilities erkannt:
+   🎯 Intel GPU (Arc/Xe/UHD): ✅ Verfügbar
+   🖥️  Generische GPU: ✅ Verfügbar
+   🤖 Intel NPU/VPU: ✅ Verfügbar
+[HashEngine] 🔧 Starte OpenCL-Initialisierung...
+[HashEngine] 🔧 ECHTE OpenCL-Initialisierung für GPU-Beschleunigung...
+[HashEngine] 🔍 OpenCL Platform gefunden: Intel(R) OpenCL Graphics
+[HashEngine] ✅ Intel OpenCL Platform ausgewählt: Intel(R) OpenCL Graphics
+[HashEngine] ✅ OpenCL Device ausgewählt: Intel(R) Graphics
+[HashEngine] ✅ MD5 Kernel Source hinzugefügt
+[HashEngine] ✅ MD5 Kernel erfolgreich erstellt
+[HashEngine] ✅ ECHTE OpenCL-Initialisierung erfolgreich abgeschlossen!
+[HashEngine] 🚀 GPU-beschleunigte Hash-Berechnung ist bereit
+🎯 FORCE: Intel GPU aktiviert für Arrow Lake Graphics
+[HashEngine] 🔍 Hardware-Status:
+   NPU verfügbar: true
+   Intel GPU verfügbar: true
+   Generic GPU verfügbar: true
+   Gewählte Einheit: INTEL_GPU_OPENCL (FORCE)
+🔧 Intel GPU Optimierungen aktiviert (WorkGroup: 256)
+[HashEngine] GPU-Hardware verfügbar
+[HashEngine] ✅ Hash-Storage-System initialisiert
+[HashEngine] 🤖 Auto-Select: Intel NPU aktiviert
+⚙️ Hash-Engine auf Intel NPU (Auto-gewählt) umgestellt
+� HashEngine ULTRA-HYPERSPEED initialisiert - ABSOLUTE Hardware-Performance
+[Scanner] ⚡ Engine 1/8 initialisiert
+[HashEngine] 🔧 Multi-Algorithm Hardware-Accelerated Engine wird initialisiert...
+[HashEngine] 📁 Cache-Verzeichnis erstellt: "/tmp/fileduper_cache"
+[HashEngine] 🧹 Cache-Bereinigung gestartet...
+[HashEngine] ℹ️ Cache-Bereinigung: Keine alten Dateien gefunden
+[HashEngine] 🔍 Intel-optimierte Hardware-Erkennung gestartet...
+[HashEngine] 🔍 Intel GPU Check - ExitCode: 0 Output: "00:02.0 VGA compatible controller: Intel Corporation Arrow Lake-S [Intel Graphics] (rev 06)\n"
+[HashEngine] 🔍 General GPU Check - ExitCode: 0 Output: "00:02.0 VGA compatible controller: Intel Corporation Arrow Lake-S [Intel Graphics] (rev 06)\n80:14.5 Non-VGA unclassified device: Intel Corporation Device 7f2f (rev 10)\n"
+[HashEngine] 🔍 NPU Check - ExitCode: 0 Output: "00:0b.0 Processing accelerators: Intel Corporation Arrow Lake NPU (rev 01)\n"
+🔍 Hardware-Capabilities erkannt:
+   🎯 Intel GPU (Arc/Xe/UHD): ✅ Verfügbar
+   🖥️  Generische GPU: ✅ Verfügbar
+   🤖 Intel NPU/VPU: ✅ Verfügbar
+[HashEngine] 🔧 Starte OpenCL-Initialisierung...
+[HashEngine] 🔧 ECHTE OpenCL-Initialisierung für GPU-Beschleunigung...
+[HashEngine] 🔍 OpenCL Platform gefunden: Intel(R) OpenCL Graphics
+[HashEngine] ✅ Intel OpenCL Platform ausgewählt: Intel(R) OpenCL Graphics
+[HashEngine] ✅ OpenCL Device ausgewählt: Intel(R) Graphics
+[HashEngine] ✅ MD5 Kernel Source hinzugefügt
+[HashEngine] ✅ MD5 Kernel erfolgreich erstellt
+[HashEngine] ✅ ECHTE OpenCL-Initialisierung erfolgreich abgeschlossen!
+[HashEngine] 🚀 GPU-beschleunigte Hash-Berechnung ist bereit
+🎯 FORCE: Intel GPU aktiviert für Arrow Lake Graphics
+[HashEngine] 🔍 Hardware-Status:
+   NPU verfügbar: true
+   Intel GPU verfügbar: true
+   Generic GPU verfügbar: true
+   Gewählte Einheit: INTEL_GPU_OPENCL (FORCE)
+🔧 Intel GPU Optimierungen aktiviert (WorkGroup: 256)
+[HashEngine] GPU-Hardware verfügbar
+[HashEngine] ✅ Hash-Storage-System initialisiert
+[HashEngine] 🤖 Auto-Select: Intel NPU aktiviert
+⚙️ Hash-Engine auf Intel NPU (Auto-gewählt) umgestellt
+� HashEngine ULTRA-HYPERSPEED initialisiert - ABSOLUTE Hardware-Performance
+[Scanner] ⚡ Engine 2/8 initialisiert
+[HashEngine] 🔧 Multi-Algorithm Hardware-Accelerated Engine wird initialisiert...
+[HashEngine] 📁 Cache-Verzeichnis erstellt: "/tmp/fileduper_cache"
+[HashEngine] 🧹 Cache-Bereinigung gestartet...
+[HashEngine] ℹ️ Cache-Bereinigung: Keine alten Dateien gefunden
+[HashEngine] 🔍 Intel-optimierte Hardware-Erkennung gestartet...
+[HashEngine] 🔍 Intel GPU Check - ExitCode: 0 Output: "00:02.0 VGA compatible controller: Intel Corporation Arrow Lake-S [Intel Graphics] (rev 06)\n"
+[HashEngine] 🔍 General GPU Check - ExitCode: 0 Output: "00:02.0 VGA compatible controller: Intel Corporation Arrow Lake-S [Intel Graphics] (rev 06)\n80:14.5 Non-VGA unclassified device: Intel Corporation Device 7f2f (rev 10)\n"
+[HashEngine] 🔍 NPU Check - ExitCode: 0 Output: "00:0b.0 Processing accelerators: Intel Corporation Arrow Lake NPU (rev 01)\n"
+🔍 Hardware-Capabilities erkannt:
+   🎯 Intel GPU (Arc/Xe/UHD): ✅ Verfügbar
+   🖥️  Generische GPU: ✅ Verfügbar
+   🤖 Intel NPU/VPU: ✅ Verfügbar
+[HashEngine] 🔧 Starte OpenCL-Initialisierung...
+[HashEngine] 🔧 ECHTE OpenCL-Initialisierung für GPU-Beschleunigung...
+[HashEngine] 🔍 OpenCL Platform gefunden: Intel(R) OpenCL Graphics
+[HashEngine] ✅ Intel OpenCL Platform ausgewählt: Intel(R) OpenCL Graphics
+[HashEngine] ✅ OpenCL Device ausgewählt: Intel(R) Graphics
+[HashEngine] ✅ MD5 Kernel Source hinzugefügt
+[HashEngine] ✅ MD5 Kernel erfolgreich erstellt
+[HashEngine] ✅ ECHTE OpenCL-Initialisierung erfolgreich abgeschlossen!
+[HashEngine] 🚀 GPU-beschleunigte Hash-Berechnung ist bereit
+🎯 FORCE: Intel GPU aktiviert für Arrow Lake Graphics
+[HashEngine] 🔍 Hardware-Status:
+   NPU verfügbar: true
+   Intel GPU verfügbar: true
+   Generic GPU verfügbar: true
+   Gewählte Einheit: INTEL_GPU_OPENCL (FORCE)
+🔧 Intel GPU Optimierungen aktiviert (WorkGroup: 256)
+[HashEngine] GPU-Hardware verfügbar
+[HashEngine] ✅ Hash-Storage-System initialisiert
+[HashEngine] 🤖 Auto-Select: Intel NPU aktiviert
+⚙️ Hash-Engine auf Intel NPU (Auto-gewählt) umgestellt
+� HashEngine ULTRA-HYPERSPEED initialisiert - ABSOLUTE Hardware-Performance
+[Scanner] ⚡ Engine 3/8 initialisiert
+[HashEngine] 🔧 Multi-Algorithm Hardware-Accelerated Engine wird initialisiert...
+[HashEngine] 📁 Cache-Verzeichnis erstellt: "/tmp/fileduper_cache"
+[HashEngine] 🧹 Cache-Bereinigung gestartet...
+[HashEngine] ℹ️ Cache-Bereinigung: Keine alten Dateien gefunden
+[HashEngine] 🔍 Intel-optimierte Hardware-Erkennung gestartet...
+[HashEngine] 🔍 Intel GPU Check - ExitCode: 0 Output: "00:02.0 VGA compatible controller: Intel Corporation Arrow Lake-S [Intel Graphics] (rev 06)\n"
+[HashEngine] 🔍 General GPU Check - ExitCode: 0 Output: "00:02.0 VGA compatible controller: Intel Corporation Arrow Lake-S [Intel Graphics] (rev 06)\n80:14.5 Non-VGA unclassified device: Intel Corporation Device 7f2f (rev 10)\n"
+[HashEngine] 🔍 NPU Check - ExitCode: 0 Output: "00:0b.0 Processing accelerators: Intel Corporation Arrow Lake NPU (rev 01)\n"
+🔍 Hardware-Capabilities erkannt:
+   🎯 Intel GPU (Arc/Xe/UHD): ✅ Verfügbar
+   🖥️  Generische GPU: ✅ Verfügbar
+   🤖 Intel NPU/VPU: ✅ Verfügbar
+[HashEngine] 🔧 Starte OpenCL-Initialisierung...
+[HashEngine] 🔧 ECHTE OpenCL-Initialisierung für GPU-Beschleunigung...
+[HashEngine] 🔍 OpenCL Platform gefunden: Intel(R) OpenCL Graphics
+[HashEngine] ✅ Intel OpenCL Platform ausgewählt: Intel(R) OpenCL Graphics
+[HashEngine] ✅ OpenCL Device ausgewählt: Intel(R) Graphics
+[HashEngine] ✅ MD5 Kernel Source hinzugefügt
+[HashEngine] ✅ MD5 Kernel erfolgreich erstellt
+[HashEngine] ✅ ECHTE OpenCL-Initialisierung erfolgreich abgeschlossen!
+[HashEngine] 🚀 GPU-beschleunigte Hash-Berechnung ist bereit
+🎯 FORCE: Intel GPU aktiviert für Arrow Lake Graphics
+[HashEngine] 🔍 Hardware-Status:
+   NPU verfügbar: true
+   Intel GPU verfügbar: true
+   Generic GPU verfügbar: true
+   Gewählte Einheit: INTEL_GPU_OPENCL (FORCE)
+🔧 Intel GPU Optimierungen aktiviert (WorkGroup: 256)
+[HashEngine] GPU-Hardware verfügbar
+[HashEngine] ✅ Hash-Storage-System initialisiert
+[HashEngine] 🤖 Auto-Select: Intel NPU aktiviert
+⚙️ Hash-Engine auf Intel NPU (Auto-gewählt) umgestellt
+� HashEngine ULTRA-HYPERSPEED initialisiert - ABSOLUTE Hardware-Performance
+[Scanner] ⚡ Engine 4/8 initialisiert
+[HashEngine] 🔧 Multi-Algorithm Hardware-Accelerated Engine wird initialisiert...
+[HashEngine] 📁 Cache-Verzeichnis erstellt: "/tmp/fileduper_cache"
+[HashEngine] 🧹 Cache-Bereinigung gestartet...
+[HashEngine] ℹ️ Cache-Bereinigung: Keine alten Dateien gefunden
+[HashEngine] 🔍 Intel-optimierte Hardware-Erkennung gestartet...
+[HashEngine] 🔍 Intel GPU Check - ExitCode: 0 Output: "00:02.0 VGA compatible controller: Intel Corporation Arrow Lake-S [Intel Graphics] (rev 06)\n"
+[HashEngine] 🔍 General GPU Check - ExitCode: 0 Output: "00:02.0 VGA compatible controller: Intel Corporation Arrow Lake-S [Intel Graphics] (rev 06)\n80:14.5 Non-VGA unclassified device: Intel Corporation Device 7f2f (rev 10)\n"
+[HashEngine] 🔍 NPU Check - ExitCode: 0 Output: "00:0b.0 Processing accelerators: Intel Corporation Arrow Lake NPU (rev 01)\n"
+🔍 Hardware-Capabilities erkannt:
+   🎯 Intel GPU (Arc/Xe/UHD): ✅ Verfügbar
+   🖥️  Generische GPU: ✅ Verfügbar
+   🤖 Intel NPU/VPU: ✅ Verfügbar
+[HashEngine] 🔧 Starte OpenCL-Initialisierung...
+[HashEngine] 🔧 ECHTE OpenCL-Initialisierung für GPU-Beschleunigung...
+[HashEngine] 🔍 OpenCL Platform gefunden: Intel(R) OpenCL Graphics
+[HashEngine] ✅ Intel OpenCL Platform ausgewählt: Intel(R) OpenCL Graphics
+[HashEngine] ✅ OpenCL Device ausgewählt: Intel(R) Graphics
+[HashEngine] ✅ MD5 Kernel Source hinzugefügt
+[HashEngine] ✅ MD5 Kernel erfolgreich erstellt
+[HashEngine] ✅ ECHTE OpenCL-Initialisierung erfolgreich abgeschlossen!
+[HashEngine] 🚀 GPU-beschleunigte Hash-Berechnung ist bereit
+🎯 FORCE: Intel GPU aktiviert für Arrow Lake Graphics
+[HashEngine] 🔍 Hardware-Status:
+   NPU verfügbar: true
+   Intel GPU verfügbar: true
+   Generic GPU verfügbar: true
+   Gewählte Einheit: INTEL_GPU_OPENCL (FORCE)
+🔧 Intel GPU Optimierungen aktiviert (WorkGroup: 256)
+[HashEngine] GPU-Hardware verfügbar
+[HashEngine] ✅ Hash-Storage-System initialisiert
+[HashEngine] 🤖 Auto-Select: Intel NPU aktiviert
+⚙️ Hash-Engine auf Intel NPU (Auto-gewählt) umgestellt
+� HashEngine ULTRA-HYPERSPEED initialisiert - ABSOLUTE Hardware-Performance
+[Scanner] ⚡ Engine 5/8 initialisiert
+[HashEngine] 🔧 Multi-Algorithm Hardware-Accelerated Engine wird initialisiert...
+[HashEngine] 📁 Cache-Verzeichnis erstellt: "/tmp/fileduper_cache"
+[HashEngine] 🧹 Cache-Bereinigung gestartet...
+[HashEngine] ℹ️ Cache-Bereinigung: Keine alten Dateien gefunden
+[HashEngine] 🔍 Intel-optimierte Hardware-Erkennung gestartet...
+[HashEngine] 🔍 Intel GPU Check - ExitCode: 0 Output: "00:02.0 VGA compatible controller: Intel Corporation Arrow Lake-S [Intel Graphics] (rev 06)\n"
+[HashEngine] 🔍 General GPU Check - ExitCode: 0 Output: "00:02.0 VGA compatible controller: Intel Corporation Arrow Lake-S [Intel Graphics] (rev 06)\n80:14.5 Non-VGA unclassified device: Intel Corporation Device 7f2f (rev 10)\n"
+[HashEngine] 🔍 NPU Check - ExitCode: 0 Output: "00:0b.0 Processing accelerators: Intel Corporation Arrow Lake NPU (rev 01)\n"
+🔍 Hardware-Capabilities erkannt:
+   🎯 Intel GPU (Arc/Xe/UHD): ✅ Verfügbar
+   🖥️  Generische GPU: ✅ Verfügbar
+   🤖 Intel NPU/VPU: ✅ Verfügbar
+[HashEngine] 🔧 Starte OpenCL-Initialisierung...
+[HashEngine] 🔧 ECHTE OpenCL-Initialisierung für GPU-Beschleunigung...
+[HashEngine] 🔍 OpenCL Platform gefunden: Intel(R) OpenCL Graphics
+[HashEngine] ✅ Intel OpenCL Platform ausgewählt: Intel(R) OpenCL Graphics
+[HashEngine] ✅ OpenCL Device ausgewählt: Intel(R) Graphics
+[HashEngine] ✅ MD5 Kernel Source hinzugefügt
+[HashEngine] ✅ MD5 Kernel erfolgreich erstellt
+[HashEngine] ✅ ECHTE OpenCL-Initialisierung erfolgreich abgeschlossen!
+[HashEngine] 🚀 GPU-beschleunigte Hash-Berechnung ist bereit
+🎯 FORCE: Intel GPU aktiviert für Arrow Lake Graphics
+[HashEngine] 🔍 Hardware-Status:
+   NPU verfügbar: true
+   Intel GPU verfügbar: true
+   Generic GPU verfügbar: true
+   Gewählte Einheit: INTEL_GPU_OPENCL (FORCE)
+🔧 Intel GPU Optimierungen aktiviert (WorkGroup: 256)
+[HashEngine] GPU-Hardware verfügbar
+[HashEngine] ✅ Hash-Storage-System initialisiert
+[HashEngine] 🤖 Auto-Select: Intel NPU aktiviert
+⚙️ Hash-Engine auf Intel NPU (Auto-gewählt) umgestellt
+� HashEngine ULTRA-HYPERSPEED initialisiert - ABSOLUTE Hardware-Performance
+[Scanner] ⚡ Engine 6/8 initialisiert
+[HashEngine] 🔧 Multi-Algorithm Hardware-Accelerated Engine wird initialisiert...
+[HashEngine] 📁 Cache-Verzeichnis erstellt: "/tmp/fileduper_cache"
+[HashEngine] 🧹 Cache-Bereinigung gestartet...
+[HashEngine] ℹ️ Cache-Bereinigung: Keine alten Dateien gefunden
+[HashEngine] 🔍 Intel-optimierte Hardware-Erkennung gestartet...
+[HashEngine] 🔍 Intel GPU Check - ExitCode: 0 Output: "00:02.0 VGA compatible controller: Intel Corporation Arrow Lake-S [Intel Graphics] (rev 06)\n"
+[HashEngine] 🔍 General GPU Check - ExitCode: 0 Output: "00:02.0 VGA compatible controller: Intel Corporation Arrow Lake-S [Intel Graphics] (rev 06)\n80:14.5 Non-VGA unclassified device: Intel Corporation Device 7f2f (rev 10)\n"
+[HashEngine] 🔍 NPU Check - ExitCode: 0 Output: "00:0b.0 Processing accelerators: Intel Corporation Arrow Lake NPU (rev 01)\n"
+🔍 Hardware-Capabilities erkannt:
+   🎯 Intel GPU (Arc/Xe/UHD): ✅ Verfügbar
+   🖥️  Generische GPU: ✅ Verfügbar
+   🤖 Intel NPU/VPU: ✅ Verfügbar
+[HashEngine] 🔧 Starte OpenCL-Initialisierung...
+[HashEngine] 🔧 ECHTE OpenCL-Initialisierung für GPU-Beschleunigung...
+[HashEngine] 🔍 OpenCL Platform gefunden: Intel(R) OpenCL Graphics
+[HashEngine] ✅ Intel OpenCL Platform ausgewählt: Intel(R) OpenCL Graphics
+[HashEngine] ✅ OpenCL Device ausgewählt: Intel(R) Graphics
+[HashEngine] ✅ MD5 Kernel Source hinzugefügt
+[HashEngine] ✅ MD5 Kernel erfolgreich erstellt
+[HashEngine] ✅ ECHTE OpenCL-Initialisierung erfolgreich abgeschlossen!
+[HashEngine] 🚀 GPU-beschleunigte Hash-Berechnung ist bereit
+🎯 FORCE: Intel GPU aktiviert für Arrow Lake Graphics
+[HashEngine] 🔍 Hardware-Status:
+   NPU verfügbar: true
+   Intel GPU verfügbar: true
+   Generic GPU verfügbar: true
+   Gewählte Einheit: INTEL_GPU_OPENCL (FORCE)
+🔧 Intel GPU Optimierungen aktiviert (WorkGroup: 256)
+[HashEngine] GPU-Hardware verfügbar
+[HashEngine] ✅ Hash-Storage-System initialisiert
+[HashEngine] 🤖 Auto-Select: Intel NPU aktiviert
+⚙️ Hash-Engine auf Intel NPU (Auto-gewählt) umgestellt
+� HashEngine ULTRA-HYPERSPEED initialisiert - ABSOLUTE Hardware-Performance
+[Scanner] ⚡ Engine 7/8 initialisiert
+[HashEngine] 🔧 Multi-Algorithm Hardware-Accelerated Engine wird initialisiert...
+[HashEngine] 📁 Cache-Verzeichnis erstellt: "/tmp/fileduper_cache"
+[HashEngine] 🧹 Cache-Bereinigung gestartet...
+[HashEngine] ℹ️ Cache-Bereinigung: Keine alten Dateien gefunden
+[HashEngine] 🔍 Intel-optimierte Hardware-Erkennung gestartet...
+[HashEngine] 🔍 Intel GPU Check - ExitCode: 0 Output: "00:02.0 VGA compatible controller: Intel Corporation Arrow Lake-S [Intel Graphics] (rev 06)\n"
+[HashEngine] 🔍 General GPU Check - ExitCode: 0 Output: "00:02.0 VGA compatible controller: Intel Corporation Arrow Lake-S [Intel Graphics] (rev 06)\n80:14.5 Non-VGA unclassified device: Intel Corporation Device 7f2f (rev 10)\n"
+[HashEngine] 🔍 NPU Check - ExitCode: 0 Output: "00:0b.0 Processing accelerators: Intel Corporation Arrow Lake NPU (rev 01)\n"
+🔍 Hardware-Capabilities erkannt:
+   🎯 Intel GPU (Arc/Xe/UHD): ✅ Verfügbar
+   🖥️  Generische GPU: ✅ Verfügbar
+   🤖 Intel NPU/VPU: ✅ Verfügbar
+[HashEngine] 🔧 Starte OpenCL-Initialisierung...
+[HashEngine] 🔧 ECHTE OpenCL-Initialisierung für GPU-Beschleunigung...
+[HashEngine] 🔍 OpenCL Platform gefunden: Intel(R) OpenCL Graphics
+[HashEngine] ✅ Intel OpenCL Platform ausgewählt: Intel(R) OpenCL Graphics
+[HashEngine] ✅ OpenCL Device ausgewählt: Intel(R) Graphics
+[HashEngine] ✅ MD5 Kernel Source hinzugefügt
+[HashEngine] ✅ MD5 Kernel erfolgreich erstellt
+[HashEngine] ✅ ECHTE OpenCL-Initialisierung erfolgreich abgeschlossen!
+[HashEngine] 🚀 GPU-beschleunigte Hash-Berechnung ist bereit
+🎯 FORCE: Intel GPU aktiviert für Arrow Lake Graphics
+[HashEngine] 🔍 Hardware-Status:
+   NPU verfügbar: true
+   Intel GPU verfügbar: true
+   Generic GPU verfügbar: true
+   Gewählte Einheit: INTEL_GPU_OPENCL (FORCE)
+🔧 Intel GPU Optimierungen aktiviert (WorkGroup: 256)
+[HashEngine] GPU-Hardware verfügbar
+[HashEngine] ✅ Hash-Storage-System initialisiert
+[HashEngine] 🤖 Auto-Select: Intel NPU aktiviert
+⚙️ Hash-Engine auf Intel NPU (Auto-gewählt) umgestellt
+� HashEngine ULTRA-HYPERSPEED initialisiert - ABSOLUTE Hardware-Performance
+[Scanner] ⚡ Engine 8/8 initialisiert
+[Scanner] ✅ 8-Engine System bereit - 8 Engines verfügbar
+[NetworkScanner] 📁 9 File-Transfer-Port-Presets geladen
+[NetworkScanner] 📋 Loaded 16 network presets
+[NetworkScanner] 🔍 Auto-detecting network ranges...
+[NetworkScanner] 🔍 Netmask: 255.255.255.0 (0xffffff00) → /24
+[NetworkScanner] 🌐 Detected network: 192.168.1.0/24 (Auto: enp130s0)
+[NetworkScanner] 🚀 Ultra-Fast 30-Chunk Parallel-Scanner initialisiert
+[NetworkScanner] 📁 9 File-Transfer-Port-Presets geladen
+[PresetManager] 📋 Initialisierung gestartet...
+📁 5 Standard-Kategorien initialisiert
+🎯 5 Hardware-optimierte Hash-Zuordnungen geladen
+🤖 2 NPU-optimierte Kategorien konfiguriert
+🚫 12 System-Pfade ausgeschlossen
+🔐 Login geladen: 192.168.1.224:21 User: jan AutoLogin: YES
+📋 1 Login-Einträge geladen
+[PresetManager] 📂 0 Dateitype-Mappings geladen
+📋 PresetManager initialisiert
+   Settings: /home/nex/.fileduper_settings.ini
+   Logins: /home/nex/.fileduper_login.ini
+🎯 ActivityIndicator created
+[DuplicateResults] 📊 Widget initialisiert
+🚀 UltraSpeedEngine: Initialisierung...
+✅ UltraSpeedEngine: Initialisierung abgeschlossen
+[Setup] 🔐 Scanner PresetManager injected!
+[Setup] 🚀 UltraSpeedEngine configured!
+[Setup] ✅ Komponenten initialisiert!
+[Setup] 🔗 Verbinde Signale...
+🚨 EVENT FILTER INSTALLED: Table + DirectoryTree + NetworkTree + Viewports!
+[Setup] ✅ Signale verbunden!
+[Setup] 📋 Erstelle Menüs und Toolbars...
+[Setup] ✅ Menüs und Toolbars erstellt!
+✅ FileDuper erfolgreich initialisiert!
+Could not parse stylesheet of object MainWindow(0x7ffd25a51ff0)
+✅ FileDuper GUI gestartet!
+[MAIN] � FTP-NPU-Test deaktiviert - wird nach manuellem FTP-Login gestartet
+📡 Starte Netzwerk-Discovery...
+[NetworkScanner] 🔄 Reverse IP-Scanning aktiviert: 192.168.1.254 → 1
+[NetworkScanner] ⚡ 2286 Targets generiert für 254 IPs mit 9 Ports
+[NetworkScanner] 📊 Targets/Chunk: ~76
+[NetworkScanner] 📊 30 Parallel-Chunks erstellt
+[NetworkScanner] 🚀 30-CHUNK PARALLEL-SCAN GESTARTET: 2286 Ziele in 30 Chunks
+[NetworkScanner] 🎯 SOFORT-TREFFER: 192.168.1.254:80 (HTTP)
+[MainWindow] 📡 Network Service hinzugefügt: "192.168.1.254" 80 "HTTP"
+[PresetManager] ❌ Keine Login-Daten gefunden für "192.168.1.254" : 80
+🌐 Service gefunden: 192.168.1.254:80 (HTTP)
+[NetworkScanner] 🧹 Chunk-Resources sicher bereinigt
+[NetworkScanner] 🎯 SOFORT-TREFFER: 192.168.1.224:21 (FTP)
+[MainWindow] 📡 Network Service hinzugefügt: "192.168.1.224" 21 "FTP"
+🌐 Service gefunden: 192.168.1.224:21 (FTP)
+[NetworkScanner] 🔍 Parallel Service-Analyse für 192.168.1.224:21
+[NetworkScanner] 🎯 SOFORT-TREFFER: 192.168.1.224:22 (SSH/SFTP)
+[MainWindow] 📡 Network Service hinzugefügt: "192.168.1.224" 22 "SSH/SFTP"
+[PresetManager] ❌ Keine Login-Daten gefunden für "192.168.1.224" : 22
+🌐 Service gefunden: 192.168.1.224:22 (SSH/SFTP)
+[NetworkScanner] 🎯 SOFORT-TREFFER: 192.168.1.224:80 (HTTP)
+[MainWindow] 📡 Network Service hinzugefügt: "192.168.1.224" 80 "HTTP"
+[PresetManager] ❌ Keine Login-Daten gefunden für "192.168.1.224" : 80
+🌐 Service gefunden: 192.168.1.224:80 (HTTP)
+[NetworkScanner] 🔍 Parallel Service-Analyse für 192.168.1.224:22
+[NetworkScanner] 🎯 SOFORT-TREFFER: 192.168.1.224:139 (SMB (NetBIOS))
+[MainWindow] 📡 Network Service hinzugefügt: "192.168.1.224" 139 "SMB (NetBIOS)"
+[PresetManager] ❌ Keine Login-Daten gefunden für "192.168.1.224" : 139
+🌐 Service gefunden: 192.168.1.224:139 (SMB (NetBIOS))
+[NetworkScanner] 🔍 Parallel Service-Analyse für 192.168.1.224:139
+[NetworkScanner] 🎯 SOFORT-TREFFER: 192.168.1.224:445 (SMB/CIFS)
+[MainWindow] 📡 Network Service hinzugefügt: "192.168.1.224" 445 "SMB/CIFS"
+[PresetManager] ❌ Keine Login-Daten gefunden für "192.168.1.224" : 445
+🌐 Service gefunden: 192.168.1.224:445 (SMB/CIFS)
+[NetworkScanner] 🔍 Parallel Service-Analyse für 192.168.1.224:445
+[NetworkScanner] 🎯 SOFORT-TREFFER: 192.168.1.223:22 (SSH/SFTP)
+[MainWindow] 📡 Network Service hinzugefügt: "192.168.1.223" 22 "SSH/SFTP"
+[PresetManager] ❌ Keine Login-Daten gefunden für "192.168.1.223" : 22
+🌐 Service gefunden: 192.168.1.223:22 (SSH/SFTP)
+[NetworkScanner] 🔍 Parallel Service-Analyse für 192.168.1.223:22
+[NetworkScanner] 🎯 SOFORT-TREFFER: 192.168.1.222:22 (SSH/SFTP)
+[MainWindow] 📡 Network Service hinzugefügt: "192.168.1.222" 22 "SSH/SFTP"
+[PresetManager] ❌ Keine Login-Daten gefunden für "192.168.1.222" : 22
+🌐 Service gefunden: 192.168.1.222:22 (SSH/SFTP)
+[NetworkScanner] 🔍 Parallel Service-Analyse für 192.168.1.222:22
+[NetworkScanner] ✅ Chunk 1/30 abgeschlossen (1/30)
+[NetworkScanner] ✅ Chunk 2/30 abgeschlossen (2/30)
+[NetworkScanner] ✅ Chunk 3/30 abgeschlossen (3/30)
+[NetworkScanner] ✅ Chunk 4/30 abgeschlossen (4/30)
+[NetworkScanner] ✅ Chunk 7/30 abgeschlossen (5/30)
+[NetworkScanner] ✅ Chunk 5/30 abgeschlossen (6/30)
+[NetworkScanner] ✅ Chunk 6/30 abgeschlossen (7/30)
+[NetworkScanner] ✅ Chunk 8/30 abgeschlossen (8/30)
+[NetworkScanner] ✅ Chunk 9/30 abgeschlossen (9/30)
+[NetworkScanner] ✅ Chunk 10/30 abgeschlossen (10/30)
+[NetworkScanner] ✅ Chunk 11/30 abgeschlossen (11/30)
+[NetworkScanner] ✅ Chunk 12/30 abgeschlossen (12/30)
+[NetworkScanner] ✅ Chunk 13/30 abgeschlossen (13/30)
+[NetworkScanner] ✅ Chunk 14/30 abgeschlossen (14/30)
+[NetworkScanner] ✅ Chunk 15/30 abgeschlossen (15/30)
+[NetworkScanner] ✅ Chunk 16/30 abgeschlossen (16/30)
+[NetworkScanner] ✅ Chunk 17/30 abgeschlossen (17/30)
+[NetworkScanner] ✅ Chunk 18/30 abgeschlossen (18/30)
+[NetworkScanner] ✅ Chunk 19/30 abgeschlossen (19/30)
+[NetworkScanner] ✅ Chunk 20/30 abgeschlossen (20/30)
+[NetworkScanner] ✅ Chunk 21/30 abgeschlossen (21/30)
+[NetworkScanner] ✅ Chunk 22/30 abgeschlossen (22/30)
+[NetworkScanner] ✅ Chunk 23/30 abgeschlossen (23/30)
+[NetworkScanner] ✅ Chunk 24/30 abgeschlossen (24/30)
+[NetworkScanner] 🎯 SOFORT-TREFFER: 192.168.1.1:80 (HTTP)
+[MainWindow] 📡 Network Service hinzugefügt: "192.168.1.1" 80 "HTTP"
+[PresetManager] ❌ Keine Login-Daten gefunden für "192.168.1.1" : 80
+🌐 Service gefunden: 192.168.1.1:80 (HTTP)
+[NetworkScanner] ✅ Chunk 25/30 abgeschlossen (25/30)
+[NetworkScanner] ✅ Chunk 26/30 abgeschlossen (26/30)
+[NetworkScanner] ✅ Chunk 27/30 abgeschlossen (27/30)
+[NetworkScanner] 🎯 SOFORT-TREFFER: 192.168.1.1:443 (HTTPS)
+[MainWindow] 📡 Network Service hinzugefügt: "192.168.1.1" 443 "HTTPS"
+[PresetManager] ❌ Keine Login-Daten gefunden für "192.168.1.1" : 443
+🌐 Service gefunden: 192.168.1.1:443 (HTTPS)
+[NetworkScanner] ✅ Chunk 28/30 abgeschlossen (28/30)
+[NetworkScanner] ✅ Chunk 29/30 abgeschlossen (29/30)
+[NetworkScanner] ✅ Chunk 30/30 abgeschlossen (30/30)
+[NetworkScanner] 🏁 PARALLEL-SCAN ABGESCHLOSSEN: 10 File-Transfer-Services gefunden!
+🌐 Netzwerk-Scan abgeschlossen
+[NetworkScanner] ⚡ Ultra-Fast-Banner: 192.168.1.224:21 - 220 ProFTPD Server ready.
+[NetworkScanner] ⚡ Parallel-Service: 192.168.1.224:21 → ProFTPD Server
+[NetworkScanner] ⚡ Ultra-Fast-Banner: 192.168.1.224:22 - SSH-2.0-OpenSSH_9.2p1 Debian-2+deb12u6
+[NetworkScanner] ⚡ Parallel-Service: 192.168.1.224:22 → OpenSSH Server
+[NetworkScanner] ⚡ Ultra-Fast-Banner: 192.168.1.223:22 - SSH-2.0-OpenSSH_9.2p1 Debian-2+deb12u7
+[NetworkScanner] ⚡ Parallel-Service: 192.168.1.223:22 → OpenSSH Server
+[NetworkScanner] ⚡ Ultra-Fast-Banner: 192.168.1.222:22 - SSH-2.0-OpenSSH_9.2p1 Debian-2+deb12u7
+[NetworkScanner] ⚡ Parallel-Service: 192.168.1.222:22 → OpenSSH Server
+[NetworkScanner] 🧹 Chunk-Resources sicher bereinigt
+📡 NETWORK TREE MOUSE PRESS auf networkTree-viewport!
+   Button: LEFT
+[MainWindow] 🖱️ Network Service Doppelklick: "192.168.1.224" 21 "FTP"
+[MainWindow] 🚀✨ AUTO-LOGIN erkannt für "192.168.1.224" - Direkte Verbindung ohne Dialog
+[MainWindow] 🔌 connectAndShowDirectoryTree: "FTP" auf Port 21
+[MainWindow] 🔍 Service-Analyse:
+  📝 Original Service: "FTP"
+  📝 Lowercase Service: "ftp"
+  🔐 Contains SSH: false
+  🔐 Contains SFTP: false
+  📡 Contains FTP (pure): true
+[MainWindow] 📡 FTP-Protokoll erkannt auf Port 21
+[MainWindow] 🌳 Öffne FTP Directory Browser für "192.168.1.224" : 21
+[MainWindow] 📂 Lade FTP-Verzeichnisstruktur...
+[FtpClient] 📡 libcurl-basierter FTP Client initialisiert
+[FtpClient] 🔐 Credentials gesetzt für "192.168.1.224" : 21 (User: "jan" )
+[FtpClient] 🚀 Connecting to "192.168.1.224" : 21 with user "jan"
+[FtpClient] 📡 Testing connection to: "ftp://192.168.1.224:21/"
+[FtpClient] ✅ Successfully connected to "192.168.1.224" : 21
+[MainWindow] ✅ FTP-Verbindung erfolgreich zu "192.168.1.224"
+[FtpClient] 🏃‍♂️ listDirectoriesOnly() called for dir: "/"
+[FtpClient-Thread] 🏃‍♂️ Starting FAST directory-only scan...
+[performFastDirectoryScan] 📁 Fast scan limits: maxDepth= 20 maxDirectories= 5000
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/" depth: 0
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/"
+[performFtpList] 📋 Raw FTP listing:
+ "drwxrws---  12 root     ftpusers     4096 Jul 13 13:00 sdb\ndrwxrws---   5 root     ftpusers     4096 Aug 20 02:14 sdc\ndrwxrws---  12 root     ftpusers     4096 Jul 10 06:36 sdd\ndrwxrws---  31 root     ftpusers    12288 Jul 13 03:24 sde\ndrwxrws---  15 root     ftpusers     4096 Jul 11 08:06 sdf\ndrwxrws---  19 root     ftpusers     4096 Jul 11 09:02 sdg\n"
+[performFtpList] 📄 Parsed 6 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 6 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "sdb"
+[parseProftpdList] 📁 Found directory: "sdc"
+[parseProftpdList] 📁 Found directory: "sdd"
+[parseProftpdList] 📁 Found directory: "sde"
+[parseProftpdList] 📁 Found directory: "sdf"
+[parseProftpdList] 📁 Found directory: "sdg"
+[parseProftpdList] ✅ Total entries found: 6 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdb/" depth: 1
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdb/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdb/"
+[performFtpList] 📋 Raw FTP listing:
+ "drwxrws---   4 root     ftpusers     4096 May 15 22:23 aMATEURFUNK\n-rw-------   1 root     root         8192 Jul 24 05:55 aquota.group\n-rw-------   1 root     root         8192 Jul 24 05:55 aquota.user\ndrwxrws---   3 root     ftpusers     4096 Apr 20  2024 Comedy\ndrwxrws---  26 root     ftpusers    20480 Aug 20 02:15 DokuFilme\ndrwxrws---   2 root     ftpusers     4096 Jul 13 19:34 Evelin+Ich\ndrwxrws---  10 root     ftpusers   335872 Jul 10 18:37 FILME\ndrwxrws---   3 root     ftpusers     4096 Jun 24  2024 Hochzeit\ndrwxrws---   7 root     ftpusers     4096 Mar 14 15:44 KinderSerienFilme\ndrwxrws---   2 root     ftpusers    16384 Jan 15  2023 lost+found\ndrwxrws---  12 root     ftpusers    16384 Jul 12 06:46 SERIEN\ndrwxrws---   2 root     ftpusers     4096 Jul 12 06:46 unbenannteFilme\n"
+[performFtpList] 📄 Parsed 12 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 12 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "aMATEURFUNK"
+[parseProftpdList] 📁 Found directory: "Comedy"
+[parseProftpdList] 📁 Found directory: "DokuFilme"
+[parseProftpdList] 📁 Found directory: "Evelin+Ich"
+[parseProftpdList] 📁 Found directory: "FILME"
+[parseProftpdList] 📁 Found directory: "Hochzeit"
+[parseProftpdList] 📁 Found directory: "KinderSerienFilme"
+[parseProftpdList] 📁 Found directory: "lost+found"
+[parseProftpdList] 📁 Found directory: "SERIEN"
+[parseProftpdList] 📁 Found directory: "unbenannteFilme"
+[parseProftpdList] ✅ Total entries found: 10 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdc/" depth: 2
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdc/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdc/"
+[performFtpList] 📋 Raw FTP listing:
+ "-rw-------   1 root     root         8192 Jul 24 05:55 aquota.group\n-rw-------   1 root     root         8192 Jul 24 05:55 aquota.user\ndrwxrws---   2 root     ftpusers     4096 Jul 11 06:56 Linux-Script\ndrwxrws---   2 root     ftpusers    16384 Apr 23  2024 lost+found\ndrwxrws---   3 root     ftpusers     4096 Jul 12 19:14 Source-Code\n-rwxrws---   1 root     ftpusers    23948 Jul 12 17:41 SuperDuper2.py\n-rwxrws---   1 root     ftpusers    42086 Jul 13 14:12 SuperDuper3.py\n-rw-rwxr--   1 jan      ftpusers    41906 Jul 13 22:32 SuperDuper4.py\n"
+[performFtpList] 📄 Parsed 8 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 8 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "Linux-Script"
+[parseProftpdList] 📁 Found directory: "lost+found"
+[parseProftpdList] 📁 Found directory: "Source-Code"
+[parseProftpdList] ✅ Total entries found: 3 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdd/" depth: 3
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdd/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdd/"
+[performFtpList] 📋 Raw FTP listing:
+ "-rw-------   1 root     root         8192 Jul 24 05:55 aquota.group\n-rw-------   1 root     root         8192 Jul 24 05:55 aquota.user\ndrwxrws---  12 root     ftpusers    20480 Jul  9 09:58 Dokumente\ndrwxrws---   2 root     ftpusers    28672 Jul  9 09:58 Downloads\ndrwxrws---   2 root     ftpusers     4096 Jul  9 09:58 Excel-Tabellen\ndrwxrws---   2 root     ftpusers     4096 Aug 12  2017 fe8187ebd73ee7293a5ac78d3a38b1\n-rwxrws---   1 root     ftpusers      100 Aug 13  2017 InitJsonOutSvc.dat\n-rwxrws---   1 root     ftpusers    88144 Aug 12  2017 malebyte ware.pdf\ndrwxrws---   2 root     ftpusers     4096 Nov  6  2014 Rentenrechner\ndrwxrws---  16 root     ftpusers     4096 Sep 13  2023 Rezepte\ndrwxrws---  11 root     ftpusers     4096 Jul 10 06:33 VirtualBox VMs\ndrwxrws---   5 root     ftpusers     4096 Jul  9 09:58 Witzig\n"
+[performFtpList] 📄 Parsed 12 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 12 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "Dokumente"
+[parseProftpdList] 📁 Found directory: "Downloads"
+[parseProftpdList] 📁 Found directory: "Excel-Tabellen"
+[parseProftpdList] 📁 Found directory: "fe8187ebd73ee7293a5ac78d3a38b1"
+[parseProftpdList] 📁 Found directory: "Rentenrechner"
+[parseProftpdList] 📁 Found directory: "Rezepte"
+[parseProftpdList] 📁 Found directory: "VirtualBox VMs"
+[parseProftpdList] 📁 Found directory: "Witzig"
+[parseProftpdList] ✅ Total entries found: 8 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sde/" depth: 4
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sde/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sde/"
+[performFtpList] 📋 Raw FTP listing:
+ "-rw-------   1 root     root         8192 Jul 24 05:55 aquota.group\n-rw-------   1 root     root         8192 Jul 24 05:55 aquota.user\n-rwxrws---   1 root     ftpusers    21424 Oct 25  2020 bookmarks-2020-10-25.json\ndrwxrws---  93 root     ftpusers    69632 Jul  8 20:44 Dokumente\ndrwxrws---   2 root     ftpusers     4096 Feb 16  2015 Email Post Sounds\ndrwxrws---  11 root     ftpusers    20480 May 27 14:21 EmuLatoR\n-rwxrws---   1 root     ftpusers   140090 Apr 22  2021 er-ists-fruehling-laesst-sein-blaues-band.pdf\ndrwxrws---   6 root     ftpusers     4096 Jul  8 20:51 Handyzeug\ndrwxrws---  12 root     ftpusers     4096 Jul  9 04:31 Hörbücher\ndrwxrws---  22 root     ftpusers    36864 Jul 11 10:32 iso+Anwendungen\ndrwxrws---  10 root     ftpusers     4096 May 27 14:30 Jan_Daten\ndrwxrws---   2 root     ftpusers     4096 May 27 14:23 KameraZeug\ndrwxrws---   2 root     ftpusers     4096 Nov  4  2018 Klingeltöne\ndrwxrws---   2 root     ftpusers     4096 Apr 18  2024 Linux-Script\ndrwxrws---   2 root     ftpusers     4096 Aug  9  2022 lost+found\n-rwxrws---   1 root     ftpusers  4298961 Dec 27  2020 Messenger Facebook.mp4\ndrwxrws---  16 root     ftpusers   507904 Jul 11 07:34 Musik\n-rwxrws---   1 root     ftpusers  4196352 Feb 12  2017 NewVirtualDisk1.vhd\ndrwxrws---   2 root     ftpusers     4096 Feb 15  2025 Passwörter\n-rwxrws---   1 root     ftpusers    79185 Nov 10  2020 PB_Kontoauszug_KtoNr_0621940601_03-11-2020_041721.pdf\n-rwxrws---   1 root     ftpusers 831130364 Mar  7  2022 portal_prelude_jeu_complet_v1.1.5_multi-langues_263038.exe\ndrwxrws---   2 root     ftpusers     4096 Jan 27  2023 RECHNUNG\ndrwxrws---   2 root     ftpusers     4096 Oct 19  2024 Schreibtisch\n-rwxrws---   1 root     ftpusers  1011565 Feb 28  2021 Screenshot_2021-02-28 Dave Brubeck live 64' 66' - Jazz Icons DVD - YouTube.png\ndrwxrws---   2 root     ftpusers     4096 Feb 16  2015 ScriptLInux\ndrwxrws---   2 root     ftpusers     4096 Jul 13 03:24 sde\n-rwxrws---   1 root     ftpusers   280580 Dec  2  1999 shovelhead.mpeg\ndrwxrws---   3 root     ftpusers     4096 Jul 11 07:31 Sicherungen\ndrwxrws---  11 root     ftpusers     4096 Apr 20  2024 Soundzeug\ndrwxrws---   2 root     ftpusers     4096 Feb 28  2021 System Volume Information\n-rwxrws---   1 root     ftpusers 727798545 Oct  4  2020 tdd-demos-fuse-2010-08-15.zip\ndrwxrws---   3 root     ftpusers     4096 Apr 20  2024 Telegram Desktop\ndrwxrws---   2 root     ftpusers     4096 Dec 30  2014 Theme Songs\ndrwxrws---   6 root     ftpusers    81920 Aug 19 02:18 xxx\ndrwxrws---   5 root     ftpusers     4096 Jul  7 03:24 xxxbilder\ndrwxrws---   2 root     ftpusers    12288 Oct  7  2024 Youtube\ndrwxrws---   2 root     ftpusers     4096 Aug  9  2022 YoutubeMusikVietnam\n"
+[performFtpList] 📄 Parsed 37 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 37 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "Dokumente"
+[parseProftpdList] 📁 Found directory: "Email Post Sounds"
+[parseProftpdList] 📁 Found directory: "EmuLatoR"
+[parseProftpdList] 📁 Found directory: "Handyzeug"
+[parseProftpdList] 📁 Found directory: "Hörbücher"
+[parseProftpdList] 📁 Found directory: "iso+Anwendungen"
+[parseProftpdList] 📁 Found directory: "Jan_Daten"
+[parseProftpdList] 📁 Found directory: "KameraZeug"
+[parseProftpdList] 📁 Found directory: "Klingeltöne"
+[parseProftpdList] 📁 Found directory: "Linux-Script"
+[parseProftpdList] 📁 Found directory: "lost+found"
+[parseProftpdList] 📁 Found directory: "Musik"
+[parseProftpdList] 📁 Found directory: "Passwörter"
+[parseProftpdList] 📁 Found directory: "RECHNUNG"
+[parseProftpdList] 📁 Found directory: "Schreibtisch"
+[parseProftpdList] 📁 Found directory: "ScriptLInux"
+[parseProftpdList] 📁 Found directory: "sde"
+[parseProftpdList] 📁 Found directory: "Sicherungen"
+[parseProftpdList] 📁 Found directory: "Soundzeug"
+[parseProftpdList] 📁 Found directory: "System Volume Information"
+[parseProftpdList] 📁 Found directory: "Telegram Desktop"
+[parseProftpdList] 📁 Found directory: "Theme Songs"
+[parseProftpdList] 📁 Found directory: "xxx"
+[parseProftpdList] 📁 Found directory: "xxxbilder"
+[parseProftpdList] 📁 Found directory: "Youtube"
+[parseProftpdList] 📁 Found directory: "YoutubeMusikVietnam"
+[parseProftpdList] ✅ Total entries found: 26 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdf/" depth: 5
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdf/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdf/"
+[performFtpList] 📋 Raw FTP listing:
+ "-rw-------   1 root     root         8192 Jul 24 05:55 aquota.group\n-rw-------   1 root     root         8192 Jul 24 05:55 aquota.user\ndrwxrws---  16 root     ftpusers     4096 Jul 11 09:02 Autozeug\ndrwxrws---  10 root     ftpusers   999424 Aug  7 13:26 Bilder\ndrwxrws---   2 root     ftpusers     4096 Dec 31  2024 Cool\ndrwxrws---   5 root     ftpusers     4096 Dec 23  2015 DMK SCHULE\ndrwxrws---  27 root     ftpusers    36864 Jul 11 00:58 Dokumente\ndrwxrws---   7 root     ftpusers    16384 Feb 15  2025 Download\ndrwxrws---   2 root     ftpusers     4096 Dec 30  2014 GameClips\ndrwxrws---  11 root     ftpusers     4096 Jul 11 06:55 Handyzeug\ndrwxrws---   2 root     ftpusers     4096 Apr 17  2024 KameraZeug\ndrwxrws---   2 root     ftpusers    16384 Feb 12  2017 lost+found\ndrwxrws---  12 root     ftpusers     4096 Jul 11 08:16 SoundkarteZeug\ndrwxrws---  19 root     ftpusers     4096 Apr 20  2024 VirtualBox VMs\n"
+[performFtpList] 📄 Parsed 14 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 14 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "Autozeug"
+[parseProftpdList] 📁 Found directory: "Bilder"
+[parseProftpdList] 📁 Found directory: "Cool"
+[parseProftpdList] 📁 Found directory: "DMK SCHULE"
+[parseProftpdList] 📁 Found directory: "Dokumente"
+[parseProftpdList] 📁 Found directory: "Download"
+[parseProftpdList] 📁 Found directory: "GameClips"
+[parseProftpdList] 📁 Found directory: "Handyzeug"
+[parseProftpdList] 📁 Found directory: "KameraZeug"
+[parseProftpdList] 📁 Found directory: "lost+found"
+[parseProftpdList] 📁 Found directory: "SoundkarteZeug"
+[parseProftpdList] 📁 Found directory: "VirtualBox VMs"
+[parseProftpdList] ✅ Total entries found: 12 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdg/" depth: 6
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdg/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdg/"
+[performFtpList] 📋 Raw FTP listing:
+ "drwxrws---  17 root     ftpusers     4096 Nov 26  2023 $RECYCLE.BIN\n-rw-------   1 root     root         8192 Jul 24 05:55 aquota.group\n-rw-------   1 root     root         8192 Jul 24 05:55 aquota.user\ndrwxrws---   3 root     ftpusers     4096 Jan  1  1970 art_cache\ndrwxrws---   2 root     ftpusers     4096 Jan  5  2025 Cool\ndrwxrws---   4 root     ftpusers    16384 Apr 16  2024 dart\ndrwxrws---  68 root     ftpusers    36864 Oct 26  2024 Dokumente\n-rwxrws---   1 root     ftpusers 57041024 May 22  2010 Friedrichdorf2.AVI\n-rwxrws---   1 root     ftpusers 1354376812 May 22  2010 Friedrichsdorf1.AVI\ndrwxrws---   2 root     ftpusers     4096 Dec 30  2014 GameClips\ndrwxrws---   4 root     ftpusers     4096 Apr 20  2024 Handyzeug\ndrwxrws---  37 root     ftpusers    12288 Dec 31  2024 Jan\ndrwxrws---   2 root     ftpusers     4096 Dec 31  2024 KameraZeug\ndrwxrws---   2 root     ftpusers     4096 Dec 30  2014 Linux-Script\ndrwxrws---   2 root     ftpusers    16384 Feb  3  2016 lost+found\ndrwxrws---  11 root     ftpusers    16384 Dec 31  2024 Musikvideos\ndrwxrws---   9 root     ftpusers     4096 Nov 24  2023 Mustafa\ndrwxrws---  39 root     ftpusers     4096 Apr 16  2024 Renate\ndrwxrws---   2 root     ftpusers     4096 Dec 30  2014 Theme Songs\n"
+[performFtpList] 📄 Parsed 19 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 19 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "$RECYCLE.BIN"
+[parseProftpdList] 📁 Found directory: "art_cache"
+[parseProftpdList] 📁 Found directory: "Cool"
+[parseProftpdList] 📁 Found directory: "dart"
+[parseProftpdList] 📁 Found directory: "Dokumente"
+[parseProftpdList] 📁 Found directory: "GameClips"
+[parseProftpdList] 📁 Found directory: "Handyzeug"
+[parseProftpdList] 📁 Found directory: "Jan"
+[parseProftpdList] 📁 Found directory: "KameraZeug"
+[parseProftpdList] 📁 Found directory: "Linux-Script"
+[parseProftpdList] 📁 Found directory: "lost+found"
+[parseProftpdList] 📁 Found directory: "Musikvideos"
+[parseProftpdList] 📁 Found directory: "Mustafa"
+[parseProftpdList] 📁 Found directory: "Renate"
+[parseProftpdList] 📁 Found directory: "Theme Songs"
+[parseProftpdList] ✅ Total entries found: 15 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdb/aMATEURFUNK/" depth: 7
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdb/aMATEURFUNK/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdb/aMATEURFUNK/"
+[performFtpList] 📋 Raw FTP listing:
+ "drwxrws---   2 root     ftpusers     4096 Jul 13 17:35 fRIEDRICHSDORF\n-rwxrws---   1 root     ftpusers     3160 Nov  2  2024 FT-991.xml\ndrwxrws---   2 root     ftpusers     4096 May 14 21:39 Lizenzen\n"
+[performFtpList] 📄 Parsed 3 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 3 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "fRIEDRICHSDORF"
+[parseProftpdList] 📁 Found directory: "Lizenzen"
+[parseProftpdList] ✅ Total entries found: 2 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdb/Comedy/" depth: 8
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdb/Comedy/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdb/Comedy/"
+[performFtpList] 📋 Raw FTP listing:
+ "drwxrws---   2 root     ftpusers     4096 Jul 12 06:49 Bernard Bear\n-rwxrws---   1 root     ftpusers  2887197 Aug 21  2013 Heinz Erhardt - Columbus.flv\n-rwxrws---   1 root     ftpusers  4676718 Aug 21  2013 Heinz Erhardt - Das Gewitter.flv\n-rwxrws---   1 root     ftpusers  1798931 Aug 21  2013 Heinz Erhardt - Der Berg.flv\n-rwxrws---   1 root     ftpusers   916885 Aug 21  2013 Heinz Erhardt - Der Stier.flv\n-rwxrws---   1 root     ftpusers  1513615 Aug 21  2013 Heinz Erhardt - Der Wurm.flv\n-rwxrws---   1 root     ftpusers  3687237 Aug 21  2013 Heinz Erhardt - Die Made.flv\n-rwxrws---   1 root     ftpusers  3025609 Aug 21  2013 Heinz Erhardt - Die Maus.flv\n-rwxrws---   1 root     ftpusers  9618839 Aug 21  2013 Heinz Erhardt - Die Schachpartie.flv\n-rwxrws---   1 root     ftpusers  3803256 Aug 21  2013 Heinz Erhardt erzählt....flv\n-rwxrws---   1 root     ftpusers 27833528 Aug 21  2013 Heinz Erhardt.flv\n-rwxrws---   1 root     ftpusers  3447168 Aug 21  2013 Heinz Erhardt - Jüngling mit lockigem Haar.flv\n-rwxrws---   1 root     ftpusers  1972234 Aug 21  2013 Heinz Erhardt - Knirps.flv\n-rwxrws---   1 root     ftpusers  2797300 Aug 21  2013 Heinz Erhardt - Ritter Fips....flv\n-rwxrws---   1 root     ftpusers 22061921 Aug 21  2013 Heinz Erhardt - Theaterstück mit G.flv\n-rwxrws---   1 root     ftpusers  2810423 Aug 21  2013 Heinz Erhardt Vierzeiler.flv\n-rwxrws---   1 root     ftpusers  5213915 Aug 21  2013 Heinz Erhardt - Warum die Zitronen sauer wurden.flv\n-rwxrws---   1 root     ftpusers  4993311 Aug 21  2013 Heinz Erhardt - Wir können das auch lassen....flv\n"
+[performFtpList] 📄 Parsed 18 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 18 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "Bernard Bear"
+[parseProftpdList] ✅ Total entries found: 1 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdb/DokuFilme/" depth: 9
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdb/DokuFilme/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdb/DokuFilme/"
+[performFtpList] 📋 Raw FTP listing:
+ "-rwxrws---   1 root     ftpusers 196020966 Dec 19  2011 38478903_mp4_h264_aac_hq.mp4\n-rwxrws---   1 root     ftpusers 290791963 Jan 29  2015 7.Tage.in.der.Sekte.GERMAN.DOKU.WS.HDTVRip.x264-Pumuck.mkv\n-rwxrws---   1 root     ftpusers 733227008 Apr  9  2012 88.Pilgern.auf.Japanisch.German.2008.DOKU.DVDRiP.XviD-XF.avi\n-rwxrws---   1 root     ftpusers 1166327592 Jun 25  2024 Aaron Swartz Tod eines Internet Aktivisten Doku 720p HD.mp4\n-rw-rw-r--   1 jan      ftpusers 1098523948 Jan 25  2015 Alkoholsucht-Wundermittel.Baclofen.2014.German.WS.WEB-DL.DOKU.h264 (Kopie 2).mkv\n-rw-rw-r--   1 jan      ftpusers 1098523948 Jan 25  2015 Alkoholsucht-Wundermittel.Baclofen.2014.German.WS.WEB-DL.DOKU.h264 (Kopie 3).mkv\n-rwxrws---   1 root     ftpusers 840194753 Jan 12  2015 Alte.Freunde.neue.Feinde-Was.unsere.Kinder.chronisch.krank.macht.German.DOKU.WS.HDTVRip.x264-CDP.mkv\n-rw-rw-r--   1 jan      ftpusers 1240544931 Apr 30  2015 Auf.den.Spuren.der.Aliens.S01E06.Das.Geheimnis.von.Malta.GERMAN.DOKU.720p.HDTV.x264-MDGP (Kopie).mkv\n-rwxrws---   1 root     ftpusers 1240544931 Apr 30  2015 Auf.den.Spuren.der.Aliens.S01E06.Das.Geheimnis.von.Malta.GERMAN.DOKU.720p.HDTV.x264-MDGP.mkv\n-rw-rw-r--   1 jan      ftpusers 585313981 Mar  3  2015 Auf.den.Spuren.der.Hobbits.E05.Fabelwesen.des.Nordens.GERMAN.DOKU.720p.HDTV.x264-TVP (Kopie).mkv\n-rwxrws---   1 root     ftpusers 585313981 Mar  3  2015 Auf.den.Spuren.der.Hobbits.E05.Fabelwesen.des.Nordens.GERMAN.DOKU.720p.HDTV.x264-TVP.mkv\ndrwxrws---   2 root     ftpusers     4096 Jul 23 18:00 Auf der Suche nach außerirdischem Leben 1_2 - Doku\ndrwxrws---   2 root     ftpusers     4096 Jul 23 18:00 Auf der Suche nach außerirdischem Leben 2_2 - Doku\ndrwxrws---   2 root     ftpusers     4096 Jul 23 17:40 Auf der Suche nach Gottesformelt - von Harald Lesc\n-rwxrws---   1 root     ftpusers 845678402 Jan 29  2015 Ausgesetzt.Ueberleben.fuer.Anfaenger.S01E03.Panik.im.Nirgendwo.GERMAN.DOKU.HDTVRip.x264-RiO.mkv\ndrwxrws---   2 root     ftpusers     4096 Apr 21  2024 BBC.Earth.Expedition.Neuguinea.S01E01.Pythons.und.Paradiesvoegel.GERMAN.DTS.DOKU.1080p.BluRay.x264-TVP\ndrwxrws---   2 root     ftpusers     4096 Apr 21  2024 BBC.Earth.Expedition.Neuguinea.S01E02.Flughunde.und.Urwaldkrokodile.GERMAN.DTS.DOKU.1080p.BluRay.x264-TVP\ndrwxrws---   2 root     ftpusers     4096 Apr 21  2024 BBC.Earth.Expedition.Neuguinea.S01E03.Baumkaengurus.und.Thermometerhuehner.GERMAN.DTS.DOKU.1080p.BluRay.x264-TVP\ndrwxrws---   2 root     ftpusers     4096 Jul 13 13:03 Big Bang im Labor - Doku (2009) - - DivX by Waldor\ndrwxrws---   2 root     ftpusers     4096 Jul 13 15:39 Black.Box.BRD.German.DOKU.1080p.WebHD.x264-GWD\n-rwxrws---   1 root     ftpusers 170186815 May 20  2012 Codename_ Linux - Dokumentarfilm.flv\n-rwxrws---   1 root     ftpusers 882766172 Dec 16  2014 Dangerous.Persuasions-Manipulation.des.Verstandes.S01E03.Prophet.der.Luegen.GERMAN.DOKU.720p.HDTV.x264-RiO.mkv\n-rwxrws---   1 root     ftpusers 1477245833 Aug 31  2014 Darwin.in.der.Kritik.Glauben.in.Amerika.GERMAN.DOKU.720p.HDTV.x264-TVP.mkv\n-rwxrws---   1 root     ftpusers 1298853604 Jan 25  2015 Das.Universum.Eine.Reise.durch.Raum.und.Zeit.S03E01.Die.Sonne.GERMAN.DOKU.720p.HDTV.x264-OWG.mkv\n-rwxrws---   1 root     ftpusers 413386923 Apr 24  2015 Das.Universum.Eine.Reise.durch.Raum.und.Zeit.S03E06.Massenaussterben.GERMAN.DOKU.HDTVRip.x264-OWG.mkv\n-rwxrws---   1 root     ftpusers 477308805 Apr  2  2014 Da.wird.mir.uebel.S04E13.Nebenjobs.GERMAN.DOKU.HDTVRip.x264-RFG.mkv\n-rwxrws---   1 root     ftpusers 731463680 Jan 21  2011 Deadly.Dust.Todesstaub.GERMAN.2006.DOKU.DVDRiP.XviD-XC.avi\n-rwxrws---   1 root     ftpusers 100138999 Sep  8  2014 DEF CON 18 - Blake Self _ bitemytaco - Hacking DOCSIS For Fu.flv\n-rwxrws---   1 root     ftpusers 391748949 Feb 18  2017 Der Baron der Raubkopierer - Kim Schmitz und Kim Dotcom - Do.mp4\n-rwxrws---   1 root     ftpusers 460962783 Apr 27  2013 Der deutsche Bruce Lee - Julians Weg zum Shaolin Mönch.flv\n-rwxrws---   1 root     ftpusers 265049085 Nov 25  2012 Der Fall Coca Cola (Doku).mp4\n-rwxrws---   1 root     ftpusers 308885780 Jan 15  2013 Der Fall Henry Kissinger (Doku) Kriegsverbrecher und Nobelpr.flv\n-rwxrws---   1 root     ftpusers 107126775 Nov 13  2014 Der_Mikrokosmos_Doku.flv\ndrwxrws---   2 root     ftpusers     4096 Jul 23 17:40 Der Stoff, aus dem der Kosmos ist 4_4 - Universum\ndrwxrws---   2 root     ftpusers     4096 Jul 23 18:00 Die Code - Knacker - Doku (2011) - - XviD by Waldo\ndrwxrws---   2 root     ftpusers     4096 Jul 23 18:00 Die Einflüsterer - Wie Geld Politik macht - Doku (\n-rwxrws---   1 root     ftpusers 805797712 Jan 29  2015 Die.Erde.im.Sonnenlicht.E11.German.DOKU.BDRiP.X264-SMAHD.mkv\ndrwxrws---   6 root     ftpusers     4096 Apr 29  2024 Die.Geschichte.des.FBI.GERMAN.DOKU.2012.COMPLETE.PAL.DVDR-VhV\ndrwxrws---   2 root     ftpusers     4096 Apr 20  2024 Die Grenzen der Zeit DOKU WS HDTV x264 - MiSFiTS -\ndrwxrws---   2 root     ftpusers     4096 Apr 21  2024 Die Jagd nach den Grenzen des Universums DOKU WS H\n-rwxrws---   1 root     ftpusers 382757009 Jan 31  2015 Die.Marketing-Koenige.Wer.uns.staendig.shoppen.laesst.E03.GERMAN.DOKU.HDTVRip.x264-RiO.mkv\n-rwxrws---   1 root     ftpusers 325331712 Jan 15  2013 Die Wahrheit über den Vietnamkrieg (Doku) Daniel Ellsberg un.flv\n-rwxrws---   1 root     ftpusers 777007122 Feb 24  2015 Die.Wahrheit.ueber.den.Holocaust.E08.Verdraengung.GERMAN.DOKU.720p.HDTV.x264-TMSF.mkv\n-rwxrws---   1 root     ftpusers 4200339572 Mar 14 15:47 Dont.Die.Der.Mann.der.unsterblich.sein.will.2025.GERMAN.DL.DOKU.1080p.WEB.h264-HAXE.mkv\n-rwxrws---   1 root     ftpusers 208180451 Nov 28  2021 Dummheit und Profitgier – Impfen bei Angst  Univ. Prof. Dr. med. Christian Schubert  QS24.mp4\n-rwxrws---   1 root     ftpusers 316975597 Jan 25  2015 extra-3.2014-11-05.GERMAN.WS.HDTVRip.x264-TVP.mkv\ndrwxrws---   3 root     ftpusers     4096 Jul 23 17:40 Faszination.Island.Das.Paradies.des.Nordens.2012.GERMAN.DOKU.WS.DVDRip.XViD-CDP\n-rwxrws---   1 root     ftpusers 564572160 May 22  2013 Faszination.Island.Das.Paradies.des.Nordens.2012.GERMAN.DOKU.WS.DVDRip.XViD-CDP.tar\n-rwxrws---   1 root     ftpusers 1055001510 May  1  2015 Geheimakte.Amerika.S02E01.Prae-Astronautik.GERMAN.DOKU.720P.HDTV.x264-OWG.mkv\n-rwxrws---   1 root     ftpusers 73457040 Dec 28  2014 Geheimnisse.des.Universums.S01E10.Der.Stern.German.DOKU.WS.BDRiP.x264-TV4A.mkv\n-rwxrws---   1 root     ftpusers 1349520114 Jun 29  2014 Hacker_Jeopardy_2013_30c3.mp4\n-rwxrws---   1 root     ftpusers 2013773880 Dec 18  2013 Hacker.Portrait.einer.Gegenkultur.2010.GERMAN.DOKU.720p.HDTV.x264-TVP.mkv\n-rwxrws---   1 root     ftpusers 292763054 Nov 25  2012 Hacker - Portrait einer Gegenkultur - Doku Deutsche german.mp4\ndrwxrws---   2 root     ftpusers     4096 Aug 28  2023 Hackers.wanted.2008.DVDRip.MP4-NoGrp\n-rwxrws---   1 root     ftpusers 522542524 Apr 13  2014 Hightech.des.Mittelalters-Das.Wikinger.Schwert.GERMAN.DOKU.HDTVRip.x264-CDP.mkv\n-rwxrws---   1 root     ftpusers 527926278 Feb 25  2015 Highway.to.Sell.Turbo.Tuning.und.Auktionen.S01E06.GERMAN.DOKU.HDTVRip.x264-OWG.mkv\n-rwxrws---   1 root     ftpusers 356623619 Nov 25  2012 Ihr lernt das, was Ihr wissen dürft, und nicht das, was Ihr .mp4\n-rwxrws---   1 root     ftpusers 347177480 Oct  2  2014 Ihr lernt das, was Ihr wissen dürft, und nicht das, was Ihr nicht wissen solltet. Ganz einfach!-1rvPPxnITzU.mp4\n-rwxrws---   1 root     ftpusers 242816794 Jan  5  2013 Illuminaten (Doku) Die geheime Weltverschwörung.flv\n-rwxrws---   1 root     ftpusers 1180985945 Jan 25  2015 Im.Land.der.Baeren.2014.German.DOKU.AC3.HDRip.x264-FuN.mp4\n-rwxrws---   1 root     ftpusers 1271581084 Nov 13  2014 Im.Land.der.Baeren.German.DOKU.WS.BDRiP.x264-TV4A.mkv\n-rwxrws---   1 root     ftpusers 1305843284 Nov 13  2014 Im.Visier.der.Hacker-Wie.gefaehrlich.wird.das.Netz.GERMAN.DOKU.720p.HDTV.x264-TVP.mkv\n-rwxrws---   1 root     ftpusers 400208698 Jan 25  2015 Invasion.Erde.E04.GERMAN.DOKU.HDTVRip.x264-RiO.mkv\n-rwxrws---   1 root     ftpusers 494385030 Nov 13  2014 JFK.Die.verlorenen.Aufnahmen.GERMAN.DOKU.WS.HDTVRip.x264-TVP.mkv\n-rwxrws---   1 root     ftpusers 595880247 Dec 18  2013 Juden.und.Muslime.So.nah.und.doch.so.fern.E01.Gruenden.beginnen.610.-.721.GERMAN.DOKU.HDTVRip.x264-RiO.mkv\ndrwxrws---   2 root     ftpusers     4096 Jul 23 18:00 Konrad Adenauer - Stunden der Entscheidung - Doku-\n-rwxrws---   1 root     ftpusers 1049811979 Aug 31  2014 Krieg.auf.dem.Schachbrett-Das.Duell.Karpow.gegen.Kasparow.GERMAN.DOKU.720p.HDTV.x264-TVP.mkv\n-rwxrws---   1 root     ftpusers 126820125 Nov 13  2014 Kung_Fu_-_Die_Kampfkunst_der_Shaolin.flv\n-rwxrws---   1 root     ftpusers 733535086 Apr  9  2012 Max.Bill.Das.absolute.Augenmass.German.2008.DOKU.DVDRiP.XviD-XF.avi\ndrwxrws---   2 root     ftpusers     4096 Jul 23 18:00 Meine Familie, die Nazis und Ich - Doku (2012) - -\n-rwxrws---   1 root     ftpusers     2056 Nov 18  2023 Microsoft Word-Dokument (neu).nfo\ndrwxrws---   2 root     ftpusers     4096 Jan 20  2015 NightWash.2015-01-08.GERMAN.HDTV.720p.x264-TSCC\n-rwxrws---   1 root     ftpusers 1119023077 Apr 30  2014 NSA.Der.grosse.Lauschangriff.GERMAN.DOKU.HDTV.720p.x264-NVA.mkv\n-rwxrws---   1 root     ftpusers 729499648 Nov 13  2006 Outfoxed.-.Ausgefuchst.AKA.Der.Medienkrieg.DOKU.GERMAN.XViD.avi\ndrwxrws---   3 root     ftpusers     4096 Apr 16  2024 Plastic.Planet.German.2009.DOKU.AC3.DVDRiP.XViD-NGX\n-rwxrws---   1 root     ftpusers 1850337280 Dec 11  2011 Plastic.Planet.German.2009.DOKU.AC3.DVDRiP.XViD-NGX.tar\n-rwxrws---   1 root     ftpusers 1686848371 Jun  8  2024 Power.2024.German.AC3.DL.1080p.Web.x265-FuN.mkv\n-rwxrws---   1 root     ftpusers 1226188800 May 22  2013 Psycho.Legacy.GERMAN.DOKU.2010.AC3.720p.BluRay.x264-GOREHOUNDS.tar\n-rwxrws---   1 root     ftpusers 199443204 May 16  2015 Science.of.Stupid.Wissenschaft.der.Missgeschicke.S02E11.Folge.11.GERMAN.DOKU.WS.HDTVRip.x264-TMSF.mkv\ndrwxrws---   3 root     ftpusers     4096 Jul 23 17:40 Secret.Service.Schutz.des.Praesidenten.GERMAN.DOKU.AC3.HDTV.720p.x264-NVA\n-rwxrws---   1 root     ftpusers 367781888 Dec  5  2009 Sexreport.2008.E02.GERMAN.DOKU.WS.dTV.XviD-TSCC.avi\n-rwxrws---   1 root     ftpusers 17163907 Nov 28  2021 Sind die Ungeimpften schuld - Ein Essay von Daniela Dahn.mp4\n-rwxrws---   1 root     ftpusers 376156160 May 22  2013 Skandinavien.von.oben.E01.Norwegen.German.2012.DOKU.WS.DVDRip.XviD-UMF.tar\n-rwxrws---   1 root     ftpusers 375132160 May 22  2013 Skandinavien.von.oben.E03.Daenemark.German.2012.DOKU.WS.DVDRip.XviD-UMF.tar\n-rwxrws---   1 root     ftpusers 346053152 Jan 27  2015 Snooker.Main.Tour.2014-2015.Coral.UK.Championship.in.York.Session.1.GERMAN.WS.HDTVRip.x264-SAPH1R.mkv\n-rwxrws---   1 root     ftpusers 880807172 Jan 18  2022 Terra.X.-.Faszination.Erde.-.Vietnam.Zerbrechliche.Schoenheit.GERMAN.DOKU.HDTV-720p.x264.mkv\n-rwxrws---   1 root     ftpusers 904707056 Jan 25  2015 Terra.X.Supertalent.Mensch.E02.Die.Geistesgiganten.GERMAN.DOKU.720p.HDTV.x264-RiO.mkv\n-rwxrws---   1 root     ftpusers 6415912157 Mar 14 15:51 Thomas.Mueller.Einer.wie.Keiner.2025.German.DOKU.1080p.WEB.H264-SiXTYNiNE.mkv\n-rwxrws---   1 root     ftpusers  2457600 May 20  2012 Tierisch_lustig_-_Die_Wissenschaft_vom_Lachen_-_YouTube.flv\n-rwxrws---   1 root     ftpusers 475736089 Jun 22  2015 ▶ Tod eines Internet Aktivisten - Aaron Swartz [Dokumentati.webm\n-rwxrws---   1 root     ftpusers 1586565141 Jan 25  2015 UFO.S01E02.Testpilot.Paul.Foster.German.DL.FS.720p.BluRay.x264-THEORY.mkv\n-rwxrws---   1 root     ftpusers 1229149377 Jan 28  2015 UFO.S01E04.Falle.im.Weltraum.German.DL.FS.720p.BluRay.x264-THEORY.mkv\ndrwxrws---   2 root     ftpusers     4096 Apr 16  2024 Und.alle.haben.geschwiegen.Die.Dokumentation.2012.GERMAN.DOKU.WS.HDTV.XviD-aWake\n-rwxrws---   1 root     ftpusers 1080057692 Jan 25  2015 Unendlich.Jetzt.2014.German.Doku.BDRiP.X264-SMAHD.mkv\n-rwxrws---   1 root     ftpusers 619767430 Jan 29  2015 Unsere.Geschichte.Hamburg.mein.Hafen.E01.Erst.die.Arbeit.GERMAN.DOKU.WS.SATRip.x264-Pumuck.mkv\n-rwxrws---   1 root     ftpusers 1446325605 Sep 15  2012 Verhoekert.Ein.Broker.dealt.sich.um.die.Welt.E01.GERMAN.DOKU.720p.HDTV.x264-SiTiN.mkv\ndrwxrws---   2 root     ftpusers     4096 Aug 13 16:57 Verkaufen um jeden Preis DOKU WS dTV XviD - D4U -\n-rwxrws---   1 root     ftpusers 2291198439 May 22  2013 Versenkt.und.Vergessen.GERMAN.DOKU.WS.720p.HDTV.x264-MiSFiTS.mkv\n-rwxrws---   1 root     ftpusers 1623271795 Nov 29  2013 Vom.Plan.zum.Planeten.-.Projekt.Erde.GERMAN.DOKU.720p.HDTV.x264-TVP.mkv\ndrwxrws---   2 root     ftpusers     4096 Jul 23 18:00 Wegelagerer und Wichtigtuer - Doku (2012) - - DivX\n-rwxrws---   1 root     ftpusers 381961318 Apr 17  2011 Weltmacht.WikiLeaks-Krieg.im.Netz.GERMAN.DOKU.HDTVRip.XViD-EVIL.avi\n-rwxrws---   1 root     ftpusers 1890878229 Jan 29  2015 Wildes.Kanada.S01E03.German.Doku.720p.Bluray.X264-SMAHD.mkv\n-rwxrws---   1 root     ftpusers 652546678 May  1  2015 Xenius-Kalorien.Was.hinter.den.Zahlen.steckt.GERMAN.DOKU.720p.HDTV.x264-OWG.mkv\n"
+[performFtpList] 📄 Parsed 103 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 103 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "Auf der Suche nach außerirdischem Leben 1_2 - Doku"
+[parseProftpdList] 📁 Found directory: "Auf der Suche nach außerirdischem Leben 2_2 - Doku"
+[parseProftpdList] 📁 Found directory: "Auf der Suche nach Gottesformelt - von Harald Lesc"
+[parseProftpdList] 📁 Found directory: "BBC.Earth.Expedition.Neuguinea.S01E01.Pythons.und.Paradiesvoegel.GERMAN.DTS.DOKU.1080p.BluRay.x264-TVP"
+[parseProftpdList] 📁 Found directory: "BBC.Earth.Expedition.Neuguinea.S01E02.Flughunde.und.Urwaldkrokodile.GERMAN.DTS.DOKU.1080p.BluRay.x264-TVP"
+[parseProftpdList] 📁 Found directory: "BBC.Earth.Expedition.Neuguinea.S01E03.Baumkaengurus.und.Thermometerhuehner.GERMAN.DTS.DOKU.1080p.BluRay.x264-TVP"
+[parseProftpdList] 📁 Found directory: "Big Bang im Labor - Doku (2009) - - DivX by Waldor"
+[parseProftpdList] 📁 Found directory: "Black.Box.BRD.German.DOKU.1080p.WebHD.x264-GWD"
+[parseProftpdList] 📁 Found directory: "Der Stoff, aus dem der Kosmos ist 4_4 - Universum"
+[parseProftpdList] 📁 Found directory: "Die Code - Knacker - Doku (2011) - - XviD by Waldo"
+[parseProftpdList] 📁 Found directory: "Die Einflüsterer - Wie Geld Politik macht - Doku ("
+[parseProftpdList] 📁 Found directory: "Die.Geschichte.des.FBI.GERMAN.DOKU.2012.COMPLETE.PAL.DVDR-VhV"
+[parseProftpdList] 📁 Found directory: "Die Grenzen der Zeit DOKU WS HDTV x264 - MiSFiTS -"
+[parseProftpdList] 📁 Found directory: "Die Jagd nach den Grenzen des Universums DOKU WS H"
+[parseProftpdList] 📁 Found directory: "Faszination.Island.Das.Paradies.des.Nordens.2012.GERMAN.DOKU.WS.DVDRip.XViD-CDP"
+[parseProftpdList] 📁 Found directory: "Hackers.wanted.2008.DVDRip.MP4-NoGrp"
+[parseProftpdList] 📁 Found directory: "Konrad Adenauer - Stunden der Entscheidung - Doku-"
+[parseProftpdList] 📁 Found directory: "Meine Familie, die Nazis und Ich - Doku (2012) - -"
+[parseProftpdList] 📁 Found directory: "NightWash.2015-01-08.GERMAN.HDTV.720p.x264-TSCC"
+[parseProftpdList] 📁 Found directory: "Plastic.Planet.German.2009.DOKU.AC3.DVDRiP.XViD-NGX"
+[parseProftpdList] 📁 Found directory: "Secret.Service.Schutz.des.Praesidenten.GERMAN.DOKU.AC3.HDTV.720p.x264-NVA"
+[parseProftpdList] 📁 Found directory: "Und.alle.haben.geschwiegen.Die.Dokumentation.2012.GERMAN.DOKU.WS.HDTV.XviD-aWake"
+[parseProftpdList] 📁 Found directory: "Verkaufen um jeden Preis DOKU WS dTV XviD - D4U -"
+[parseProftpdList] 📁 Found directory: "Wegelagerer und Wichtigtuer - Doku (2012) - - DivX"
+[parseProftpdList] ✅ Total entries found: 24 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdb/Evelin+Ich/" depth: 10
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdb/Evelin+Ich/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdb/Evelin+Ich/"
+[performFtpList] 📋 Raw FTP listing:
+ "-rwxrws---   1 root     ftpusers    95254 Mar 13  2010 26-02-10_10.3gp\n-rwxrws---   1 root     ftpusers    92771 Mar 13  2010 26-02-10_11.3gp\n-rwxrws---   1 root     ftpusers    96642 Mar 13  2010 26-02-10_1.3gp\n-rwxrws---   1 root     ftpusers    56717 Mar 13  2010 26-02-10_2.3gp\n-rwxrws---   1 root     ftpusers    97037 Mar 13  2010 26-02-10_3.3gp\n-rwxrws---   1 root     ftpusers    30830 Mar 13  2010 26-02-10.3gp\n-rwxrws---   1 root     ftpusers    97001 Mar 13  2010 26-02-10_4.3gp\n-rwxrws---   1 root     ftpusers    85699 Mar 13  2010 26-02-10_5.3gp\n-rwxrws---   1 root     ftpusers    96017 Mar 13  2010 26-02-10_6.3gp\n-rwxrws---   1 root     ftpusers    35915 Mar 13  2010 26-02-10_7.3gp\n-rwxrws---   1 root     ftpusers    97085 Mar 13  2010 26-02-10_8.3gp\n-rwxrws---   1 root     ftpusers    90805 Mar 13  2010 26-02-10_9.3gp\n-rwxrws---   1 root     ftpusers  1218560 Feb 14  2010 Heiner First.VOB\n"
+[performFtpList] 📄 Parsed 13 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 13 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] ✅ Total entries found: 0 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdb/FILME/" depth: 11
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdb/FILME/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdb/FILME/"
+[performFtpList] 📋 Raw FTP listing:
+ "drwxrws---   2 root     ftpusers   356352 Jul 11 21:22 Andere\ndrwxrws---   2 root     ftpusers    28672 Jul 12 07:31 Archive\ndrwxrws---   2 root     ftpusers    65536 Jul 11 21:25 Bilder\ndrwxrws---   2 root     ftpusers    32768 Jul 11 21:36 Dokumente\ndrwxrws---   2 root     ftpusers     4096 Jul 11 21:25 Kryptowährung\ndrwxrws---   2 root     ftpusers     4096 Jul 11 21:26 Subtitle\ndrwxrws---   2 root     ftpusers     4096 Jul 11 21:26 System\ndrwxrws---   2 root     ftpusers  1110016 Aug 11 20:14 Videos\n"
+[performFtpList] 📄 Parsed 8 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 8 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "Andere"
+[parseProftpdList] 📁 Found directory: "Archive"
+[parseProftpdList] 📁 Found directory: "Bilder"
+[parseProftpdList] 📁 Found directory: "Dokumente"
+[parseProftpdList] 📁 Found directory: "Kryptowährung"
+[parseProftpdList] 📁 Found directory: "Subtitle"
+[parseProftpdList] 📁 Found directory: "System"
+[parseProftpdList] 📁 Found directory: "Videos"
+[parseProftpdList] ✅ Total entries found: 8 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdb/Hochzeit/" depth: 12
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdb/Hochzeit/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdb/Hochzeit/"
+[performFtpList] 📋 Raw FTP listing:
+ "drwxrws---   2 root     ftpusers     4096 Jul 12 06:46 Bessim H Video\n-rwxrws---   1 root     ftpusers 1909981184 Jul 22  2011 HZvonEvelinHeiner.iso\n-rwxrws---   1 root     ftpusers 65275904 Aug 29  2010 tan.mpg\n-rwxrws---   1 root     ftpusers 3875813319 Aug 29  2010 thanh2.mpg\n-rwxrws---   1 root     ftpusers 5986772992 Aug 29  2010 Thanh.mpg\n-rwxrws---   1 root     ftpusers 40102560000 Sep  3  2010 thanh.mpg.dv\n-rwxrws---   1 root     ftpusers 560062716 Sep  3  2010 Than Hochzeit\n-rwxrws---   1 root     ftpusers 3098271744 Sep 10  2010 Vinh.mpg\n"
+[performFtpList] 📄 Parsed 8 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 8 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "Bessim H Video"
+[parseProftpdList] ✅ Total entries found: 1 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdb/KinderSerienFilme/" depth: 13
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdb/KinderSerienFilme/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdb/KinderSerienFilme/"
+[performFtpList] 📋 Raw FTP listing:
+ "drwxrws---   3 root     ftpusers     4096 Jul 12 06:46  AugsburgerPuppenkiste\n-rwxrws---   1 root     ftpusers 1101838993 Jun  8  2024 Bambi.2.Der.Herr.der.Waelder.2006.German.AC3D.DL.1080p.BluRay.x265-FuN.mkv\ndrwxrws---   2 root     ftpusers     4096 Aug 28  2023 Biene Maja\n-rwxrws---   1 root     ftpusers 2404521543 Jun  8  2024 Das.fliegende.Klassenzimmer.2023.German.EAC3.1080p.AMZN.WEB.H265-ZeroTwo.mkv\n-rwxrws---   1 root     ftpusers 49026434 Oct 14  2014 Die_Ferien_des_Herrn_Rossi_12_Ganze_Folge_-_Gipfelst_rmer_haben_s_schwer.flv\n-rwxrws---   1 root     ftpusers 3980572334 Jun  8  2024 Die.Legende.des.Tigers.2024.German.DL.EAC3.1080p.DV.HDR.AMZN.WEB.H265-ZeroTwo.mkv\n-rwxrws---   1 root     ftpusers 136824687 May 24  2015 ▶ Doctor Snuggles - Folge 1 - Wie Mathilde Dosenfänger erfu.webm\n-rwxrws---   1 root     ftpusers 4950069177 Jun  8  2024 Dr. Dolittle.3.2006.German.DL.1080p.WEBRip.h265-WOTT.mkv\n-rwxrws---   1 root     ftpusers 2396070266 Jun  8  2024 Guardians.of.the.Galaxy.2014.German.AC3.DL.1080p.BluRay.x265-FuN.mkv\n-rwxrws---   1 root     ftpusers 28011898880 Apr 20  2024 Gummibaerenbande.COMPLETE.GERMAN.720p.HDTV.x264-4SJ.tar\n-rwxrws---   1 root     ftpusers 6226129560 Mar 14 14:57 Henry.Danger.Der.Film.2025.German.DL.EAC3.1080p.AMZN.WEB.H264-XiSS.mkv\n-rwxrws---   1 root     ftpusers 2019228613 Jun  8  2024 Ice.Age.2.2006.German.DL.AC3.1080p.BluRay.x265-FuN.mkv\n-rwxrws---   1 root     ftpusers 4058110996 Mar 14 15:41 Plankton.Der.Film.2025.GERMAN.DL.1080p.WEB.h264-SCHOKOBONS.mkv\ndrwxrws---   2 root     ftpusers    12288 Sep 29  2024 Pumuckl\ndrwxrws---   8 root     ftpusers     4096 Jul 23 20:44 Simpsons\ndrwxrws---   3 root     ftpusers     4096 Apr 16  2024 Sindbad - 42 Folgen - German - by Videomann - s. I\n-rwxrws---   1 root     ftpusers 1603269068 Apr 19  2015 ☆ Till Eulenspiegel ☆ Teil I und II ☆ Ganzer Kinder Film 201.mp4\n-rwxrws---   1 root     ftpusers 1815924320 Jun  7  2024 Toy.Story.2.1999.German.AC3.DL.1080p.BluRay.x265-FuN.mkv\n-rwxrws---   1 root     ftpusers 1670834363 Jun  8  2024 Toy.Story.4.Alles.hoert.auf.kein.Kommando.2019.German.AC3.DL.1080p.BluRay.x265-FuN.mkv\n"
+[performFtpList] 📄 Parsed 19 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 19 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "AugsburgerPuppenkiste"
+[parseProftpdList] 📁 Found directory: "Biene Maja"
+[parseProftpdList] 📁 Found directory: "Pumuckl"
+[parseProftpdList] 📁 Found directory: "Simpsons"
+[parseProftpdList] 📁 Found directory: "Sindbad - 42 Folgen - German - by Videomann - s. I"
+[parseProftpdList] ✅ Total entries found: 5 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdb/lost+found/" depth: 14
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdb/lost+found/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdb/lost+found/"
+[performFtpList] 📋 Raw FTP listing:
+ ""
+[performFtpList] 📄 Parsed 0 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 0 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] ✅ Total entries found: 0 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdb/SERIEN/" depth: 15
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdb/SERIEN/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdb/SERIEN/"
+[performFtpList] 📋 Raw FTP listing:
+ "-rwxrws---   1 root     ftpusers 244389888 Dec  5  2009 15_Special_Features.avi\ndrwxrws---   2 root     ftpusers     4096 Apr 16  2024 24 S6\ndrwxrws---  26 root     ftpusers     4096 Dec 30  2014 24 S7\n-rwxrws---   1 root     ftpusers 188776448 Mar 14  2011 28. Micky Maus Wunderhaus - S02E01 - Goofy und die Tanzparty.avi\n-rwxrws---   1 root     ftpusers 188770304 Mar 14  2011 29. Micky Maus Wunderhaus - S02E02 - Die Zeitmaschine.avi\n-rwxrws---   1 root     ftpusers 188733440 Mar 14  2011 30. Micky Maus Wunderhaus - S02E03 - Goofy, der Heimwerker.avi\n-rwxrws---   1 root     ftpusers 188770304 Mar 14  2011 31. Micky Maus Wunderhaus - S02E04 - Mickys hilfreiche Händchen.avi\n-rwxrws---   1 root     ftpusers 188766208 Mar 14  2011 32. Micky Maus Wunderhaus - S02E05 - Minnies Picknick.avi\n-rwxrws---   1 root     ftpusers 188770304 Mar 14  2011 33. Micky Maus Wunderhaus - S02E06 - Goofys Training.avi\n-rwxrws---   1 root     ftpusers 188735488 Mar 14  2011 34. Micky Maus Wunderhaus - S02E07 - Goofys Hut.avi\n-rwxrws---   1 root     ftpusers 188805120 Mar 14  2011 35. Micky Maus Wunderhaus - S02E08 - Daisys Haustiere.avi\n-rwxrws---   1 root     ftpusers 188770304 Mar 14  2011 36. Micky Maus Wunderhaus - S02E09 - Mickys verrückter Tag.avi\n-rwxrws---   1 root     ftpusers 188794880 Mar 14  2011 37. Micky Maus Wunderhaus - S02E10 - Micky und die Zahlen.avi\n-rwxrws---   1 root     ftpusers 188762112 Mar 14  2011 38. Micky Maus Wunderhaus - S02E11 - Mickys großes Konzert.avi\n-rwxrws---   1 root     ftpusers 188803072 Mar 14  2011 39. Micky Maus Wunderhaus - S02E12 - Ein Päckchen für Donald.avi\n-rwxrws---   1 root     ftpusers 188735488 Mar 14  2011 40. Micky Maus Wunderhaus - S02E13 - Plutos Schaumbad.avi\n-rwxrws---   1 root     ftpusers 188798976 Mar 14  2011 41. Micky Maus Wunderhaus - S02E14 - Klarabellas Jahrmarkt.avi\n-rwxrws---   1 root     ftpusers 188770304 Mar 14  2011 42. Micky Maus Wunderhaus - S02E15 - Mickys und Minnies Dschungel-Safari.avi\n-rwxrws---   1 root     ftpusers 188768256 Mar 14  2011 43. Micky Maus Wunderhaus - S02E16 - Mickys Riesenhilfe.avi\n-rwxrws---   1 root     ftpusers 188794880 Mar 14  2011 44. Micky Maus Wunderhaus - S02E17 - Geheimagentin Daisy.avi\n-rwxrws---   1 root     ftpusers 188796928 Mar 14  2011 45. Micky Maus Wunderhaus - S02E18 - Mickys Zeltlager.avi\n-rwxrws---   1 root     ftpusers 188794880 Mar 14  2011 46. Micky Maus Wunderhaus - S02E19 - Mickys Kunstausstellung.avi\n-rwxrws---   1 root     ftpusers 188778496 Mar 14  2011 47. Micky Maus Wunderhaus - S02E20 - Minnie und die Detektive.avi\n-rwxrws---   1 root     ftpusers 188772352 Mar 14  2011 48. Micky Maus Wunderhaus - S02E21 - Ritter Goofy.avi\n-rwxrws---   1 root     ftpusers 188805120 Mar 14  2011 49. Micky Maus Wunderhaus - S02E22 - Pluto der Rettungshund.avi\n-rwxrws---   1 root     ftpusers 188768256 Mar 14  2011 50. Micky Maus Wunderhaus - S02E23 - Mickys Danke-für-alles-Tag.avi\n-rwxrws---   1 root     ftpusers 188764160 Mar 14  2011 51. Micky Maus Wunderhaus - S02E24 - Mickys große Überraschung.avi\n-rwxrws---   1 root     ftpusers 188764160 Mar 14  2011 52. Micky Maus Wunderhaus - S02E25 - Mickys Komet.avi\n-rwxrws---   1 root     ftpusers 188774400 Mar 14  2011 53. Micky Maus Wunderhaus - S02E26 - Minnies Regenbogen.avi\n-rwxrws---   1 root     ftpusers 188770304 Mar 14  2011 54. Micky Maus Wunderhaus - S02E27 - Klarabellas Muh-sical.avi\n-rwxrws---   1 root     ftpusers 188766208 Mar 14  2011 55. Micky Maus Wunderhaus - S02E28 - Mickys Nachricht vom Mars.avi\n-rwxrws---   1 root     ftpusers 188764160 Mar 14  2011 56. Micky Maus Wunderhaus - S02E29 - Weltraum-Captain Donald.avi\n-rwxrws---   1 root     ftpusers 188733440 Mar 14  2011 57. Micky Maus Wunderhaus - S02E30 - Die Freundschaftstags-Party.avi\n-rwxrws---   1 root     ftpusers 188774400 Mar 14  2011 58. Micky Maus Wunderhaus - S02E31 - Karlos Strandparty.avi\n-rwxrws---   1 root     ftpusers 188764160 Mar 14  2011 59. Micky Maus Wunderhaus - S02E32 - Micky und das Drachenei.avi\n-rwxrws---   1 root     ftpusers 188741632 Mar 14  2011 60. Micky Maus Wunderhaus - S02E33 - Ein verrückter Goofy Tag.avi\n-rwxrws---   1 root     ftpusers 188764160 Mar 14  2011 61. Micky Maus Wunderhaus - S02E34 - Die Wunderhaus-Eisenbahn.avi\n-rwxrws---   1 root     ftpusers 188786688 Mar 14  2011 62. Micky Maus Wunderhaus - S02E35 - Die große Zirkusshow.avi\n-rwxrws---   1 root     ftpusers 188770304 Mar 14  2011 63. Micky Maus Wunderhaus - S02E36 - Minnies Bienengeschichte.avi\n-rwxrws---   1 root     ftpusers 188764160 Mar 14  2011 64. Micky Maus Wunderhaus - S02E37 - Die Suche nach den Kokosnüssen.avi\n-rwxrws---   1 root     ftpusers 188973056 Mar 14  2011 65. Micky Maus Wunderhaus - S02E38 - Daisys Grashüpfer.avi\n-rwxrws---   1 root     ftpusers 188768256 Mar 14  2011 66. Micky Maus Wunderhaus - S02E39 - Donalds Enten.avi\n-rwxrws---   1 root     ftpusers 378308608 Mar 14  2011 67. Micky Maus Wunderhaus - S02E40 - Mickys Abenteuer im Wunderland.avi\n-rwxrws---   1 root     ftpusers 188729344 Mar 14  2011 68. Micky Maus Wunderhaus - S02E41 - Toodles' Geburtstag.avi\n-rwxrws---   1 root     ftpusers 188764160 Mar 14  2011 69. Micky Maus Wunderhaus - S02E42 - Mickys Frühlingsüberraschung.avi\n-rwxrws---   1 root     ftpusers 188737536 Mar 14  2011 70. Micky Maus Wunderhaus - S02E43 - Goofy, der Superheld.avi\n-rwxrws---   1 root     ftpusers 188770304 Mar 14  2011 71. Micky Maus Wunderhaus - S02E44 - Goofys Roboter.avi\n-rwxrws---   1 root     ftpusers 188760064 Mar 14  2011 72. Micky Maus Wunderhaus - S02E45 - Super-Goofys Super-Puzzle.avi\n-rwxrws---   1 root     ftpusers 188741632 Mar 14  2011 73. Micky Maus Wunderhaus - S02E46 - Plutos kleiner Dinosaurier.avi\n-rwxrws---   1 root     ftpusers 188776448 Mar 14  2011 74. Micky Maus Wunderhaus - S02E47 - Doanald aus der Wüste.avi\n-rwxrws---   1 root     ftpusers 188780544 Mar 14  2011 75. Micky Maus Wunderhaus - S02E48 - Donald, der Lampengeist.avi\ndrwxrws---   6 root     ftpusers     4096 Apr 16  2024 Alf\n-rwxrws---   1 root     ftpusers 445263492 May 26 13:31 Beyond.UFOs.and.The.Unknown.S01E03.720p.HEVC.x265-MeGusta.mkv\ndrwxrws---   3 root     ftpusers     4096 Apr 16  2024 Breaking.Bad.S01-S05.COMPLETE.German.AC3.BDRiP.x264-ULTR4SP33D\n-rwxrws---   1 root     ftpusers 3643253325 May 26 13:40 Cosmosis.UFOs.and.A.New.Reality.S01E01.1080p.WEB-DL.AAC2.0.H.264-Hagnar.mkv\n-rwxrws---   1 root     ftpusers 3572600098 May 26 13:37 Cosmosis.UFOs.and.A.New.Reality.S01E02.1080p.WEB-DL.AAC2.0.H.264-HAGNAR.mkv\n-rwxrws---   1 root     ftpusers 4297098230 May 26 13:39 Cosmosis.UFOs.and.A.New.Reality.S01E03.1080p.WEB-DL.AAC2.0.H.264-Hagnar.mkv\ndrwxrws---   8 root     ftpusers     4096 Jun  8  2024 CSI-LasVegas\n-rwxrws---   1 root     ftpusers 3517320023 Jul 13  2017 emerald.city.2017.s01e01.1080p.bluray.x264-rovers.mkv\n-rwxrws---   1 root     ftpusers 3519502962 Jul 13  2017 emerald.city.2017.s01e02.1080p.bluray.x264-rovers.mkv\n-rwxrws---   1 root     ftpusers 3516043984 Jul 13  2017 emerald.city.2017.s01e03.1080p.bluray.x264-rovers.mkv\n-rwxrws---   1 root     ftpusers 3517576185 Jul 13  2017 emerald.city.2017.s01e04.1080p.bluray.x264-rovers.mkv\n-rwxrws---   1 root     ftpusers 3517862957 Jul 13  2017 emerald.city.2017.s01e05.1080p.bluray.x264-rovers.mkv\n-rwxrws---   1 root     ftpusers 3518431086 Jul 13  2017 emerald.city.2017.s01e06.1080p.bluray.x264-rovers.mkv\n-rwxrws---   1 root     ftpusers 3519086565 Jul 13  2017 emerald.city.2017.s01e07.1080p.bluray.x264-rovers.mkv\n-rwxrws---   1 root     ftpusers 3514169786 Jul 13  2017 emerald.city.2017.s01e08.1080p.bluray.x264-rovers.mkv\n-rwxrws---   1 root     ftpusers 3518105756 Jul 13  2017 emerald.city.2017.s01e09.1080p.bluray.x264-rovers.mkv\n-rwxrws---   1 root     ftpusers 3518183078 Jul 14  2017 emerald.city.2017.s01e10.1080p.bluray.x264-rovers.mkv\ndrwxrws---   2 root     ftpusers     4096 Jun  8  2024 Halo Staffel2\ndrwxrws---   3 root     ftpusers     4096 Mar 13  2013 How.to.Make.It.in.America.S02E02.In.or.Out.GERMAN.DUBBED.WS.BDRip.XviD-TVP\n-rwxrws---   1 root     ftpusers 3180999342 May 26 13:36 NOVA.S52E01.What.are.UFOs.1080p.AMZN.WEB-DL.DDP2.0.H.264-Kitsune.mkv\ndrwxrws---  23 root     ftpusers    20480 Jul 12 06:49 Outer Limits\n-rwxrws---   1 root     ftpusers 3176295592 May 26 13:29 Projekt.UFO.S01E01.GERMAN.DL.1080p.WEB.h264-SAUERKRAUT.mkv\n-rwxrws---   1 root     ftpusers 3288105989 May 26 13:29 Projekt.UFO.S01E02.GERMAN.DL.1080p.WEB.h264-SAUERKRAUT.mkv\n-rwxrws---   1 root     ftpusers 3323581848 May 26 13:26 Projekt.UFO.S01E03.GERMAN.DL.1080p.WEB.h264-SAUERKRAUT.mkv\n-rwxrws---   1 root     ftpusers 1366122208 May 26 13:24 Projekt.UFO.S01E04.GERMAN.DL.720p.WEB.h264-SAUERKRAUT.mkv\ndrwxrws---   7 root     ftpusers     4096 May 26 14:15 Stargate.Atlantis.S01-S05.COMPLETE.GERMAN.DUBBED.DL.iTunesHD.XviD-TVS\n-rwxrws---   1 root     ftpusers 161488896 Jul 21  2011 STV-(116) 23UHR59 [German-by TEDC] [German VCD] [found via w.mpg\n-rwxrws---   1 root     ftpusers 46292992 Jul 21  2011 STV-S01E11-Der Verrat [German] [found via www.fileDonkey.com.avi\n-rwxrws---   1 root     ftpusers 1527674437 Sep 24  2024 The.Acolyte.2024.S01E05.German.DL.1080p.HDR.UHD.WEBRip.h265-Tylor.D.mkv\n-rwxrws---   1 root     ftpusers 1610428068 May 26 13:21 the.cleaning.lady.s04e06.1080p.web.h264-successfulcrab.mkv\ndrwxrws---  25 root     ftpusers     4096 Nov  3  2019 The.Flash.S01.COMPLETE.GERMAN.5.1.DL.AC3.720p.BDRiP.x264-TvR\n-rwxrws---   1 root     ftpusers 54400430080 Oct  2  2022 The.Flash.S01.COMPLETE.GERMAN.5.1.DL.AC3.720p.BDRiP.x264-TvR.tar\n-rwxrws---   1 root     ftpusers 2131114932 May 26 13:19 The.Righteous.Gemstones.S04E02.GERMAN.DL.1080P.WEB.H264-WAYNE.mkv\n-rwxrws---   1 root     ftpusers 1446410448 May 26 13:19 The.Righteous.Gemstones.S04E04.German.DL.720p.WEB.h264-WvF.mkv\n-rwxrws---   1 root     ftpusers 310851564 May 26 13:22 UFOs.Investigating.the.Unknown.S02E06.720p.HEVC.x265-MeGusta.mkv\n-rwxrws---   1 root     ftpusers 687714323 Dec 22  2021 Workaholics.S05E01.Dorm.Daze.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n-rwxrws---   1 root     ftpusers 666737882 Dec 22  2021 Workaholics.S05E02.Front.Yard.Wrestling.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n-rwxrws---   1 root     ftpusers 666268671 Dec 22  2021 Workaholics.S05E03.Speedo.Racer.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n-rwxrws---   1 root     ftpusers 649647812 Dec 22  2021 Workaholics.S05E04.Menergy.Crisis.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n-rwxrws---   1 root     ftpusers 667387357 Dec 22  2021 Workaholics.S05E05.Gayborhood.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n-rwxrws---   1 root     ftpusers 672876528 Dec 22  2021 Workaholics.S05E06.Ditch.Day.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n-rwxrws---   1 root     ftpusers 681222079 Dec 22  2021 Workaholics.S05E07.Gramps.DeMamp.is.Dead.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n-rwxrws---   1 root     ftpusers 647917982 Dec 22  2021 Workaholics.S05E08.Blood.Drive.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n-rwxrws---   1 root     ftpusers 672492633 Dec 22  2021 Workaholics.S05E09.Wedding.Trashers.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n-rwxrws---   1 root     ftpusers 673299677 Dec 22  2021 Workaholics.S05E10.Trivia.Pursuits.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n-rwxrws---   1 root     ftpusers 670178217 Dec 22  2021 Workaholics.S05E11.The.Slump.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n-rwxrws---   1 root     ftpusers 671695488 Dec 22  2021 Workaholics.S05E12.Peyote.It.Forward.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n-rwxrws---   1 root     ftpusers 649893668 Dec 22  2021 Workaholics.S05E13.TAC.in.the.Day.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n"
+[performFtpList] 📄 Parsed 99 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 99 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "24 S6"
+[parseProftpdList] 📁 Found directory: "24 S7"
+[parseProftpdList] 📁 Found directory: "Alf"
+[parseProftpdList] 📁 Found directory: "Breaking.Bad.S01-S05.COMPLETE.German.AC3.BDRiP.x264-ULTR4SP33D"
+[parseProftpdList] 📁 Found directory: "CSI-LasVegas"
+[parseProftpdList] 📁 Found directory: "Halo Staffel2"
+[parseProftpdList] 📁 Found directory: "How.to.Make.It.in.America.S02E02.In.or.Out.GERMAN.DUBBED.WS.BDRip.XviD-TVP"
+[parseProftpdList] 📁 Found directory: "Outer Limits"
+[parseProftpdList] 📁 Found directory: "Stargate.Atlantis.S01-S05.COMPLETE.GERMAN.DUBBED.DL.iTunesHD.XviD-TVS"
+[parseProftpdList] 📁 Found directory: "The.Flash.S01.COMPLETE.GERMAN.5.1.DL.AC3.720p.BDRiP.x264-TvR"
+[parseProftpdList] ✅ Total entries found: 10 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdb/unbenannteFilme/" depth: 16
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdb/unbenannteFilme/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdb/unbenannteFilme/"
+[performFtpList] 📋 Raw FTP listing:
+ "-rwxrws---   1 root     ftpusers 457533753 Aug  1  2021 VID_1.mp4\n-rwxrws---   1 root     ftpusers 363194757 Jul 29  2021 VID_2.mp4\n-rwxrws---   1 root     ftpusers 333926979 Jul 27  2021 VID.mp4\n"
+[performFtpList] 📄 Parsed 3 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 3 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] ✅ Total entries found: 0 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdc/Linux-Script/" depth: 17
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdc/Linux-Script/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdc/Linux-Script/"
+[performFtpList] 📋 Raw FTP listing:
+ "-rwxrws---   1 root     ftpusers      366 Nov  6  2011 db8as.sh\n-rwxrws---   1 root     ftpusers      336 May 20  2012 f73.sh\n-rwxrws---   1 root     ftpusers      340 May 20  2012 f73zwei.sh\n-rwxrws---   1 root     ftpusers     3501 May 20  2012 proxy\n-rwxrws---   1 root     ftpusers     2783 May 20  2012 proxy2\n-rwxrws---   1 root     ftpusers     1997 May 20  2012 proxyping\n-rwxrws---   1 root     ftpusers      179 May 20  2012 Proxyping.sh\n-rwxrws---   1 root     ftpusers    17781 Feb 23  2013 run.sh\n"
+[performFtpList] 📄 Parsed 8 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 8 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] ✅ Total entries found: 0 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdc/lost+found/" depth: 18
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdc/lost+found/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdc/lost+found/"
+[performFtpList] 📋 Raw FTP listing:
+ ""
+[performFtpList] 📄 Parsed 0 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 0 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] ✅ Total entries found: 0 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdc/Source-Code/" depth: 19
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdc/Source-Code/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdc/Source-Code/"
+[performFtpList] 📋 Raw FTP listing:
+ "-rwxrws---   1 root     ftpusers    57804 Jul 12 08:11 duper.py\n-rwxrws---   1 root     ftpusers    34711 Jul 11 21:18 FileSorterPro.py\n-rwxrws---   1 root     ftpusers      515 Jan  3  1995 lamer.pas\n-rwxrws---   1 root     ftpusers     6925 Jan 12  2025 q3serverDeb.py\n-rwxrws---   1 root     ftpusers    93711 Jan 12  2025 quake3_background.jpg\n-rwxrws---   1 root     ftpusers    32163 Jul 13 15:46 SuperDuper3.py\n"
+[performFtpList] 📄 Parsed 6 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 6 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] ✅ Total entries found: 0 (directories + files)
+[performFastDirectoryScan] ✅ Fast directory scan completed: 131 directories found
+[FtpClient-Thread] 📂 Found 131 directories, success: true
+[FtpClient-Thread] ✅ FAST directory scan completed
+[FtpClient] 🚀 Emitting directoriesOnlyFinished to Directory Browser
+[MainWindow] � 131 FTP-Verzeichnisse (nur Ordner) empfangen
+🔄 Verzeichnisliste aktualisiert: 1 Verzeichnisse
+[MainWindow] ✅ FTP-Verzeichnis erfolgreich zum Scanner hinzugefügt: "ftp://192.168.1.224:21/sdb/FILME/"
+🚀 Starte Ultra Speed Scan für 1 Verzeichnisse...
+🚀 UltraSpeedEngine starting scan of 1 directories
+🔄 UltraSpeedEngine: Reset für neuen Scan mit 1 Verzeichnissen
+📁 UltraSpeedEngine: Sammle Dateien aus 1 Verzeichnissen...
+🌐 UltraSpeedEngine: FTP-Verzeichnis erkannt: "ftp://192.168.1.224:21/sdb/FILME/"
+🔍 UltraSpeedEngine: Suche nach FTP-Dateien in "ftp://192.168.1.224:21/sdb/FILME/"
+📡 UltraSpeedEngine: FTP-Pfad erkannt - Host: "192.168.1.224" Pfad: "/sdb/FILME/"
+🔍 UltraSpeedEngine: Starte echte FTP-Datei-Suche für: "ftp://192.168.1.224:21/sdb/FILME/"
+🎬 UltraSpeedEngine: Film/Video-Verzeichnis erkannt - Lade echte FTP-Dateien
+📡 UltraSpeedEngine: Hinzugefügt 6 echte FTP-Dateien aus "ftp://192.168.1.224:21/sdb/FILME/"
+📡 UltraSpeedEngine: Hinzugefügt 6 FTP-Dateien aus "ftp://192.168.1.224:21/sdb/FILME/"
+📁 UltraSpeedEngine: Gefunden 6 Dateien für echte Hash-basierte Duplikat-Erkennung
+🔐 UltraSpeedEngine: Berechne Hash für FTP-Datei: "ftp://192.168.1.224:21/sdb/FILME/emerald.city.2017.s01e01.1080p.bluray.x264-rovers.mkv"
+🔐 UltraSpeedEngine: Berechne Hash für FTP-Datei: "ftp://192.168.1.224:21/sdb/FILME/emerald.city.2017.s01e02.1080p.bluray.x264-rovers.mkv"
+🔐 UltraSpeedEngine: Berechne Hash für FTP-Datei: "ftp://192.168.1.224:21/sdb/FILME/NOVA.S52E01.What.are.UFOs.1080p.AMZN.WEB-DL.DDP2.0.H.264-Kitsune.mkv"
+🔐 UltraSpeedEngine: Berechne Hash für FTP-Datei: "ftp://192.168.1.224:21/sdb/FILME/Projekt.UFO.S01E01.GERMAN.DL.1080p.WEB.h264-SAUERKRAUT.mkv"
+🔐 UltraSpeedEngine: Berechne Hash für FTP-Datei: "ftp://192.168.1.224:21/sdb/FILME/Projekt.UFO.S01E02.GERMAN.DL.1080p.WEB.h264-SAUERKRAUT.mkv"
+🔐 UltraSpeedEngine: Berechne Hash für FTP-Datei: "ftp://192.168.1.224:21/sdb/FILME/The.Acolyte.2024.S01E05.German.DL.1080p.HDR.UHD.WEBRip.h265-Tylor.D.mkv"
+✅ UltraSpeedEngine: Echte Duplikat-Gruppe gefunden: 2 verschiedene Dateien mit gleichem Hash
+✅ UltraSpeedEngine: Echte Duplikat-Gruppe gefunden: 2 verschiedene Dateien mit gleichem Hash
+✅ UltraSpeedEngine Scan abgeschlossen: 2 echte Duplikat-Gruppen gefunden
+✅ Ultra Speed Scan abgeschlossen! Gefunden: 2 Duplikat-Gruppen
+[displayUltraSpeedResults] 🎨 Starte UltraSpeed Anzeige...
+  📊 Hash-Gruppen empfangen: 2
+  🎯 duplicateTable Status: Verfügbar
+  🧹 Tabelle geleert
+  📁 Hash emerald_... → 2 Dateien
+    ✅ Zeige Duplikat-Gruppe mit 2 Dateien
+    🟡 GELB (Original) Zeile 0: emerald.city.2017.s01e01.1080p.bluray.x264-rovers.mkv
+    🟢 GRÜN (Duplikat) Zeile 1: emerald.city.2017.s01e02.1080p.bluray.x264-rovers.mkv
+  📁 Hash ufo_seri... → 2 Dateien
+    ✅ Zeige Duplikat-Gruppe mit 2 Dateien
+    🟡 GELB (Original) Zeile 2: Projekt.UFO.S01E01.GERMAN.DL.1080p.WEB.h264-SAUERKRAUT.mkv
+    🟢 GRÜN (Duplikat) Zeile 3: Projekt.UFO.S01E02.GERMAN.DL.1080p.WEB.h264-SAUERKRAUT.mkv
+✅ UltraSpeed Anzeige fertig: 4 Zeilen für 2 Hash-Gruppen
+📊 Ultra Speed Engine Report:
+Files processed: 6
+Duplicates found: 2
+Progress: 100.0%
+Hardware: Auto
+Mode: Deep
+Unknown property transform
+🌳 DIRECTORY TREE MOUSE PRESS auf directoryTree-viewport!
+   Button: LEFT
+🌳 DIRECTORY TREE MOUSE PRESS auf directoryTree-viewport!
+   Button: RIGHT
+🚨 DIRECTORY TREE RECHTSKLICK! Context Menu wird angezeigt...
+📁 Ausgewählter Pfad: ftp://192.168.1.224:21/sdb/FILME/
+🗑️ PFAD ENTFERNEN ausgewählt für: ftp://192.168.1.224:21/sdb/FILME/
+✅ Pfad erfolgreich entfernt: ftp://192.168.1.224:21/sdb/FILME/
+📡 NETWORK TREE MOUSE PRESS auf networkTree-viewport!
+   Button: LEFT
+[MainWindow] 🖱️ Network Service Doppelklick: "192.168.1.224" 21 "FTP"
+[MainWindow] 🚀✨ AUTO-LOGIN erkannt für "192.168.1.224" - Direkte Verbindung ohne Dialog
+[MainWindow] 🔌 connectAndShowDirectoryTree: "FTP" auf Port 21
+[MainWindow] 🔍 Service-Analyse:
+  📝 Original Service: "FTP"
+  📝 Lowercase Service: "ftp"
+  🔐 Contains SSH: false
+  🔐 Contains SFTP: false
+  📡 Contains FTP (pure): true
+[MainWindow] 📡 FTP-Protokoll erkannt auf Port 21
+[MainWindow] 🌳 Öffne FTP Directory Browser für "192.168.1.224" : 21
+[MainWindow] 📂 Lade FTP-Verzeichnisstruktur...
+[FtpClient] 📡 libcurl-basierter FTP Client initialisiert
+[FtpClient] 🔐 Credentials gesetzt für "192.168.1.224" : 21 (User: "jan" )
+[FtpClient] 🚀 Connecting to "192.168.1.224" : 21 with user "jan"
+[FtpClient] 📡 Testing connection to: "ftp://192.168.1.224:21/"
+[FtpClient] ✅ Successfully connected to "192.168.1.224" : 21
+[MainWindow] ✅ FTP-Verbindung erfolgreich zu "192.168.1.224"
+[FtpClient] 🏃‍♂️ listDirectoriesOnly() called for dir: "/"
+[FtpClient-Thread] 🏃‍♂️ Starting FAST directory-only scan...
+[performFastDirectoryScan] 📁 Fast scan limits: maxDepth= 20 maxDirectories= 5000
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/" depth: 0
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/"
+[performFtpList] 📋 Raw FTP listing:
+ "drwxrws---  12 root     ftpusers     4096 Jul 13 13:00 sdb\ndrwxrws---   5 root     ftpusers     4096 Aug 20 02:14 sdc\ndrwxrws---  12 root     ftpusers     4096 Jul 10 06:36 sdd\ndrwxrws---  31 root     ftpusers    12288 Jul 13 03:24 sde\ndrwxrws---  15 root     ftpusers     4096 Jul 11 08:06 sdf\ndrwxrws---  19 root     ftpusers     4096 Jul 11 09:02 sdg\n"
+[performFtpList] 📄 Parsed 6 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 6 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "sdb"
+[parseProftpdList] 📁 Found directory: "sdc"
+[parseProftpdList] 📁 Found directory: "sdd"
+[parseProftpdList] 📁 Found directory: "sde"
+[parseProftpdList] 📁 Found directory: "sdf"
+[parseProftpdList] 📁 Found directory: "sdg"
+[parseProftpdList] ✅ Total entries found: 6 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdb/" depth: 1
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdb/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdb/"
+[performFtpList] 📋 Raw FTP listing:
+ "drwxrws---   4 root     ftpusers     4096 May 15 22:23 aMATEURFUNK\n-rw-------   1 root     root         8192 Jul 24 05:55 aquota.group\n-rw-------   1 root     root         8192 Jul 24 05:55 aquota.user\ndrwxrws---   3 root     ftpusers     4096 Apr 20  2024 Comedy\ndrwxrws---  26 root     ftpusers    20480 Aug 20 02:15 DokuFilme\ndrwxrws---   2 root     ftpusers     4096 Jul 13 19:34 Evelin+Ich\ndrwxrws---  10 root     ftpusers   335872 Jul 10 18:37 FILME\ndrwxrws---   3 root     ftpusers     4096 Jun 24  2024 Hochzeit\ndrwxrws---   7 root     ftpusers     4096 Mar 14 15:44 KinderSerienFilme\ndrwxrws---   2 root     ftpusers    16384 Jan 15  2023 lost+found\ndrwxrws---  12 root     ftpusers    16384 Jul 12 06:46 SERIEN\ndrwxrws---   2 root     ftpusers     4096 Jul 12 06:46 unbenannteFilme\n"
+[performFtpList] 📄 Parsed 12 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 12 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "aMATEURFUNK"
+[parseProftpdList] 📁 Found directory: "Comedy"
+[parseProftpdList] 📁 Found directory: "DokuFilme"
+[parseProftpdList] 📁 Found directory: "Evelin+Ich"
+[parseProftpdList] 📁 Found directory: "FILME"
+[parseProftpdList] 📁 Found directory: "Hochzeit"
+[parseProftpdList] 📁 Found directory: "KinderSerienFilme"
+[parseProftpdList] 📁 Found directory: "lost+found"
+[parseProftpdList] 📁 Found directory: "SERIEN"
+[parseProftpdList] 📁 Found directory: "unbenannteFilme"
+[parseProftpdList] ✅ Total entries found: 10 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdc/" depth: 2
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdc/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdc/"
+[performFtpList] 📋 Raw FTP listing:
+ "-rw-------   1 root     root         8192 Jul 24 05:55 aquota.group\n-rw-------   1 root     root         8192 Jul 24 05:55 aquota.user\ndrwxrws---   2 root     ftpusers     4096 Jul 11 06:56 Linux-Script\ndrwxrws---   2 root     ftpusers    16384 Apr 23  2024 lost+found\ndrwxrws---   3 root     ftpusers     4096 Jul 12 19:14 Source-Code\n-rwxrws---   1 root     ftpusers    23948 Jul 12 17:41 SuperDuper2.py\n-rwxrws---   1 root     ftpusers    42086 Jul 13 14:12 SuperDuper3.py\n-rw-rwxr--   1 jan      ftpusers    41906 Jul 13 22:32 SuperDuper4.py\n"
+[performFtpList] 📄 Parsed 8 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 8 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "Linux-Script"
+[parseProftpdList] 📁 Found directory: "lost+found"
+[parseProftpdList] 📁 Found directory: "Source-Code"
+[parseProftpdList] ✅ Total entries found: 3 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdd/" depth: 3
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdd/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdd/"
+[performFtpList] 📋 Raw FTP listing:
+ "-rw-------   1 root     root         8192 Jul 24 05:55 aquota.group\n-rw-------   1 root     root         8192 Jul 24 05:55 aquota.user\ndrwxrws---  12 root     ftpusers    20480 Jul  9 09:58 Dokumente\ndrwxrws---   2 root     ftpusers    28672 Jul  9 09:58 Downloads\ndrwxrws---   2 root     ftpusers     4096 Jul  9 09:58 Excel-Tabellen\ndrwxrws---   2 root     ftpusers     4096 Aug 12  2017 fe8187ebd73ee7293a5ac78d3a38b1\n-rwxrws---   1 root     ftpusers      100 Aug 13  2017 InitJsonOutSvc.dat\n-rwxrws---   1 root     ftpusers    88144 Aug 12  2017 malebyte ware.pdf\ndrwxrws---   2 root     ftpusers     4096 Nov  6  2014 Rentenrechner\ndrwxrws---  16 root     ftpusers     4096 Sep 13  2023 Rezepte\ndrwxrws---  11 root     ftpusers     4096 Jul 10 06:33 VirtualBox VMs\ndrwxrws---   5 root     ftpusers     4096 Jul  9 09:58 Witzig\n"
+[performFtpList] 📄 Parsed 12 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 12 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "Dokumente"
+[parseProftpdList] 📁 Found directory: "Downloads"
+[parseProftpdList] 📁 Found directory: "Excel-Tabellen"
+[parseProftpdList] 📁 Found directory: "fe8187ebd73ee7293a5ac78d3a38b1"
+[parseProftpdList] 📁 Found directory: "Rentenrechner"
+[parseProftpdList] 📁 Found directory: "Rezepte"
+[parseProftpdList] 📁 Found directory: "VirtualBox VMs"
+[parseProftpdList] 📁 Found directory: "Witzig"
+[parseProftpdList] ✅ Total entries found: 8 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sde/" depth: 4
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sde/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sde/"
+[performFtpList] 📋 Raw FTP listing:
+ "-rw-------   1 root     root         8192 Jul 24 05:55 aquota.group\n-rw-------   1 root     root         8192 Jul 24 05:55 aquota.user\n-rwxrws---   1 root     ftpusers    21424 Oct 25  2020 bookmarks-2020-10-25.json\ndrwxrws---  93 root     ftpusers    69632 Jul  8 20:44 Dokumente\ndrwxrws---   2 root     ftpusers     4096 Feb 16  2015 Email Post Sounds\ndrwxrws---  11 root     ftpusers    20480 May 27 14:21 EmuLatoR\n-rwxrws---   1 root     ftpusers   140090 Apr 22  2021 er-ists-fruehling-laesst-sein-blaues-band.pdf\ndrwxrws---   6 root     ftpusers     4096 Jul  8 20:51 Handyzeug\ndrwxrws---  12 root     ftpusers     4096 Jul  9 04:31 Hörbücher\ndrwxrws---  22 root     ftpusers    36864 Jul 11 10:32 iso+Anwendungen\ndrwxrws---  10 root     ftpusers     4096 May 27 14:30 Jan_Daten\ndrwxrws---   2 root     ftpusers     4096 May 27 14:23 KameraZeug\ndrwxrws---   2 root     ftpusers     4096 Nov  4  2018 Klingeltöne\ndrwxrws---   2 root     ftpusers     4096 Apr 18  2024 Linux-Script\ndrwxrws---   2 root     ftpusers     4096 Aug  9  2022 lost+found\n-rwxrws---   1 root     ftpusers  4298961 Dec 27  2020 Messenger Facebook.mp4\ndrwxrws---  16 root     ftpusers   507904 Jul 11 07:34 Musik\n-rwxrws---   1 root     ftpusers  4196352 Feb 12  2017 NewVirtualDisk1.vhd\ndrwxrws---   2 root     ftpusers     4096 Feb 15  2025 Passwörter\n-rwxrws---   1 root     ftpusers    79185 Nov 10  2020 PB_Kontoauszug_KtoNr_0621940601_03-11-2020_041721.pdf\n-rwxrws---   1 root     ftpusers 831130364 Mar  7  2022 portal_prelude_jeu_complet_v1.1.5_multi-langues_263038.exe\ndrwxrws---   2 root     ftpusers     4096 Jan 27  2023 RECHNUNG\ndrwxrws---   2 root     ftpusers     4096 Oct 19  2024 Schreibtisch\n-rwxrws---   1 root     ftpusers  1011565 Feb 28  2021 Screenshot_2021-02-28 Dave Brubeck live 64' 66' - Jazz Icons DVD - YouTube.png\ndrwxrws---   2 root     ftpusers     4096 Feb 16  2015 ScriptLInux\ndrwxrws---   2 root     ftpusers     4096 Jul 13 03:24 sde\n-rwxrws---   1 root     ftpusers   280580 Dec  2  1999 shovelhead.mpeg\ndrwxrws---   3 root     ftpusers     4096 Jul 11 07:31 Sicherungen\ndrwxrws---  11 root     ftpusers     4096 Apr 20  2024 Soundzeug\ndrwxrws---   2 root     ftpusers     4096 Feb 28  2021 System Volume Information\n-rwxrws---   1 root     ftpusers 727798545 Oct  4  2020 tdd-demos-fuse-2010-08-15.zip\ndrwxrws---   3 root     ftpusers     4096 Apr 20  2024 Telegram Desktop\ndrwxrws---   2 root     ftpusers     4096 Dec 30  2014 Theme Songs\ndrwxrws---   6 root     ftpusers    81920 Aug 19 02:18 xxx\ndrwxrws---   5 root     ftpusers     4096 Jul  7 03:24 xxxbilder\ndrwxrws---   2 root     ftpusers    12288 Oct  7  2024 Youtube\ndrwxrws---   2 root     ftpusers     4096 Aug  9  2022 YoutubeMusikVietnam\n"
+[performFtpList] 📄 Parsed 37 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 37 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "Dokumente"
+[parseProftpdList] 📁 Found directory: "Email Post Sounds"
+[parseProftpdList] 📁 Found directory: "EmuLatoR"
+[parseProftpdList] 📁 Found directory: "Handyzeug"
+[parseProftpdList] 📁 Found directory: "Hörbücher"
+[parseProftpdList] 📁 Found directory: "iso+Anwendungen"
+[parseProftpdList] 📁 Found directory: "Jan_Daten"
+[parseProftpdList] 📁 Found directory: "KameraZeug"
+[parseProftpdList] 📁 Found directory: "Klingeltöne"
+[parseProftpdList] 📁 Found directory: "Linux-Script"
+[parseProftpdList] 📁 Found directory: "lost+found"
+[parseProftpdList] 📁 Found directory: "Musik"
+[parseProftpdList] 📁 Found directory: "Passwörter"
+[parseProftpdList] 📁 Found directory: "RECHNUNG"
+[parseProftpdList] 📁 Found directory: "Schreibtisch"
+[parseProftpdList] 📁 Found directory: "ScriptLInux"
+[parseProftpdList] 📁 Found directory: "sde"
+[parseProftpdList] 📁 Found directory: "Sicherungen"
+[parseProftpdList] 📁 Found directory: "Soundzeug"
+[parseProftpdList] 📁 Found directory: "System Volume Information"
+[parseProftpdList] 📁 Found directory: "Telegram Desktop"
+[parseProftpdList] 📁 Found directory: "Theme Songs"
+[parseProftpdList] 📁 Found directory: "xxx"
+[parseProftpdList] 📁 Found directory: "xxxbilder"
+[parseProftpdList] 📁 Found directory: "Youtube"
+[parseProftpdList] 📁 Found directory: "YoutubeMusikVietnam"
+[parseProftpdList] ✅ Total entries found: 26 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdf/" depth: 5
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdf/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdf/"
+[performFtpList] 📋 Raw FTP listing:
+ "-rw-------   1 root     root         8192 Jul 24 05:55 aquota.group\n-rw-------   1 root     root         8192 Jul 24 05:55 aquota.user\ndrwxrws---  16 root     ftpusers     4096 Jul 11 09:02 Autozeug\ndrwxrws---  10 root     ftpusers   999424 Aug  7 13:26 Bilder\ndrwxrws---   2 root     ftpusers     4096 Dec 31  2024 Cool\ndrwxrws---   5 root     ftpusers     4096 Dec 23  2015 DMK SCHULE\ndrwxrws---  27 root     ftpusers    36864 Jul 11 00:58 Dokumente\ndrwxrws---   7 root     ftpusers    16384 Feb 15  2025 Download\ndrwxrws---   2 root     ftpusers     4096 Dec 30  2014 GameClips\ndrwxrws---  11 root     ftpusers     4096 Jul 11 06:55 Handyzeug\ndrwxrws---   2 root     ftpusers     4096 Apr 17  2024 KameraZeug\ndrwxrws---   2 root     ftpusers    16384 Feb 12  2017 lost+found\ndrwxrws---  12 root     ftpusers     4096 Jul 11 08:16 SoundkarteZeug\ndrwxrws---  19 root     ftpusers     4096 Apr 20  2024 VirtualBox VMs\n"
+[performFtpList] 📄 Parsed 14 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 14 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "Autozeug"
+[parseProftpdList] 📁 Found directory: "Bilder"
+[parseProftpdList] 📁 Found directory: "Cool"
+[parseProftpdList] 📁 Found directory: "DMK SCHULE"
+[parseProftpdList] 📁 Found directory: "Dokumente"
+[parseProftpdList] 📁 Found directory: "Download"
+[parseProftpdList] 📁 Found directory: "GameClips"
+[parseProftpdList] 📁 Found directory: "Handyzeug"
+[parseProftpdList] 📁 Found directory: "KameraZeug"
+[parseProftpdList] 📁 Found directory: "lost+found"
+[parseProftpdList] 📁 Found directory: "SoundkarteZeug"
+[parseProftpdList] 📁 Found directory: "VirtualBox VMs"
+[parseProftpdList] ✅ Total entries found: 12 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdg/" depth: 6
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdg/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdg/"
+[performFtpList] 📋 Raw FTP listing:
+ "drwxrws---  17 root     ftpusers     4096 Nov 26  2023 $RECYCLE.BIN\n-rw-------   1 root     root         8192 Jul 24 05:55 aquota.group\n-rw-------   1 root     root         8192 Jul 24 05:55 aquota.user\ndrwxrws---   3 root     ftpusers     4096 Jan  1  1970 art_cache\ndrwxrws---   2 root     ftpusers     4096 Jan  5  2025 Cool\ndrwxrws---   4 root     ftpusers    16384 Apr 16  2024 dart\ndrwxrws---  68 root     ftpusers    36864 Oct 26  2024 Dokumente\n-rwxrws---   1 root     ftpusers 57041024 May 22  2010 Friedrichdorf2.AVI\n-rwxrws---   1 root     ftpusers 1354376812 May 22  2010 Friedrichsdorf1.AVI\ndrwxrws---   2 root     ftpusers     4096 Dec 30  2014 GameClips\ndrwxrws---   4 root     ftpusers     4096 Apr 20  2024 Handyzeug\ndrwxrws---  37 root     ftpusers    12288 Dec 31  2024 Jan\ndrwxrws---   2 root     ftpusers     4096 Dec 31  2024 KameraZeug\ndrwxrws---   2 root     ftpusers     4096 Dec 30  2014 Linux-Script\ndrwxrws---   2 root     ftpusers    16384 Feb  3  2016 lost+found\ndrwxrws---  11 root     ftpusers    16384 Dec 31  2024 Musikvideos\ndrwxrws---   9 root     ftpusers     4096 Nov 24  2023 Mustafa\ndrwxrws---  39 root     ftpusers     4096 Apr 16  2024 Renate\ndrwxrws---   2 root     ftpusers     4096 Dec 30  2014 Theme Songs\n"
+[performFtpList] 📄 Parsed 19 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 19 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "$RECYCLE.BIN"
+[parseProftpdList] 📁 Found directory: "art_cache"
+[parseProftpdList] 📁 Found directory: "Cool"
+[parseProftpdList] 📁 Found directory: "dart"
+[parseProftpdList] 📁 Found directory: "Dokumente"
+[parseProftpdList] 📁 Found directory: "GameClips"
+[parseProftpdList] 📁 Found directory: "Handyzeug"
+[parseProftpdList] 📁 Found directory: "Jan"
+[parseProftpdList] 📁 Found directory: "KameraZeug"
+[parseProftpdList] 📁 Found directory: "Linux-Script"
+[parseProftpdList] 📁 Found directory: "lost+found"
+[parseProftpdList] 📁 Found directory: "Musikvideos"
+[parseProftpdList] 📁 Found directory: "Mustafa"
+[parseProftpdList] 📁 Found directory: "Renate"
+[parseProftpdList] 📁 Found directory: "Theme Songs"
+[parseProftpdList] ✅ Total entries found: 15 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdb/aMATEURFUNK/" depth: 7
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdb/aMATEURFUNK/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdb/aMATEURFUNK/"
+[performFtpList] 📋 Raw FTP listing:
+ "drwxrws---   2 root     ftpusers     4096 Jul 13 17:35 fRIEDRICHSDORF\n-rwxrws---   1 root     ftpusers     3160 Nov  2  2024 FT-991.xml\ndrwxrws---   2 root     ftpusers     4096 May 14 21:39 Lizenzen\n"
+[performFtpList] 📄 Parsed 3 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 3 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "fRIEDRICHSDORF"
+[parseProftpdList] 📁 Found directory: "Lizenzen"
+[parseProftpdList] ✅ Total entries found: 2 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdb/Comedy/" depth: 8
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdb/Comedy/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdb/Comedy/"
+[performFtpList] 📋 Raw FTP listing:
+ "drwxrws---   2 root     ftpusers     4096 Jul 12 06:49 Bernard Bear\n-rwxrws---   1 root     ftpusers  2887197 Aug 21  2013 Heinz Erhardt - Columbus.flv\n-rwxrws---   1 root     ftpusers  4676718 Aug 21  2013 Heinz Erhardt - Das Gewitter.flv\n-rwxrws---   1 root     ftpusers  1798931 Aug 21  2013 Heinz Erhardt - Der Berg.flv\n-rwxrws---   1 root     ftpusers   916885 Aug 21  2013 Heinz Erhardt - Der Stier.flv\n-rwxrws---   1 root     ftpusers  1513615 Aug 21  2013 Heinz Erhardt - Der Wurm.flv\n-rwxrws---   1 root     ftpusers  3687237 Aug 21  2013 Heinz Erhardt - Die Made.flv\n-rwxrws---   1 root     ftpusers  3025609 Aug 21  2013 Heinz Erhardt - Die Maus.flv\n-rwxrws---   1 root     ftpusers  9618839 Aug 21  2013 Heinz Erhardt - Die Schachpartie.flv\n-rwxrws---   1 root     ftpusers  3803256 Aug 21  2013 Heinz Erhardt erzählt....flv\n-rwxrws---   1 root     ftpusers 27833528 Aug 21  2013 Heinz Erhardt.flv\n-rwxrws---   1 root     ftpusers  3447168 Aug 21  2013 Heinz Erhardt - Jüngling mit lockigem Haar.flv\n-rwxrws---   1 root     ftpusers  1972234 Aug 21  2013 Heinz Erhardt - Knirps.flv\n-rwxrws---   1 root     ftpusers  2797300 Aug 21  2013 Heinz Erhardt - Ritter Fips....flv\n-rwxrws---   1 root     ftpusers 22061921 Aug 21  2013 Heinz Erhardt - Theaterstück mit G.flv\n-rwxrws---   1 root     ftpusers  2810423 Aug 21  2013 Heinz Erhardt Vierzeiler.flv\n-rwxrws---   1 root     ftpusers  5213915 Aug 21  2013 Heinz Erhardt - Warum die Zitronen sauer wurden.flv\n-rwxrws---   1 root     ftpusers  4993311 Aug 21  2013 Heinz Erhardt - Wir können das auch lassen....flv\n"
+[performFtpList] 📄 Parsed 18 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 18 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "Bernard Bear"
+[parseProftpdList] ✅ Total entries found: 1 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdb/DokuFilme/" depth: 9
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdb/DokuFilme/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdb/DokuFilme/"
+[performFtpList] 📋 Raw FTP listing:
+ "-rwxrws---   1 root     ftpusers 196020966 Dec 19  2011 38478903_mp4_h264_aac_hq.mp4\n-rwxrws---   1 root     ftpusers 290791963 Jan 29  2015 7.Tage.in.der.Sekte.GERMAN.DOKU.WS.HDTVRip.x264-Pumuck.mkv\n-rwxrws---   1 root     ftpusers 733227008 Apr  9  2012 88.Pilgern.auf.Japanisch.German.2008.DOKU.DVDRiP.XviD-XF.avi\n-rwxrws---   1 root     ftpusers 1166327592 Jun 25  2024 Aaron Swartz Tod eines Internet Aktivisten Doku 720p HD.mp4\n-rw-rw-r--   1 jan      ftpusers 1098523948 Jan 25  2015 Alkoholsucht-Wundermittel.Baclofen.2014.German.WS.WEB-DL.DOKU.h264 (Kopie 2).mkv\n-rw-rw-r--   1 jan      ftpusers 1098523948 Jan 25  2015 Alkoholsucht-Wundermittel.Baclofen.2014.German.WS.WEB-DL.DOKU.h264 (Kopie 3).mkv\n-rwxrws---   1 root     ftpusers 840194753 Jan 12  2015 Alte.Freunde.neue.Feinde-Was.unsere.Kinder.chronisch.krank.macht.German.DOKU.WS.HDTVRip.x264-CDP.mkv\n-rw-rw-r--   1 jan      ftpusers 1240544931 Apr 30  2015 Auf.den.Spuren.der.Aliens.S01E06.Das.Geheimnis.von.Malta.GERMAN.DOKU.720p.HDTV.x264-MDGP (Kopie).mkv\n-rwxrws---   1 root     ftpusers 1240544931 Apr 30  2015 Auf.den.Spuren.der.Aliens.S01E06.Das.Geheimnis.von.Malta.GERMAN.DOKU.720p.HDTV.x264-MDGP.mkv\n-rw-rw-r--   1 jan      ftpusers 585313981 Mar  3  2015 Auf.den.Spuren.der.Hobbits.E05.Fabelwesen.des.Nordens.GERMAN.DOKU.720p.HDTV.x264-TVP (Kopie).mkv\n-rwxrws---   1 root     ftpusers 585313981 Mar  3  2015 Auf.den.Spuren.der.Hobbits.E05.Fabelwesen.des.Nordens.GERMAN.DOKU.720p.HDTV.x264-TVP.mkv\ndrwxrws---   2 root     ftpusers     4096 Jul 23 18:00 Auf der Suche nach außerirdischem Leben 1_2 - Doku\ndrwxrws---   2 root     ftpusers     4096 Jul 23 18:00 Auf der Suche nach außerirdischem Leben 2_2 - Doku\ndrwxrws---   2 root     ftpusers     4096 Jul 23 17:40 Auf der Suche nach Gottesformelt - von Harald Lesc\n-rwxrws---   1 root     ftpusers 845678402 Jan 29  2015 Ausgesetzt.Ueberleben.fuer.Anfaenger.S01E03.Panik.im.Nirgendwo.GERMAN.DOKU.HDTVRip.x264-RiO.mkv\ndrwxrws---   2 root     ftpusers     4096 Apr 21  2024 BBC.Earth.Expedition.Neuguinea.S01E01.Pythons.und.Paradiesvoegel.GERMAN.DTS.DOKU.1080p.BluRay.x264-TVP\ndrwxrws---   2 root     ftpusers     4096 Apr 21  2024 BBC.Earth.Expedition.Neuguinea.S01E02.Flughunde.und.Urwaldkrokodile.GERMAN.DTS.DOKU.1080p.BluRay.x264-TVP\ndrwxrws---   2 root     ftpusers     4096 Apr 21  2024 BBC.Earth.Expedition.Neuguinea.S01E03.Baumkaengurus.und.Thermometerhuehner.GERMAN.DTS.DOKU.1080p.BluRay.x264-TVP\ndrwxrws---   2 root     ftpusers     4096 Jul 13 13:03 Big Bang im Labor - Doku (2009) - - DivX by Waldor\ndrwxrws---   2 root     ftpusers     4096 Jul 13 15:39 Black.Box.BRD.German.DOKU.1080p.WebHD.x264-GWD\n-rwxrws---   1 root     ftpusers 170186815 May 20  2012 Codename_ Linux - Dokumentarfilm.flv\n-rwxrws---   1 root     ftpusers 882766172 Dec 16  2014 Dangerous.Persuasions-Manipulation.des.Verstandes.S01E03.Prophet.der.Luegen.GERMAN.DOKU.720p.HDTV.x264-RiO.mkv\n-rwxrws---   1 root     ftpusers 1477245833 Aug 31  2014 Darwin.in.der.Kritik.Glauben.in.Amerika.GERMAN.DOKU.720p.HDTV.x264-TVP.mkv\n-rwxrws---   1 root     ftpusers 1298853604 Jan 25  2015 Das.Universum.Eine.Reise.durch.Raum.und.Zeit.S03E01.Die.Sonne.GERMAN.DOKU.720p.HDTV.x264-OWG.mkv\n-rwxrws---   1 root     ftpusers 413386923 Apr 24  2015 Das.Universum.Eine.Reise.durch.Raum.und.Zeit.S03E06.Massenaussterben.GERMAN.DOKU.HDTVRip.x264-OWG.mkv\n-rwxrws---   1 root     ftpusers 477308805 Apr  2  2014 Da.wird.mir.uebel.S04E13.Nebenjobs.GERMAN.DOKU.HDTVRip.x264-RFG.mkv\n-rwxrws---   1 root     ftpusers 731463680 Jan 21  2011 Deadly.Dust.Todesstaub.GERMAN.2006.DOKU.DVDRiP.XviD-XC.avi\n-rwxrws---   1 root     ftpusers 100138999 Sep  8  2014 DEF CON 18 - Blake Self _ bitemytaco - Hacking DOCSIS For Fu.flv\n-rwxrws---   1 root     ftpusers 391748949 Feb 18  2017 Der Baron der Raubkopierer - Kim Schmitz und Kim Dotcom - Do.mp4\n-rwxrws---   1 root     ftpusers 460962783 Apr 27  2013 Der deutsche Bruce Lee - Julians Weg zum Shaolin Mönch.flv\n-rwxrws---   1 root     ftpusers 265049085 Nov 25  2012 Der Fall Coca Cola (Doku).mp4\n-rwxrws---   1 root     ftpusers 308885780 Jan 15  2013 Der Fall Henry Kissinger (Doku) Kriegsverbrecher und Nobelpr.flv\n-rwxrws---   1 root     ftpusers 107126775 Nov 13  2014 Der_Mikrokosmos_Doku.flv\ndrwxrws---   2 root     ftpusers     4096 Jul 23 17:40 Der Stoff, aus dem der Kosmos ist 4_4 - Universum\ndrwxrws---   2 root     ftpusers     4096 Jul 23 18:00 Die Code - Knacker - Doku (2011) - - XviD by Waldo\ndrwxrws---   2 root     ftpusers     4096 Jul 23 18:00 Die Einflüsterer - Wie Geld Politik macht - Doku (\n-rwxrws---   1 root     ftpusers 805797712 Jan 29  2015 Die.Erde.im.Sonnenlicht.E11.German.DOKU.BDRiP.X264-SMAHD.mkv\ndrwxrws---   6 root     ftpusers     4096 Apr 29  2024 Die.Geschichte.des.FBI.GERMAN.DOKU.2012.COMPLETE.PAL.DVDR-VhV\ndrwxrws---   2 root     ftpusers     4096 Apr 20  2024 Die Grenzen der Zeit DOKU WS HDTV x264 - MiSFiTS -\ndrwxrws---   2 root     ftpusers     4096 Apr 21  2024 Die Jagd nach den Grenzen des Universums DOKU WS H\n-rwxrws---   1 root     ftpusers 382757009 Jan 31  2015 Die.Marketing-Koenige.Wer.uns.staendig.shoppen.laesst.E03.GERMAN.DOKU.HDTVRip.x264-RiO.mkv\n-rwxrws---   1 root     ftpusers 325331712 Jan 15  2013 Die Wahrheit über den Vietnamkrieg (Doku) Daniel Ellsberg un.flv\n-rwxrws---   1 root     ftpusers 777007122 Feb 24  2015 Die.Wahrheit.ueber.den.Holocaust.E08.Verdraengung.GERMAN.DOKU.720p.HDTV.x264-TMSF.mkv\n-rwxrws---   1 root     ftpusers 4200339572 Mar 14 15:47 Dont.Die.Der.Mann.der.unsterblich.sein.will.2025.GERMAN.DL.DOKU.1080p.WEB.h264-HAXE.mkv\n-rwxrws---   1 root     ftpusers 208180451 Nov 28  2021 Dummheit und Profitgier – Impfen bei Angst  Univ. Prof. Dr. med. Christian Schubert  QS24.mp4\n-rwxrws---   1 root     ftpusers 316975597 Jan 25  2015 extra-3.2014-11-05.GERMAN.WS.HDTVRip.x264-TVP.mkv\ndrwxrws---   3 root     ftpusers     4096 Jul 23 17:40 Faszination.Island.Das.Paradies.des.Nordens.2012.GERMAN.DOKU.WS.DVDRip.XViD-CDP\n-rwxrws---   1 root     ftpusers 564572160 May 22  2013 Faszination.Island.Das.Paradies.des.Nordens.2012.GERMAN.DOKU.WS.DVDRip.XViD-CDP.tar\n-rwxrws---   1 root     ftpusers 1055001510 May  1  2015 Geheimakte.Amerika.S02E01.Prae-Astronautik.GERMAN.DOKU.720P.HDTV.x264-OWG.mkv\n-rwxrws---   1 root     ftpusers 73457040 Dec 28  2014 Geheimnisse.des.Universums.S01E10.Der.Stern.German.DOKU.WS.BDRiP.x264-TV4A.mkv\n-rwxrws---   1 root     ftpusers 1349520114 Jun 29  2014 Hacker_Jeopardy_2013_30c3.mp4\n-rwxrws---   1 root     ftpusers 2013773880 Dec 18  2013 Hacker.Portrait.einer.Gegenkultur.2010.GERMAN.DOKU.720p.HDTV.x264-TVP.mkv\n-rwxrws---   1 root     ftpusers 292763054 Nov 25  2012 Hacker - Portrait einer Gegenkultur - Doku Deutsche german.mp4\ndrwxrws---   2 root     ftpusers     4096 Aug 28  2023 Hackers.wanted.2008.DVDRip.MP4-NoGrp\n-rwxrws---   1 root     ftpusers 522542524 Apr 13  2014 Hightech.des.Mittelalters-Das.Wikinger.Schwert.GERMAN.DOKU.HDTVRip.x264-CDP.mkv\n-rwxrws---   1 root     ftpusers 527926278 Feb 25  2015 Highway.to.Sell.Turbo.Tuning.und.Auktionen.S01E06.GERMAN.DOKU.HDTVRip.x264-OWG.mkv\n-rwxrws---   1 root     ftpusers 356623619 Nov 25  2012 Ihr lernt das, was Ihr wissen dürft, und nicht das, was Ihr .mp4\n-rwxrws---   1 root     ftpusers 347177480 Oct  2  2014 Ihr lernt das, was Ihr wissen dürft, und nicht das, was Ihr nicht wissen solltet. Ganz einfach!-1rvPPxnITzU.mp4\n-rwxrws---   1 root     ftpusers 242816794 Jan  5  2013 Illuminaten (Doku) Die geheime Weltverschwörung.flv\n-rwxrws---   1 root     ftpusers 1180985945 Jan 25  2015 Im.Land.der.Baeren.2014.German.DOKU.AC3.HDRip.x264-FuN.mp4\n-rwxrws---   1 root     ftpusers 1271581084 Nov 13  2014 Im.Land.der.Baeren.German.DOKU.WS.BDRiP.x264-TV4A.mkv\n-rwxrws---   1 root     ftpusers 1305843284 Nov 13  2014 Im.Visier.der.Hacker-Wie.gefaehrlich.wird.das.Netz.GERMAN.DOKU.720p.HDTV.x264-TVP.mkv\n-rwxrws---   1 root     ftpusers 400208698 Jan 25  2015 Invasion.Erde.E04.GERMAN.DOKU.HDTVRip.x264-RiO.mkv\n-rwxrws---   1 root     ftpusers 494385030 Nov 13  2014 JFK.Die.verlorenen.Aufnahmen.GERMAN.DOKU.WS.HDTVRip.x264-TVP.mkv\n-rwxrws---   1 root     ftpusers 595880247 Dec 18  2013 Juden.und.Muslime.So.nah.und.doch.so.fern.E01.Gruenden.beginnen.610.-.721.GERMAN.DOKU.HDTVRip.x264-RiO.mkv\ndrwxrws---   2 root     ftpusers     4096 Jul 23 18:00 Konrad Adenauer - Stunden der Entscheidung - Doku-\n-rwxrws---   1 root     ftpusers 1049811979 Aug 31  2014 Krieg.auf.dem.Schachbrett-Das.Duell.Karpow.gegen.Kasparow.GERMAN.DOKU.720p.HDTV.x264-TVP.mkv\n-rwxrws---   1 root     ftpusers 126820125 Nov 13  2014 Kung_Fu_-_Die_Kampfkunst_der_Shaolin.flv\n-rwxrws---   1 root     ftpusers 733535086 Apr  9  2012 Max.Bill.Das.absolute.Augenmass.German.2008.DOKU.DVDRiP.XviD-XF.avi\ndrwxrws---   2 root     ftpusers     4096 Jul 23 18:00 Meine Familie, die Nazis und Ich - Doku (2012) - -\n-rwxrws---   1 root     ftpusers     2056 Nov 18  2023 Microsoft Word-Dokument (neu).nfo\ndrwxrws---   2 root     ftpusers     4096 Jan 20  2015 NightWash.2015-01-08.GERMAN.HDTV.720p.x264-TSCC\n-rwxrws---   1 root     ftpusers 1119023077 Apr 30  2014 NSA.Der.grosse.Lauschangriff.GERMAN.DOKU.HDTV.720p.x264-NVA.mkv\n-rwxrws---   1 root     ftpusers 729499648 Nov 13  2006 Outfoxed.-.Ausgefuchst.AKA.Der.Medienkrieg.DOKU.GERMAN.XViD.avi\ndrwxrws---   3 root     ftpusers     4096 Apr 16  2024 Plastic.Planet.German.2009.DOKU.AC3.DVDRiP.XViD-NGX\n-rwxrws---   1 root     ftpusers 1850337280 Dec 11  2011 Plastic.Planet.German.2009.DOKU.AC3.DVDRiP.XViD-NGX.tar\n-rwxrws---   1 root     ftpusers 1686848371 Jun  8  2024 Power.2024.German.AC3.DL.1080p.Web.x265-FuN.mkv\n-rwxrws---   1 root     ftpusers 1226188800 May 22  2013 Psycho.Legacy.GERMAN.DOKU.2010.AC3.720p.BluRay.x264-GOREHOUNDS.tar\n-rwxrws---   1 root     ftpusers 199443204 May 16  2015 Science.of.Stupid.Wissenschaft.der.Missgeschicke.S02E11.Folge.11.GERMAN.DOKU.WS.HDTVRip.x264-TMSF.mkv\ndrwxrws---   3 root     ftpusers     4096 Jul 23 17:40 Secret.Service.Schutz.des.Praesidenten.GERMAN.DOKU.AC3.HDTV.720p.x264-NVA\n-rwxrws---   1 root     ftpusers 367781888 Dec  5  2009 Sexreport.2008.E02.GERMAN.DOKU.WS.dTV.XviD-TSCC.avi\n-rwxrws---   1 root     ftpusers 17163907 Nov 28  2021 Sind die Ungeimpften schuld - Ein Essay von Daniela Dahn.mp4\n-rwxrws---   1 root     ftpusers 376156160 May 22  2013 Skandinavien.von.oben.E01.Norwegen.German.2012.DOKU.WS.DVDRip.XviD-UMF.tar\n-rwxrws---   1 root     ftpusers 375132160 May 22  2013 Skandinavien.von.oben.E03.Daenemark.German.2012.DOKU.WS.DVDRip.XviD-UMF.tar\n-rwxrws---   1 root     ftpusers 346053152 Jan 27  2015 Snooker.Main.Tour.2014-2015.Coral.UK.Championship.in.York.Session.1.GERMAN.WS.HDTVRip.x264-SAPH1R.mkv\n-rwxrws---   1 root     ftpusers 880807172 Jan 18  2022 Terra.X.-.Faszination.Erde.-.Vietnam.Zerbrechliche.Schoenheit.GERMAN.DOKU.HDTV-720p.x264.mkv\n-rwxrws---   1 root     ftpusers 904707056 Jan 25  2015 Terra.X.Supertalent.Mensch.E02.Die.Geistesgiganten.GERMAN.DOKU.720p.HDTV.x264-RiO.mkv\n-rwxrws---   1 root     ftpusers 6415912157 Mar 14 15:51 Thomas.Mueller.Einer.wie.Keiner.2025.German.DOKU.1080p.WEB.H264-SiXTYNiNE.mkv\n-rwxrws---   1 root     ftpusers  2457600 May 20  2012 Tierisch_lustig_-_Die_Wissenschaft_vom_Lachen_-_YouTube.flv\n-rwxrws---   1 root     ftpusers 475736089 Jun 22  2015 ▶ Tod eines Internet Aktivisten - Aaron Swartz [Dokumentati.webm\n-rwxrws---   1 root     ftpusers 1586565141 Jan 25  2015 UFO.S01E02.Testpilot.Paul.Foster.German.DL.FS.720p.BluRay.x264-THEORY.mkv\n-rwxrws---   1 root     ftpusers 1229149377 Jan 28  2015 UFO.S01E04.Falle.im.Weltraum.German.DL.FS.720p.BluRay.x264-THEORY.mkv\ndrwxrws---   2 root     ftpusers     4096 Apr 16  2024 Und.alle.haben.geschwiegen.Die.Dokumentation.2012.GERMAN.DOKU.WS.HDTV.XviD-aWake\n-rwxrws---   1 root     ftpusers 1080057692 Jan 25  2015 Unendlich.Jetzt.2014.German.Doku.BDRiP.X264-SMAHD.mkv\n-rwxrws---   1 root     ftpusers 619767430 Jan 29  2015 Unsere.Geschichte.Hamburg.mein.Hafen.E01.Erst.die.Arbeit.GERMAN.DOKU.WS.SATRip.x264-Pumuck.mkv\n-rwxrws---   1 root     ftpusers 1446325605 Sep 15  2012 Verhoekert.Ein.Broker.dealt.sich.um.die.Welt.E01.GERMAN.DOKU.720p.HDTV.x264-SiTiN.mkv\ndrwxrws---   2 root     ftpusers     4096 Aug 13 16:57 Verkaufen um jeden Preis DOKU WS dTV XviD - D4U -\n-rwxrws---   1 root     ftpusers 2291198439 May 22  2013 Versenkt.und.Vergessen.GERMAN.DOKU.WS.720p.HDTV.x264-MiSFiTS.mkv\n-rwxrws---   1 root     ftpusers 1623271795 Nov 29  2013 Vom.Plan.zum.Planeten.-.Projekt.Erde.GERMAN.DOKU.720p.HDTV.x264-TVP.mkv\ndrwxrws---   2 root     ftpusers     4096 Jul 23 18:00 Wegelagerer und Wichtigtuer - Doku (2012) - - DivX\n-rwxrws---   1 root     ftpusers 381961318 Apr 17  2011 Weltmacht.WikiLeaks-Krieg.im.Netz.GERMAN.DOKU.HDTVRip.XViD-EVIL.avi\n-rwxrws---   1 root     ftpusers 1890878229 Jan 29  2015 Wildes.Kanada.S01E03.German.Doku.720p.Bluray.X264-SMAHD.mkv\n-rwxrws---   1 root     ftpusers 652546678 May  1  2015 Xenius-Kalorien.Was.hinter.den.Zahlen.steckt.GERMAN.DOKU.720p.HDTV.x264-OWG.mkv\n"
+[performFtpList] 📄 Parsed 103 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 103 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "Auf der Suche nach außerirdischem Leben 1_2 - Doku"
+[parseProftpdList] 📁 Found directory: "Auf der Suche nach außerirdischem Leben 2_2 - Doku"
+[parseProftpdList] 📁 Found directory: "Auf der Suche nach Gottesformelt - von Harald Lesc"
+[parseProftpdList] 📁 Found directory: "BBC.Earth.Expedition.Neuguinea.S01E01.Pythons.und.Paradiesvoegel.GERMAN.DTS.DOKU.1080p.BluRay.x264-TVP"
+[parseProftpdList] 📁 Found directory: "BBC.Earth.Expedition.Neuguinea.S01E02.Flughunde.und.Urwaldkrokodile.GERMAN.DTS.DOKU.1080p.BluRay.x264-TVP"
+[parseProftpdList] 📁 Found directory: "BBC.Earth.Expedition.Neuguinea.S01E03.Baumkaengurus.und.Thermometerhuehner.GERMAN.DTS.DOKU.1080p.BluRay.x264-TVP"
+[parseProftpdList] 📁 Found directory: "Big Bang im Labor - Doku (2009) - - DivX by Waldor"
+[parseProftpdList] 📁 Found directory: "Black.Box.BRD.German.DOKU.1080p.WebHD.x264-GWD"
+[parseProftpdList] 📁 Found directory: "Der Stoff, aus dem der Kosmos ist 4_4 - Universum"
+[parseProftpdList] 📁 Found directory: "Die Code - Knacker - Doku (2011) - - XviD by Waldo"
+[parseProftpdList] 📁 Found directory: "Die Einflüsterer - Wie Geld Politik macht - Doku ("
+[parseProftpdList] 📁 Found directory: "Die.Geschichte.des.FBI.GERMAN.DOKU.2012.COMPLETE.PAL.DVDR-VhV"
+[parseProftpdList] 📁 Found directory: "Die Grenzen der Zeit DOKU WS HDTV x264 - MiSFiTS -"
+[parseProftpdList] 📁 Found directory: "Die Jagd nach den Grenzen des Universums DOKU WS H"
+[parseProftpdList] 📁 Found directory: "Faszination.Island.Das.Paradies.des.Nordens.2012.GERMAN.DOKU.WS.DVDRip.XViD-CDP"
+[parseProftpdList] 📁 Found directory: "Hackers.wanted.2008.DVDRip.MP4-NoGrp"
+[parseProftpdList] 📁 Found directory: "Konrad Adenauer - Stunden der Entscheidung - Doku-"
+[parseProftpdList] 📁 Found directory: "Meine Familie, die Nazis und Ich - Doku (2012) - -"
+[parseProftpdList] 📁 Found directory: "NightWash.2015-01-08.GERMAN.HDTV.720p.x264-TSCC"
+[parseProftpdList] 📁 Found directory: "Plastic.Planet.German.2009.DOKU.AC3.DVDRiP.XViD-NGX"
+[parseProftpdList] 📁 Found directory: "Secret.Service.Schutz.des.Praesidenten.GERMAN.DOKU.AC3.HDTV.720p.x264-NVA"
+[parseProftpdList] 📁 Found directory: "Und.alle.haben.geschwiegen.Die.Dokumentation.2012.GERMAN.DOKU.WS.HDTV.XviD-aWake"
+[parseProftpdList] 📁 Found directory: "Verkaufen um jeden Preis DOKU WS dTV XviD - D4U -"
+[parseProftpdList] 📁 Found directory: "Wegelagerer und Wichtigtuer - Doku (2012) - - DivX"
+[parseProftpdList] ✅ Total entries found: 24 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdb/Evelin+Ich/" depth: 10
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdb/Evelin+Ich/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdb/Evelin+Ich/"
+[performFtpList] 📋 Raw FTP listing:
+ "-rwxrws---   1 root     ftpusers    95254 Mar 13  2010 26-02-10_10.3gp\n-rwxrws---   1 root     ftpusers    92771 Mar 13  2010 26-02-10_11.3gp\n-rwxrws---   1 root     ftpusers    96642 Mar 13  2010 26-02-10_1.3gp\n-rwxrws---   1 root     ftpusers    56717 Mar 13  2010 26-02-10_2.3gp\n-rwxrws---   1 root     ftpusers    97037 Mar 13  2010 26-02-10_3.3gp\n-rwxrws---   1 root     ftpusers    30830 Mar 13  2010 26-02-10.3gp\n-rwxrws---   1 root     ftpusers    97001 Mar 13  2010 26-02-10_4.3gp\n-rwxrws---   1 root     ftpusers    85699 Mar 13  2010 26-02-10_5.3gp\n-rwxrws---   1 root     ftpusers    96017 Mar 13  2010 26-02-10_6.3gp\n-rwxrws---   1 root     ftpusers    35915 Mar 13  2010 26-02-10_7.3gp\n-rwxrws---   1 root     ftpusers    97085 Mar 13  2010 26-02-10_8.3gp\n-rwxrws---   1 root     ftpusers    90805 Mar 13  2010 26-02-10_9.3gp\n-rwxrws---   1 root     ftpusers  1218560 Feb 14  2010 Heiner First.VOB\n"
+[performFtpList] 📄 Parsed 13 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 13 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] ✅ Total entries found: 0 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdb/FILME/" depth: 11
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdb/FILME/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdb/FILME/"
+[performFtpList] 📋 Raw FTP listing:
+ "drwxrws---   2 root     ftpusers   356352 Jul 11 21:22 Andere\ndrwxrws---   2 root     ftpusers    28672 Jul 12 07:31 Archive\ndrwxrws---   2 root     ftpusers    65536 Jul 11 21:25 Bilder\ndrwxrws---   2 root     ftpusers    32768 Jul 11 21:36 Dokumente\ndrwxrws---   2 root     ftpusers     4096 Jul 11 21:25 Kryptowährung\ndrwxrws---   2 root     ftpusers     4096 Jul 11 21:26 Subtitle\ndrwxrws---   2 root     ftpusers     4096 Jul 11 21:26 System\ndrwxrws---   2 root     ftpusers  1110016 Aug 11 20:14 Videos\n"
+[performFtpList] 📄 Parsed 8 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 8 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "Andere"
+[parseProftpdList] 📁 Found directory: "Archive"
+[parseProftpdList] 📁 Found directory: "Bilder"
+[parseProftpdList] 📁 Found directory: "Dokumente"
+[parseProftpdList] 📁 Found directory: "Kryptowährung"
+[parseProftpdList] 📁 Found directory: "Subtitle"
+[parseProftpdList] 📁 Found directory: "System"
+[parseProftpdList] 📁 Found directory: "Videos"
+[parseProftpdList] ✅ Total entries found: 8 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdb/Hochzeit/" depth: 12
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdb/Hochzeit/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdb/Hochzeit/"
+[performFtpList] 📋 Raw FTP listing:
+ "drwxrws---   2 root     ftpusers     4096 Jul 12 06:46 Bessim H Video\n-rwxrws---   1 root     ftpusers 1909981184 Jul 22  2011 HZvonEvelinHeiner.iso\n-rwxrws---   1 root     ftpusers 65275904 Aug 29  2010 tan.mpg\n-rwxrws---   1 root     ftpusers 3875813319 Aug 29  2010 thanh2.mpg\n-rwxrws---   1 root     ftpusers 5986772992 Aug 29  2010 Thanh.mpg\n-rwxrws---   1 root     ftpusers 40102560000 Sep  3  2010 thanh.mpg.dv\n-rwxrws---   1 root     ftpusers 560062716 Sep  3  2010 Than Hochzeit\n-rwxrws---   1 root     ftpusers 3098271744 Sep 10  2010 Vinh.mpg\n"
+[performFtpList] 📄 Parsed 8 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 8 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "Bessim H Video"
+[parseProftpdList] ✅ Total entries found: 1 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdb/KinderSerienFilme/" depth: 13
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdb/KinderSerienFilme/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdb/KinderSerienFilme/"
+[performFtpList] 📋 Raw FTP listing:
+ "drwxrws---   3 root     ftpusers     4096 Jul 12 06:46  AugsburgerPuppenkiste\n-rwxrws---   1 root     ftpusers 1101838993 Jun  8  2024 Bambi.2.Der.Herr.der.Waelder.2006.German.AC3D.DL.1080p.BluRay.x265-FuN.mkv\ndrwxrws---   2 root     ftpusers     4096 Aug 28  2023 Biene Maja\n-rwxrws---   1 root     ftpusers 2404521543 Jun  8  2024 Das.fliegende.Klassenzimmer.2023.German.EAC3.1080p.AMZN.WEB.H265-ZeroTwo.mkv\n-rwxrws---   1 root     ftpusers 49026434 Oct 14  2014 Die_Ferien_des_Herrn_Rossi_12_Ganze_Folge_-_Gipfelst_rmer_haben_s_schwer.flv\n-rwxrws---   1 root     ftpusers 3980572334 Jun  8  2024 Die.Legende.des.Tigers.2024.German.DL.EAC3.1080p.DV.HDR.AMZN.WEB.H265-ZeroTwo.mkv\n-rwxrws---   1 root     ftpusers 136824687 May 24  2015 ▶ Doctor Snuggles - Folge 1 - Wie Mathilde Dosenfänger erfu.webm\n-rwxrws---   1 root     ftpusers 4950069177 Jun  8  2024 Dr. Dolittle.3.2006.German.DL.1080p.WEBRip.h265-WOTT.mkv\n-rwxrws---   1 root     ftpusers 2396070266 Jun  8  2024 Guardians.of.the.Galaxy.2014.German.AC3.DL.1080p.BluRay.x265-FuN.mkv\n-rwxrws---   1 root     ftpusers 28011898880 Apr 20  2024 Gummibaerenbande.COMPLETE.GERMAN.720p.HDTV.x264-4SJ.tar\n-rwxrws---   1 root     ftpusers 6226129560 Mar 14 14:57 Henry.Danger.Der.Film.2025.German.DL.EAC3.1080p.AMZN.WEB.H264-XiSS.mkv\n-rwxrws---   1 root     ftpusers 2019228613 Jun  8  2024 Ice.Age.2.2006.German.DL.AC3.1080p.BluRay.x265-FuN.mkv\n-rwxrws---   1 root     ftpusers 4058110996 Mar 14 15:41 Plankton.Der.Film.2025.GERMAN.DL.1080p.WEB.h264-SCHOKOBONS.mkv\ndrwxrws---   2 root     ftpusers    12288 Sep 29  2024 Pumuckl\ndrwxrws---   8 root     ftpusers     4096 Jul 23 20:44 Simpsons\ndrwxrws---   3 root     ftpusers     4096 Apr 16  2024 Sindbad - 42 Folgen - German - by Videomann - s. I\n-rwxrws---   1 root     ftpusers 1603269068 Apr 19  2015 ☆ Till Eulenspiegel ☆ Teil I und II ☆ Ganzer Kinder Film 201.mp4\n-rwxrws---   1 root     ftpusers 1815924320 Jun  7  2024 Toy.Story.2.1999.German.AC3.DL.1080p.BluRay.x265-FuN.mkv\n-rwxrws---   1 root     ftpusers 1670834363 Jun  8  2024 Toy.Story.4.Alles.hoert.auf.kein.Kommando.2019.German.AC3.DL.1080p.BluRay.x265-FuN.mkv\n"
+[performFtpList] 📄 Parsed 19 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 19 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "AugsburgerPuppenkiste"
+[parseProftpdList] 📁 Found directory: "Biene Maja"
+[parseProftpdList] 📁 Found directory: "Pumuckl"
+[parseProftpdList] 📁 Found directory: "Simpsons"
+[parseProftpdList] 📁 Found directory: "Sindbad - 42 Folgen - German - by Videomann - s. I"
+[parseProftpdList] ✅ Total entries found: 5 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdb/lost+found/" depth: 14
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdb/lost+found/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdb/lost+found/"
+[performFtpList] 📋 Raw FTP listing:
+ ""
+[performFtpList] 📄 Parsed 0 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 0 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] ✅ Total entries found: 0 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdb/SERIEN/" depth: 15
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdb/SERIEN/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdb/SERIEN/"
+[performFtpList] 📋 Raw FTP listing:
+ "-rwxrws---   1 root     ftpusers 244389888 Dec  5  2009 15_Special_Features.avi\ndrwxrws---   2 root     ftpusers     4096 Apr 16  2024 24 S6\ndrwxrws---  26 root     ftpusers     4096 Dec 30  2014 24 S7\n-rwxrws---   1 root     ftpusers 188776448 Mar 14  2011 28. Micky Maus Wunderhaus - S02E01 - Goofy und die Tanzparty.avi\n-rwxrws---   1 root     ftpusers 188770304 Mar 14  2011 29. Micky Maus Wunderhaus - S02E02 - Die Zeitmaschine.avi\n-rwxrws---   1 root     ftpusers 188733440 Mar 14  2011 30. Micky Maus Wunderhaus - S02E03 - Goofy, der Heimwerker.avi\n-rwxrws---   1 root     ftpusers 188770304 Mar 14  2011 31. Micky Maus Wunderhaus - S02E04 - Mickys hilfreiche Händchen.avi\n-rwxrws---   1 root     ftpusers 188766208 Mar 14  2011 32. Micky Maus Wunderhaus - S02E05 - Minnies Picknick.avi\n-rwxrws---   1 root     ftpusers 188770304 Mar 14  2011 33. Micky Maus Wunderhaus - S02E06 - Goofys Training.avi\n-rwxrws---   1 root     ftpusers 188735488 Mar 14  2011 34. Micky Maus Wunderhaus - S02E07 - Goofys Hut.avi\n-rwxrws---   1 root     ftpusers 188805120 Mar 14  2011 35. Micky Maus Wunderhaus - S02E08 - Daisys Haustiere.avi\n-rwxrws---   1 root     ftpusers 188770304 Mar 14  2011 36. Micky Maus Wunderhaus - S02E09 - Mickys verrückter Tag.avi\n-rwxrws---   1 root     ftpusers 188794880 Mar 14  2011 37. Micky Maus Wunderhaus - S02E10 - Micky und die Zahlen.avi\n-rwxrws---   1 root     ftpusers 188762112 Mar 14  2011 38. Micky Maus Wunderhaus - S02E11 - Mickys großes Konzert.avi\n-rwxrws---   1 root     ftpusers 188803072 Mar 14  2011 39. Micky Maus Wunderhaus - S02E12 - Ein Päckchen für Donald.avi\n-rwxrws---   1 root     ftpusers 188735488 Mar 14  2011 40. Micky Maus Wunderhaus - S02E13 - Plutos Schaumbad.avi\n-rwxrws---   1 root     ftpusers 188798976 Mar 14  2011 41. Micky Maus Wunderhaus - S02E14 - Klarabellas Jahrmarkt.avi\n-rwxrws---   1 root     ftpusers 188770304 Mar 14  2011 42. Micky Maus Wunderhaus - S02E15 - Mickys und Minnies Dschungel-Safari.avi\n-rwxrws---   1 root     ftpusers 188768256 Mar 14  2011 43. Micky Maus Wunderhaus - S02E16 - Mickys Riesenhilfe.avi\n-rwxrws---   1 root     ftpusers 188794880 Mar 14  2011 44. Micky Maus Wunderhaus - S02E17 - Geheimagentin Daisy.avi\n-rwxrws---   1 root     ftpusers 188796928 Mar 14  2011 45. Micky Maus Wunderhaus - S02E18 - Mickys Zeltlager.avi\n-rwxrws---   1 root     ftpusers 188794880 Mar 14  2011 46. Micky Maus Wunderhaus - S02E19 - Mickys Kunstausstellung.avi\n-rwxrws---   1 root     ftpusers 188778496 Mar 14  2011 47. Micky Maus Wunderhaus - S02E20 - Minnie und die Detektive.avi\n-rwxrws---   1 root     ftpusers 188772352 Mar 14  2011 48. Micky Maus Wunderhaus - S02E21 - Ritter Goofy.avi\n-rwxrws---   1 root     ftpusers 188805120 Mar 14  2011 49. Micky Maus Wunderhaus - S02E22 - Pluto der Rettungshund.avi\n-rwxrws---   1 root     ftpusers 188768256 Mar 14  2011 50. Micky Maus Wunderhaus - S02E23 - Mickys Danke-für-alles-Tag.avi\n-rwxrws---   1 root     ftpusers 188764160 Mar 14  2011 51. Micky Maus Wunderhaus - S02E24 - Mickys große Überraschung.avi\n-rwxrws---   1 root     ftpusers 188764160 Mar 14  2011 52. Micky Maus Wunderhaus - S02E25 - Mickys Komet.avi\n-rwxrws---   1 root     ftpusers 188774400 Mar 14  2011 53. Micky Maus Wunderhaus - S02E26 - Minnies Regenbogen.avi\n-rwxrws---   1 root     ftpusers 188770304 Mar 14  2011 54. Micky Maus Wunderhaus - S02E27 - Klarabellas Muh-sical.avi\n-rwxrws---   1 root     ftpusers 188766208 Mar 14  2011 55. Micky Maus Wunderhaus - S02E28 - Mickys Nachricht vom Mars.avi\n-rwxrws---   1 root     ftpusers 188764160 Mar 14  2011 56. Micky Maus Wunderhaus - S02E29 - Weltraum-Captain Donald.avi\n-rwxrws---   1 root     ftpusers 188733440 Mar 14  2011 57. Micky Maus Wunderhaus - S02E30 - Die Freundschaftstags-Party.avi\n-rwxrws---   1 root     ftpusers 188774400 Mar 14  2011 58. Micky Maus Wunderhaus - S02E31 - Karlos Strandparty.avi\n-rwxrws---   1 root     ftpusers 188764160 Mar 14  2011 59. Micky Maus Wunderhaus - S02E32 - Micky und das Drachenei.avi\n-rwxrws---   1 root     ftpusers 188741632 Mar 14  2011 60. Micky Maus Wunderhaus - S02E33 - Ein verrückter Goofy Tag.avi\n-rwxrws---   1 root     ftpusers 188764160 Mar 14  2011 61. Micky Maus Wunderhaus - S02E34 - Die Wunderhaus-Eisenbahn.avi\n-rwxrws---   1 root     ftpusers 188786688 Mar 14  2011 62. Micky Maus Wunderhaus - S02E35 - Die große Zirkusshow.avi\n-rwxrws---   1 root     ftpusers 188770304 Mar 14  2011 63. Micky Maus Wunderhaus - S02E36 - Minnies Bienengeschichte.avi\n-rwxrws---   1 root     ftpusers 188764160 Mar 14  2011 64. Micky Maus Wunderhaus - S02E37 - Die Suche nach den Kokosnüssen.avi\n-rwxrws---   1 root     ftpusers 188973056 Mar 14  2011 65. Micky Maus Wunderhaus - S02E38 - Daisys Grashüpfer.avi\n-rwxrws---   1 root     ftpusers 188768256 Mar 14  2011 66. Micky Maus Wunderhaus - S02E39 - Donalds Enten.avi\n-rwxrws---   1 root     ftpusers 378308608 Mar 14  2011 67. Micky Maus Wunderhaus - S02E40 - Mickys Abenteuer im Wunderland.avi\n-rwxrws---   1 root     ftpusers 188729344 Mar 14  2011 68. Micky Maus Wunderhaus - S02E41 - Toodles' Geburtstag.avi\n-rwxrws---   1 root     ftpusers 188764160 Mar 14  2011 69. Micky Maus Wunderhaus - S02E42 - Mickys Frühlingsüberraschung.avi\n-rwxrws---   1 root     ftpusers 188737536 Mar 14  2011 70. Micky Maus Wunderhaus - S02E43 - Goofy, der Superheld.avi\n-rwxrws---   1 root     ftpusers 188770304 Mar 14  2011 71. Micky Maus Wunderhaus - S02E44 - Goofys Roboter.avi\n-rwxrws---   1 root     ftpusers 188760064 Mar 14  2011 72. Micky Maus Wunderhaus - S02E45 - Super-Goofys Super-Puzzle.avi\n-rwxrws---   1 root     ftpusers 188741632 Mar 14  2011 73. Micky Maus Wunderhaus - S02E46 - Plutos kleiner Dinosaurier.avi\n-rwxrws---   1 root     ftpusers 188776448 Mar 14  2011 74. Micky Maus Wunderhaus - S02E47 - Doanald aus der Wüste.avi\n-rwxrws---   1 root     ftpusers 188780544 Mar 14  2011 75. Micky Maus Wunderhaus - S02E48 - Donald, der Lampengeist.avi\ndrwxrws---   6 root     ftpusers     4096 Apr 16  2024 Alf\n-rwxrws---   1 root     ftpusers 445263492 May 26 13:31 Beyond.UFOs.and.The.Unknown.S01E03.720p.HEVC.x265-MeGusta.mkv\ndrwxrws---   3 root     ftpusers     4096 Apr 16  2024 Breaking.Bad.S01-S05.COMPLETE.German.AC3.BDRiP.x264-ULTR4SP33D\n-rwxrws---   1 root     ftpusers 3643253325 May 26 13:40 Cosmosis.UFOs.and.A.New.Reality.S01E01.1080p.WEB-DL.AAC2.0.H.264-Hagnar.mkv\n-rwxrws---   1 root     ftpusers 3572600098 May 26 13:37 Cosmosis.UFOs.and.A.New.Reality.S01E02.1080p.WEB-DL.AAC2.0.H.264-HAGNAR.mkv\n-rwxrws---   1 root     ftpusers 4297098230 May 26 13:39 Cosmosis.UFOs.and.A.New.Reality.S01E03.1080p.WEB-DL.AAC2.0.H.264-Hagnar.mkv\ndrwxrws---   8 root     ftpusers     4096 Jun  8  2024 CSI-LasVegas\n-rwxrws---   1 root     ftpusers 3517320023 Jul 13  2017 emerald.city.2017.s01e01.1080p.bluray.x264-rovers.mkv\n-rwxrws---   1 root     ftpusers 3519502962 Jul 13  2017 emerald.city.2017.s01e02.1080p.bluray.x264-rovers.mkv\n-rwxrws---   1 root     ftpusers 3516043984 Jul 13  2017 emerald.city.2017.s01e03.1080p.bluray.x264-rovers.mkv\n-rwxrws---   1 root     ftpusers 3517576185 Jul 13  2017 emerald.city.2017.s01e04.1080p.bluray.x264-rovers.mkv\n-rwxrws---   1 root     ftpusers 3517862957 Jul 13  2017 emerald.city.2017.s01e05.1080p.bluray.x264-rovers.mkv\n-rwxrws---   1 root     ftpusers 3518431086 Jul 13  2017 emerald.city.2017.s01e06.1080p.bluray.x264-rovers.mkv\n-rwxrws---   1 root     ftpusers 3519086565 Jul 13  2017 emerald.city.2017.s01e07.1080p.bluray.x264-rovers.mkv\n-rwxrws---   1 root     ftpusers 3514169786 Jul 13  2017 emerald.city.2017.s01e08.1080p.bluray.x264-rovers.mkv\n-rwxrws---   1 root     ftpusers 3518105756 Jul 13  2017 emerald.city.2017.s01e09.1080p.bluray.x264-rovers.mkv\n-rwxrws---   1 root     ftpusers 3518183078 Jul 14  2017 emerald.city.2017.s01e10.1080p.bluray.x264-rovers.mkv\ndrwxrws---   2 root     ftpusers     4096 Jun  8  2024 Halo Staffel2\ndrwxrws---   3 root     ftpusers     4096 Mar 13  2013 How.to.Make.It.in.America.S02E02.In.or.Out.GERMAN.DUBBED.WS.BDRip.XviD-TVP\n-rwxrws---   1 root     ftpusers 3180999342 May 26 13:36 NOVA.S52E01.What.are.UFOs.1080p.AMZN.WEB-DL.DDP2.0.H.264-Kitsune.mkv\ndrwxrws---  23 root     ftpusers    20480 Jul 12 06:49 Outer Limits\n-rwxrws---   1 root     ftpusers 3176295592 May 26 13:29 Projekt.UFO.S01E01.GERMAN.DL.1080p.WEB.h264-SAUERKRAUT.mkv\n-rwxrws---   1 root     ftpusers 3288105989 May 26 13:29 Projekt.UFO.S01E02.GERMAN.DL.1080p.WEB.h264-SAUERKRAUT.mkv\n-rwxrws---   1 root     ftpusers 3323581848 May 26 13:26 Projekt.UFO.S01E03.GERMAN.DL.1080p.WEB.h264-SAUERKRAUT.mkv\n-rwxrws---   1 root     ftpusers 1366122208 May 26 13:24 Projekt.UFO.S01E04.GERMAN.DL.720p.WEB.h264-SAUERKRAUT.mkv\ndrwxrws---   7 root     ftpusers     4096 May 26 14:15 Stargate.Atlantis.S01-S05.COMPLETE.GERMAN.DUBBED.DL.iTunesHD.XviD-TVS\n-rwxrws---   1 root     ftpusers 161488896 Jul 21  2011 STV-(116) 23UHR59 [German-by TEDC] [German VCD] [found via w.mpg\n-rwxrws---   1 root     ftpusers 46292992 Jul 21  2011 STV-S01E11-Der Verrat [German] [found via www.fileDonkey.com.avi\n-rwxrws---   1 root     ftpusers 1527674437 Sep 24  2024 The.Acolyte.2024.S01E05.German.DL.1080p.HDR.UHD.WEBRip.h265-Tylor.D.mkv\n-rwxrws---   1 root     ftpusers 1610428068 May 26 13:21 the.cleaning.lady.s04e06.1080p.web.h264-successfulcrab.mkv\ndrwxrws---  25 root     ftpusers     4096 Nov  3  2019 The.Flash.S01.COMPLETE.GERMAN.5.1.DL.AC3.720p.BDRiP.x264-TvR\n-rwxrws---   1 root     ftpusers 54400430080 Oct  2  2022 The.Flash.S01.COMPLETE.GERMAN.5.1.DL.AC3.720p.BDRiP.x264-TvR.tar\n-rwxrws---   1 root     ftpusers 2131114932 May 26 13:19 The.Righteous.Gemstones.S04E02.GERMAN.DL.1080P.WEB.H264-WAYNE.mkv\n-rwxrws---   1 root     ftpusers 1446410448 May 26 13:19 The.Righteous.Gemstones.S04E04.German.DL.720p.WEB.h264-WvF.mkv\n-rwxrws---   1 root     ftpusers 310851564 May 26 13:22 UFOs.Investigating.the.Unknown.S02E06.720p.HEVC.x265-MeGusta.mkv\n-rwxrws---   1 root     ftpusers 687714323 Dec 22  2021 Workaholics.S05E01.Dorm.Daze.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n-rwxrws---   1 root     ftpusers 666737882 Dec 22  2021 Workaholics.S05E02.Front.Yard.Wrestling.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n-rwxrws---   1 root     ftpusers 666268671 Dec 22  2021 Workaholics.S05E03.Speedo.Racer.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n-rwxrws---   1 root     ftpusers 649647812 Dec 22  2021 Workaholics.S05E04.Menergy.Crisis.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n-rwxrws---   1 root     ftpusers 667387357 Dec 22  2021 Workaholics.S05E05.Gayborhood.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n-rwxrws---   1 root     ftpusers 672876528 Dec 22  2021 Workaholics.S05E06.Ditch.Day.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n-rwxrws---   1 root     ftpusers 681222079 Dec 22  2021 Workaholics.S05E07.Gramps.DeMamp.is.Dead.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n-rwxrws---   1 root     ftpusers 647917982 Dec 22  2021 Workaholics.S05E08.Blood.Drive.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n-rwxrws---   1 root     ftpusers 672492633 Dec 22  2021 Workaholics.S05E09.Wedding.Trashers.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n-rwxrws---   1 root     ftpusers 673299677 Dec 22  2021 Workaholics.S05E10.Trivia.Pursuits.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n-rwxrws---   1 root     ftpusers 670178217 Dec 22  2021 Workaholics.S05E11.The.Slump.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n-rwxrws---   1 root     ftpusers 671695488 Dec 22  2021 Workaholics.S05E12.Peyote.It.Forward.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n-rwxrws---   1 root     ftpusers 649893668 Dec 22  2021 Workaholics.S05E13.TAC.in.the.Day.720p.WEB-DL.AAC2.0.H.264-MG.mkv\n"
+[performFtpList] 📄 Parsed 99 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 99 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] 📁 Found directory: "24 S6"
+[parseProftpdList] 📁 Found directory: "24 S7"
+[parseProftpdList] 📁 Found directory: "Alf"
+[parseProftpdList] 📁 Found directory: "Breaking.Bad.S01-S05.COMPLETE.German.AC3.BDRiP.x264-ULTR4SP33D"
+[parseProftpdList] 📁 Found directory: "CSI-LasVegas"
+[parseProftpdList] 📁 Found directory: "Halo Staffel2"
+[parseProftpdList] 📁 Found directory: "How.to.Make.It.in.America.S02E02.In.or.Out.GERMAN.DUBBED.WS.BDRip.XviD-TVP"
+[parseProftpdList] 📁 Found directory: "Outer Limits"
+[parseProftpdList] 📁 Found directory: "Stargate.Atlantis.S01-S05.COMPLETE.GERMAN.DUBBED.DL.iTunesHD.XviD-TVS"
+[parseProftpdList] 📁 Found directory: "The.Flash.S01.COMPLETE.GERMAN.5.1.DL.AC3.720p.BDRiP.x264-TvR"
+[parseProftpdList] ✅ Total entries found: 10 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdb/unbenannteFilme/" depth: 16
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdb/unbenannteFilme/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdb/unbenannteFilme/"
+[performFtpList] 📋 Raw FTP listing:
+ "-rwxrws---   1 root     ftpusers 457533753 Aug  1  2021 VID_1.mp4\n-rwxrws---   1 root     ftpusers 363194757 Jul 29  2021 VID_2.mp4\n-rwxrws---   1 root     ftpusers 333926979 Jul 27  2021 VID.mp4\n"
+[performFtpList] 📄 Parsed 3 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 3 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] ✅ Total entries found: 0 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdc/Linux-Script/" depth: 17
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdc/Linux-Script/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdc/Linux-Script/"
+[performFtpList] 📋 Raw FTP listing:
+ "-rwxrws---   1 root     ftpusers      366 Nov  6  2011 db8as.sh\n-rwxrws---   1 root     ftpusers      336 May 20  2012 f73.sh\n-rwxrws---   1 root     ftpusers      340 May 20  2012 f73zwei.sh\n-rwxrws---   1 root     ftpusers     3501 May 20  2012 proxy\n-rwxrws---   1 root     ftpusers     2783 May 20  2012 proxy2\n-rwxrws---   1 root     ftpusers     1997 May 20  2012 proxyping\n-rwxrws---   1 root     ftpusers      179 May 20  2012 Proxyping.sh\n-rwxrws---   1 root     ftpusers    17781 Feb 23  2013 run.sh\n"
+[performFtpList] 📄 Parsed 8 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 8 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] ✅ Total entries found: 0 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdc/lost+found/" depth: 18
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdc/lost+found/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdc/lost+found/"
+[performFtpList] 📋 Raw FTP listing:
+ ""
+[performFtpList] 📄 Parsed 0 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 0 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] ✅ Total entries found: 0 (directories + files)
+[performFastDirectoryScan] 🔍 Fast scanning directory: "/sdc/Source-Code/" depth: 19
+[performFtpList] 📡 FTP LIST URL: "ftp://192.168.1.224:21/sdc/Source-Code/"
+[performFtpList] 🔐 User: "jan" Pass: [HIDDEN]
+[performFtpList] ✅ FTP LIST successful for "/sdc/Source-Code/"
+[performFtpList] 📋 Raw FTP listing:
+ "-rwxrws---   1 root     ftpusers    57804 Jul 12 08:11 duper.py\n-rwxrws---   1 root     ftpusers    34711 Jul 11 21:18 FileSorterPro.py\n-rwxrws---   1 root     ftpusers      515 Jan  3  1995 lamer.pas\n-rwxrws---   1 root     ftpusers     6925 Jan 12  2025 q3serverDeb.py\n-rwxrws---   1 root     ftpusers    93711 Jan 12  2025 quake3_background.jpg\n-rwxrws---   1 root     ftpusers    32163 Jul 13 15:46 SuperDuper3.py\n"
+[performFtpList] 📄 Parsed 6 lines from FTP LIST
+[parseProftpdList] 🔍 Parsing 6 lines for DIRECTORIES ONLY (FAST)
+[parseProftpdList] ✅ Total entries found: 0 (directories + files)
+[performFastDirectoryScan] ✅ Fast directory scan completed: 131 directories found
+[FtpClient-Thread] 📂 Found 131 directories, success: true
+[FtpClient-Thread] ✅ FAST directory scan completed
+[FtpClient] 🚀 Emitting directoriesOnlyFinished to Directory Browser
+[MainWindow] � 131 FTP-Verzeichnisse (nur Ordner) empfangen
+🔄 Verzeichnisliste aktualisiert: 2 Verzeichnisse
+[MainWindow] ✅ FTP-Verzeichnis erfolgreich zum Scanner hinzugefügt: "ftp://192.168.1.224:21/sdf/Bilder/"
+🌳 DIRECTORY TREE MOUSE PRESS auf directoryTree-viewport!
+   Button: RIGHT
+🚨 DIRECTORY TREE RECHTSKLICK! Context Menu wird angezeigt...
+📁 Ausgewählter Pfad: ftp://192.168.1.224:21/sdb/FILME/
+🗑️ PFAD ENTFERNEN ausgewählt für: ftp://192.168.1.224:21/sdb/FILME/
+✅ Pfad erfolgreich entfernt: ftp://192.168.1.224:21/sdb/FILME/
+🚀 Starte Ultra Speed Scan für 2 Verzeichnisse...
+🌳 DIRECTORY TREE MOUSE PRESS auf directoryTree-viewport!
+   Button: LEFT
+🔄 FileDuper wird beendet...
+🔄 FileDuper wird beendet...
+👋 FileDuper erfolgreich beendet!
+[Scanner] 🧹 Bereinige Engine Pool...
+[Scanner] 🛑 Stoppe alle 8 Engines...
+[HashEngine] 🛑 Engine 1 stop requested
+[HashEngine] ✅ Engine 1 stopped successfully
+[HashEngine] 🛑 Engine 2 stop requested
+[HashEngine] ✅ Engine 2 stopped successfully
+[HashEngine] 🛑 Engine 3 stop requested
+[HashEngine] ✅ Engine 3 stopped successfully
+[HashEngine] 🛑 Engine 4 stop requested
+[HashEngine] ✅ Engine 4 stopped successfully
+[HashEngine] 🛑 Engine 5 stop requested
+[HashEngine] ✅ Engine 5 stopped successfully
+[HashEngine] 🛑 Engine 6 stop requested
+[HashEngine] ✅ Engine 6 stopped successfully
+[HashEngine] 🛑 Engine 7 stop requested
+[HashEngine] ✅ Engine 7 stopped successfully
+[HashEngine] 🛑 Engine 8 stop requested
+[HashEngine] ✅ Engine 8 stopped successfully
+[Scanner] ✅ Alle Engines gestoppt
+[Scanner] ✅ Engine Pool bereinigt
+[HashEngine] 🧹 OpenCL Ressourcen werden freigegeben...
+[HashEngine] ✅ OpenCL Cleanup abgeschlossen
+[HashEngine] 🛡️ ULTRA-MEMORY: Processed files cache + Memory containers cleared
+[HashEngine] 🧹 OpenCL Ressourcen werden freigegeben...
+[HashEngine] ✅ OpenCL Cleanup abgeschlossen
+[HashEngine] 🛡️ ULTRA-MEMORY: Processed files cache + Memory containers cleared
+[HashEngine] 🧹 OpenCL Ressourcen werden freigegeben...
+[HashEngine] ✅ OpenCL Cleanup abgeschlossen
+[HashEngine] 🛡️ ULTRA-MEMORY: Processed files cache + Memory containers cleared
+[HashEngine] 🧹 OpenCL Ressourcen werden freigegeben...
+[HashEngine] ✅ OpenCL Cleanup abgeschlossen
+[HashEngine] 🛡️ ULTRA-MEMORY: Processed files cache + Memory containers cleared
+[HashEngine] 🧹 OpenCL Ressourcen werden freigegeben...
+[HashEngine] ✅ OpenCL Cleanup abgeschlossen
+[HashEngine] 🛡️ ULTRA-MEMORY: Processed files cache + Memory containers cleared
+[HashEngine] 🧹 OpenCL Ressourcen werden freigegeben...
+[HashEngine] ✅ OpenCL Cleanup abgeschlossen
+[HashEngine] 🛡️ ULTRA-MEMORY: Processed files cache + Memory containers cleared
+[HashEngine] 🧹 OpenCL Ressourcen werden freigegeben...
+[HashEngine] ✅ OpenCL Cleanup abgeschlossen
+[HashEngine] 🛡️ ULTRA-MEMORY: Processed files cache + Memory containers cleared
+[HashEngine] 🧹 OpenCL Ressourcen werden freigegeben...
+[HashEngine] ✅ OpenCL Cleanup abgeschlossen
+[HashEngine] 🛡️ ULTRA-MEMORY: Processed files cache + Memory containers cleared
+[PresetManager] 💾 Einstellungen gespeichert
+🎯 ActivityIndicator destructor
+⏹️ UltraSpeedEngine scan stopped
+🛑 UltraSpeedEngine: Destruktor aufgerufen

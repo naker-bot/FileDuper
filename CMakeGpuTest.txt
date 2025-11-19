@@ -1,0 +1,41 @@
+cmake_minimum_required(VERSION 3.18)
+project(GPUHashTest)
+
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Enable OpenCL
+add_definitions(-DENABLE_OPENCL)
+
+# Qt6 setup
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
+qt6_standard_project_setup()
+
+# OpenCL
+find_package(OpenCL REQUIRED)
+
+# Source files
+set(SOURCES
+    test_gpu_hash_direct.cpp
+    src/hashengine.cpp
+    src/presetmanager.cpp
+)
+
+set(HEADERS
+    include/hashengine.h
+    include/presetmanager.h
+)
+
+# Create executable
+qt6_add_executable(test_gpu_hash ${SOURCES} ${HEADERS})
+
+# Include directories
+target_include_directories(test_gpu_hash PRIVATE include)
+
+# Link libraries
+target_link_libraries(test_gpu_hash PRIVATE
+    Qt6::Core
+    Qt6::Widgets
+    OpenCL::OpenCL
+    curl
+)

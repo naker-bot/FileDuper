@@ -1,0 +1,324 @@
+#include "networkscanner.h"
+#include <QDebug>
+#include <QRegularExpression>
+#include <iostream>
+
+const QList<int> NetworkScanner::DEFAULT_PORTS = {21, 22, 80, 139, 443, 445, 2049, 5432, 3306};
+
+void NetworkScanner::processNextTarget()
+{
+    if (currentTargetIndex >= scanTargets.size())
+    {
+        // Scan completed
+        scanning = false;
+        scanTimer->stop();
+        emit scanFinished();
+
+        std::cout << "[NetworkScanner] ✅ Scan abgeschlossen: "
+                  << foundServices.size() << " Services gefunden" << std::endl;
+        return;
+    }
+
+    if (currentSocket)
+    {
+        // Previous socket still active, wait
+        return;
+    }
+
+    QPair<QString, int> target = scanTargets[currentTargetIndex];
+    QString ip = target.first;
+    int port = target.second;
+
+    currentTargetIndex++;
+
+    // Create socket for this target
+    currentSocket = new QTcpSocket(this);
+
+    // Set up connections for this scan
+    connect(currentSocket, &QTcpSocket::connected, this, &NetworkScanner::onSocketConnected);
+    connect(currentSocket, &QTcpSocket::errorOccurred, this, &NetworkScanner::onSocketError);
+
+    // Start connection timeout
+    socketTimer->start(socketTimeout);
+
+    // Attempt connection
+    std::cout << "[NetworkScanner] 🔍 Teste " << ip.toStdString() << ":" << port << std::endl;
+    currentSocket->connectToHost(ip, port);
+
+    // Emit progress
+    emit scanProgress(currentTargetIndex, scanTargets.size());
+}
+
+NetworkScanner::NetworkScanner(QObject *parent)
+    : QObject(parent), currentSocket(nullptr), currentTargetIndex(0), socketTimeout(2000), scanning(false)
+{
+    scanTimer = new QTimer(this);
+    scanTimer->setSingleShot(false);
+    scanTimer->setInterval(10); // 10ms between scans for responsiveness
+    connect(scanTimer, &QTimer::timeout, this, &NetworkScanner::processNextTarget);
+
+    socketTimer = new QTimer(this);
+    socketTimer->setSingleShot(true);
+    connect(socketTimer, &QTimer::timeout, this, &NetworkScanner::onSocketTimeout);
+
+    scanPorts = DEFAULT_PORTS;
+    ipRange = "192.168.1.0/24";
+
+    std::cout << "[NetworkScanner] 📡 Initialisiert mit Standard-Ports" << std::endl;
+}
+
+NetworkScanner::~NetworkScanner()
+{
+    stopScan();
+}
+
+void NetworkScanner::setIpRange(const QString &range)
+{
+    if (!scanning)
+    {
+        ipRange = range;
+        std::cout << "[NetworkScanner] IP-Bereich gesetzt: " << range.toStdString() << std::endl;
+    }
+}
+
+void NetworkScanner::setPorts(const QList<int> &ports)
+{
+    if (!scanning)
+    {
+        scanPorts = ports;
+        std::cout << "[NetworkScanner] " << ports.size() << " Scan-Ports konfiguriert" << std::endl;
+    }
+}
+
+void NetworkScanner::setTimeout(int msec)
+{
+    socketTimeout = msec;
+}
+
+void NetworkScanner::startScan()
+{
+    if (scanning)
+    {
+        std::cout << "[NetworkScanner] Scan bereits aktiv" << std::endl;
+        return;
+    }
+
+    parseIpRange(ipRange);
+    generateTargets();
+
+    foundServices.clear();
+    currentTargetIndex = 0;
+    scanning = true;
+
+    std::cout << "[NetworkScanner] 🚀 Starte Scan: " << scanTargets.size() << " Ziele" << std::endl;
+
+    scanTimer->start();
+    emit scanProgress(0, scanTargets.size());
+}
+
+void NetworkScanner::stopScan()
+{
+    if (!scanning)
+        return;
+
+    scanning = false;
+    scanTimer->stop();
+    socketTimer->stop();
+
+    if (currentSocket)
+    {
+        currentSocket->abort();
+        currentSocket->deleteLater();
+        currentSocket = nullptr;
+    }
+
+    std::cout << "[NetworkScanner] ⏹️ Scan gestoppt" << std::endl;
+    emit scanFinished();
+}
+
+void NetworkScanner::parseIpRange(const QString &range)
+{
+    // Simple /24 network parsing for demo
+    // TODO: Implement full CIDR and range parsing
+    QRegularExpression re(R"((\d+\.\d+\.\d+)\.\d+/24)");
+    QRegularExpressionMatch match = re.match(range);
+
+    if (match.hasMatch())
+    {
+        QString baseIp = match.captured(1);
+        // Will generate 192.168.1.1 to 192.168.1.254
+        std::cout << "[NetworkScanner] Erkanntes /24 Netzwerk: " << baseIp.toStdString() << ".x" << std::endl;
+    }
+}
+
+void NetworkScanner::generateTargets()
+{
+    scanTargets.clear();
+
+    // Simple demo: scan 192.168.1.1-10 for testing
+    for (int i = 1; i <= 10; ++i)
+    {
+        QString ip = QString("192.168.1.%1").arg(i);
+        for (int port : scanPorts)
+        {
+            scanTargets.append(qMakePair(ip, port));
+        }
+    }
+
+    std::cout << "[NetworkScanner] " << scanTargets.size() << " Scan-Ziele generiert" << std::endl;
+}
+
+void NetworkScanner::processNextTarget()
+{
+    if (!scanning || currentTargetIndex >= scanTargets.size())
+    {
+        stopScan();
+        return;
+    }
+
+    if (currentSocket)
+    {
+        // Previous socket still active, wait
+        return;
+    }
+
+    QPair<QString, int> target = scanTargets[currentTargetIndex];
+    currentTargetIndex++;
+
+    // Create socket for this target
+    currentSocket = new QTcpSocket(this);
+    connect(currentSocket, &QTcpSocket::connected, this, &NetworkScanner::onSocketConnected);
+    connect(currentSocket, QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::errorOccurred),
+            this, &NetworkScanner::onSocketError);
+
+    // Start timeout timer
+    socketTimer->start(socketTimeout);
+
+    // Attempt connection
+    currentSocket->connectToHost(target.first, target.second);
+
+    emit scanProgress(currentTargetIndex, scanTargets.size());
+}
+
+void NetworkScanner::onSocketConnected()
+{
+    if (!currentSocket)
+        return;
+
+    QString ip = currentSocket->peerAddress().toString();
+    int port = currentSocket->peerPort();
+
+    NetworkService service;
+    service.ip = ip;
+    service.port = port;
+    service.service = detectService(ip, port);
+    service.status = "Online";
+    service.responseTime = socketTimer->remainingTime();
+
+    foundServices.append(service);
+    emit serviceFound(service);
+
+    std::cout << "[NetworkScanner] ✅ Service gefunden: " << ip.toStdString()
+              << ":" << port << " (" << service.service.toStdString() << ")" << std::endl;
+
+    // Cleanup
+    socketTimer->stop();
+    currentSocket->disconnectFromHost();
+    currentSocket->deleteLater();
+    currentSocket = nullptr;
+}
+
+void NetworkScanner::onSocketError()
+{
+    // Connection failed - this is normal for most targets
+    if (currentSocket)
+    {
+        currentSocket->deleteLater();
+        currentSocket = nullptr;
+    }
+    socketTimer->stop();
+}
+
+void NetworkScanner::onSocketTimeout()
+{
+    // Connection timeout
+    if (currentSocket)
+    {
+        currentSocket->abort();
+        currentSocket->deleteLater();
+        currentSocket = nullptr;
+    }
+}
+
+QString NetworkScanner::detectService(const QString &ip, int port)
+{
+    Q_UNUSED(ip) // May be used for enhanced detection later
+
+    switch (port)
+    {
+    case 21:
+        return "FTP";
+    case 22:
+        return "SSH/SFTP";
+    case 80:
+        return "HTTP";
+    case 139:
+    case 445:
+        return "SMB";
+    case 443:
+        return "HTTPS";
+    case 2049:
+        return "NFS";
+    case 5432:
+        return "PostgreSQL";
+    case 3306:
+        return "MySQL";
+    default:
+        return QString("Port %1").arg(port);
+    }
+}
+
+QString NetworkScanner::getServiceDescription(int port)
+{
+    switch (port)
+    {
+    case 21:
+        return "📁 FTP - File Transfer Protocol (Datei-Upload/Download)";
+    case 22:
+        return "🔐 SSH/SFTP - Secure Shell/File Transfer (Sichere Dateiübertragung)";
+    case 139:
+    case 445:
+        return "🖥️ SMB - Server Message Block (Windows-Netzwerkfreigaben)";
+    case 2049:
+        return "🐧 NFS - Network File System (Unix/Linux-Netzwerkfreigaben)";
+    case 80:
+        return "🌐 HTTP - Web-Server";
+    case 443:
+        return "🔒 HTTPS - Verschlüsselter Web-Server";
+    case 5432:
+        return "🗃️ PostgreSQL - Datenbankserver";
+    case 3306:
+        return "🗄️ MySQL - Datenbankserver";
+    default:
+        return QString("❓ Unbekannter Service auf Port %1").arg(port);
+    }
+}
+
+bool NetworkScanner::isFileTransferService(int port)
+{
+    return (port == 21 || port == 22 || port == 139 || port == 445 || port == 2049);
+}
+
+QStringList NetworkScanner::getSupportedFileTransferProtocols()
+{
+    return {"FTP (Port 21)", "SFTP (Port 22)", "SMB (Port 445)", "NFS (Port 2049)"};
+}
+
+bool NetworkScanner::isScanning() const { return scanning; }
+QList<NetworkService> NetworkScanner::getFoundServices() const { return foundServices; }
+int NetworkScanner::getProgress() const
+{
+    return scanTargets.isEmpty() ? 0 : (currentTargetIndex * 100 / scanTargets.size());
+}
+#include "ftpclient.h"
+#include "npumanager.h"

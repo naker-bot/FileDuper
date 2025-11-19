@@ -1,0 +1,370 @@
+#ifndef ULTRASPEEDENGINE_H
+#define ULTRASPEEDENGINE_H
+
+#include <QObject>
+#include <QString>
+#include <QStringList>
+#include <QTimer>
+#include <QThread>
+#include <QMutex>
+#include <QQueue>
+#include <QHash>
+#include <QVector>
+#include <QElapsedTimer>
+#include <QtConcurrent>
+#include <atomic>
+#include <memory>
+
+#ifdef ENABLE_OPENCL
+#include <CL/cl.h>
+#endif
+
+// Forward declarations
+class HashEngine;
+class NetworkScanner;
+class PresetManager;
+
+struct FileMetadata {
+    QString filePath;
+    qint64 size;
+    QString quickHash;      // Schneller Header+Footer Hash
+    QString fullHash;       // Vollständiger Hash bei Bedarf
+    QDateTime lastModified;
+    bool isLocal;
+    bool isProcessed;
+    int category;           // File category for optimal processing
+    
+    FileMetadata() : size(0), isLocal(true), isProcessed(false), category(0) {}
+};
+
+struct ProcessingStats {
+    int totalFiles = 0;
+    int processedFiles = 0;
+    int duplicatesFound = 0;
+    int errorsEncountered = 0;
+    double totalSizeProcessed = 0.0;
+    double timeElapsed = 0.0;
+    double averageSpeed = 0.0;
+    
+    // Additional stats expected by the code
+    int filesTotal = 0;
+    int filesProcessed = 0;
+    int hashesPerSecond = 0;
+    double throughputMBps = 0.0;
+    
+    // Thread-safe access methods
+    void incrementProcessed() { 
+        QMutexLocker locker(&mutex);
+        processedFiles++;
+        filesProcessed++;
+    }
+    void incrementDuplicates() { 
+        QMutexLocker locker(&mutex);
+        duplicatesFound++; 
+    }
+    void incrementErrors() { 
+        QMutexLocker locker(&mutex);
+        errorsEncountered++; 
+    }
+    void addProcessedSize(double size) { 
+        QMutexLocker locker(&mutex);
+        totalSizeProcessed += size; 
+    }
+    void reset() {
+        QMutexLocker locker(&mutex);
+        totalFiles = processedFiles = duplicatesFound = errorsEncountered = 0;
+        filesTotal = filesProcessed = hashesPerSecond = 0;
+        totalSizeProcessed = timeElapsed = averageSpeed = throughputMBps = 0.0;
+    }
+    double getProgress() const {
+        QMutexLocker locker(&mutex);
+        return filesTotal > 0 ? (double)filesProcessed / filesTotal * 100.0 : 0.0;
+    }
+    
+private:
+    mutable QMutex mutex;
+};
+
+class UltraSpeedEngine : public QObject {
+    Q_OBJECT
+
+public:
+    enum HardwareTarget {
+        AUTO_SELECT,
+        CPU_OPTIMIZED,
+        GPU_ACCELERATED,
+        NPU_ENHANCED,
+        HYBRID_MODE
+    };
+
+    enum ScanMode {
+        QUICK_SCAN,      // Size + first 1KB hash
+        MEDIUM_SCAN,     // Size + MD5 hash
+        DEEP_SCAN,       // Size + SHA256 hash
+        ULTRA_SCAN       // All algorithms + content analysis
+    };
+
+    explicit UltraSpeedEngine(QObject *parent = nullptr);
+    ~UltraSpeedEngine();
+
+    void setHardwareTarget(HardwareTarget target);
+    void setScanMode(ScanMode mode);
+    void setMaxThreads(int threads);
+    
+    void startScan(const QStringList &directories);
+    void pauseScan();
+    void resumeScan();
+    void stopScan();
+    
+    bool isScanning() const { return scanning; }
+    double getProgress() const;
+    ProcessingStats getStats() const { 
+        QMutexLocker locker(&stats.mutex);
+        return stats; 
+    }
+
+class UltraSpeedEngine : public QObject
+{
+    Q_OBJECT
+
+public:
+    explicit UltraSpeedEngine(QObject *parent = nullptr);
+    ~UltraSpeedEngine();
+
+    enum ProcessingMode {
+        SPEED_OPTIMIZED,    // Maximale Geschwindigkeit, weniger Genauigkeit
+        BALANCED,          // Balance zwischen Geschwindigkeit und Genauigkeit
+        ACCURACY_OPTIMIZED, // Maximale Genauigkeit, langsamer
+        NETWORK_OPTIMIZED   // Speziell für Netzwerk-Scans optimiert
+    };
+
+    enum HardwareTarget {
+        AUTO_DETECT,
+        CPU_MULTICORE,
+        GPU_OPENCL,
+        INTEL_GPU,
+        NPU_ACCELERATION,
+        HYBRID_CPU_GPU,
+        HYBRID_GPU_NPU,
+        ALL_HARDWARE        // Verwendet alle verfügbaren Einheiten
+    };
+
+    // 🚀 MAIN API: Ultra-schnelle Duplikat-Suche
+    void startUltraSpeedScan(const QStringList &localDirectories, 
+                           const QStringList &networkDirectories,
+                           ProcessingMode mode = SPEED_OPTIMIZED,
+                           HardwareTarget hardware = AUTO_DETECT);
+    
+    void stopScan();
+    void pauseScan();
+    void resumeScan();
+    
+    // 🎯 CONFIGURATION
+    void setProcessingMode(ProcessingMode mode);
+    void setHardwareTarget(HardwareTarget target);
+    void setMaxConcurrentOperations(int count); // Default: CPU cores * 2
+    void setNetworkTimeout(int seconds);         // Default: 30 seconds
+    void setPresetManager(PresetManager *manager);
+    
+    // 📊 STATISTICS & MONITORING
+    ProcessingStats getStats() const { return stats; }
+    QStringList getActiveEngines() const;
+    QString getPerformanceReport() const;
+    
+    // 🛠️ ADVANCED FEATURES
+    void enableSmartCaching(bool enabled);       // Intelligentes File-Caching
+    void enableProgressiveScan(bool enabled);   // Zeige Ergebnisse während Scan
+    void enableNetworkCompression(bool enabled); // Kompression für Netzwerk-Transfers
+    void setQuickScanThreshold(qint64 bytes);   // Dateien unter X Bytes = Quick-Hash
+
+signals:
+    // Progress signals
+    void scanStarted(int totalFiles);
+    void scanProgress(int processed, int total, double percentage);
+    void scanPhaseChanged(const QString &phase, const QString &description);
+    void scanCompleted(const QHash<QString, QStringList> &duplicateGroups);
+    void scanError(const QString &error);
+    
+    // Performance signals
+    void performanceUpdate(int hashesPerSecond, double throughputMBps);
+    void hardwareStatusChanged(const QString &activeUnits);
+    void memoryUsageChanged(int memoryMB);
+    
+    // Results signals
+    void duplicateGroupFound(const QString &hash, const QStringList &files);
+    void progressiveResults(const QHash<QString, QStringList> &partialResults);
+    
+    // Network signals
+    void networkDirectoryScanned(const QString &directory, int filesFound);
+    void networkCredentialsRequired(const QString &host, int port);
+
+private slots:
+    void processFilesBatch();
+    void updatePerformanceStats();
+    void handleEngineCompleted(int engineId);
+    void processNetworkDirectory(const QString &directory);
+
+private:
+    // 🚀 8-ENGINE PARALLEL PROCESSING SYSTEM
+    struct ProcessingEngine {
+        std::unique_ptr<HashEngine> hashEngine;
+        QThread *thread;
+        QQueue<FileMetadata> fileQueue;
+        QMutex queueMutex;
+        std::atomic<bool> isActive{false};
+        std::atomic<int> processedCount{0};
+        int engineId;
+        HardwareTarget assignedHardware;
+        
+        ProcessingEngine(int id) : thread(nullptr), engineId(id), assignedHardware(CPU_MULTICORE) {}
+        ~ProcessingEngine() {
+            if (thread) {
+                thread->quit();
+                thread->wait();
+                delete thread;
+            }
+        }
+    };
+    
+    void setupEngines();
+    void distributeFiles();
+    void optimizeEngineAssignment();
+    ProcessingEngine* getAvailableEngine();
+    void balanceEngineLoad();
+    
+    // 🧠 INTELLIGENT FILE PROCESSING
+    void categorizeFiles(QList<FileMetadata> &files);
+    void sortFilesByOptimalProcessing(QList<FileMetadata> &files);
+    int getFileCategory(const QString &filePath, qint64 size);
+    HardwareTarget getOptimalHardware(int category);
+    
+    // 📁 FILE DISCOVERY & SCANNING
+    void scanLocalDirectories(const QStringList &directories);
+    void scanNetworkDirectories(const QStringList &directories);
+    QList<FileMetadata> scanDirectory(const QString &directory, bool isNetwork = false);
+    void applyIntelligentFiltering(QList<FileMetadata> &files);
+    
+    // 🌐 NETWORK OPTIMIZATIONS
+    void setupNetworkScanning();
+    void cacheNetworkCredentials();
+    void optimizeNetworkTransfers();
+    bool downloadNetworkFile(const QString &networkPath, QString &localCache);
+    
+    // 🔍 DUPLICATE DETECTION ALGORITHMS
+    void performQuickDuplicateDetection();
+    void performFullDuplicateDetection();
+    void compareFilesBySize();
+    void compareFilesByQuickHash();
+    void compareFilesByFullHash();
+    void mergeDuplicateResults();
+    
+    // � HASH CALCULATION (With Parallel Processing)
+    QString calculateFileHash(const QString &filePath);
+    QString calculateLocalFileHash(const QString &filePath);
+    QString calculateFtpFileHash(const QString &ftpPath);
+    
+    // 🚀 NEW: Parallel hash calculation methods
+    void calculateHashesBatch(const QStringList &filePaths, QHash<QString, QString> &results);
+    void calculateHashesParallel(const QStringList &filePaths, QHash<QString, QString> &results);
+    static QString calculateFileHashWorker(const QString &filePath); // Static worker method
+    
+    // 🎯 OPTIMIZATION STRATEGIES
+    void applySizeBasedOptimization();
+    void applyTypeBasedOptimization();
+    void applyLocationBasedOptimization();
+    void enableMemoryOptimizations();
+    
+    // 🔧 HARDWARE ACCELERATION
+    void detectAvailableHardware();
+    void initializeGpuAcceleration();
+    void initializeNpuAcceleration();
+    void initializeCpuOptimizations();
+    bool isHardwareAvailable(HardwareTarget target);
+    
+    // 📈 PERFORMANCE MONITORING
+    void startPerformanceMonitoring();
+    void logPerformanceMetrics();
+    void optimizeBasedOnPerformance();
+    
+private:
+    // Core components
+    std::vector<std::unique_ptr<ProcessingEngine>> engines;
+    NetworkScanner *networkScanner;
+    PresetManager *presetManager;
+    
+    // Configuration
+    ProcessingMode currentMode;
+    HardwareTarget currentHardware;
+    int maxConcurrentOps;
+    int networkTimeoutSec;
+    qint64 quickScanThreshold;
+    
+    // Feature flags
+    bool smartCachingEnabled;
+    bool progressiveScanEnabled;
+    bool networkCompressionEnabled;
+    
+    // Processing state
+    std::atomic<bool> isScanning{false};
+    std::atomic<bool> isPaused{false};
+    std::atomic<bool> stopRequested{false};
+    
+    // Data structures
+    QList<FileMetadata> allFiles;
+    QHash<QString, QStringList> duplicateGroups;
+    QHash<qint64, QStringList> sizeGroups;      // Size-based pre-grouping
+    QHash<QString, QStringList> quickHashGroups; // Quick hash groups
+    
+    // Threading and synchronization
+    QMutex resultsMutex;
+    QMutex statsMutex;
+    QTimer *processingTimer;
+    QTimer *performanceTimer;
+    
+    // 🚀 NEW: Timer-based progress updates
+    QTimer *progressUpdateTimer;
+    QMutex progressMutex;
+    int currentProgress = 0;
+    int totalFilesForProgress = 0;
+    QString currentFileForProgress;
+    
+    // 🚀 NEW: Hash cache system
+    QHash<QString, QString> hashCache; // file_path + size + modified -> hash
+    QMutex hashCacheMutex;
+    QString getCacheKey(const QString &filePath, qint64 size, qint64 modified);
+    QString getFromCache(const QString &cacheKey);
+    void putInCache(const QString &cacheKey, const QString &hash);
+    
+    // Statistics
+    ProcessingStats stats;
+    QElapsedTimer scanTimer;
+    
+    // Hardware status
+    bool gpuAvailable;
+    bool npuAvailable;
+    bool intelGpuAvailable;
+    int availableCpuCores;
+    
+    // Network caching
+    QString networkCacheDir;
+    QHash<QString, QString> networkCredentials;
+    QMutex networkMutex;
+    
+    // Memory management
+    int maxMemoryUsageMB;
+    QTimer *memoryCleanupTimer;
+    
+#ifdef ENABLE_OPENCL
+    // OpenCL context for GPU acceleration
+    cl_context openclContext;
+    cl_command_queue openclQueue;
+    cl_device_id openclDevice;
+    bool openclInitialized;
+    
+    void initializeOpenCL();
+    void cleanupOpenCL();
+    QString calculateGpuHash(const QString &filePath);
+#endif
+};
+
+#endif // ULTRASPEEDENGINE_H

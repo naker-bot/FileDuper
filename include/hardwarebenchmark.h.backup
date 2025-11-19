@@ -1,0 +1,58 @@
+#ifndef HARDWAREBENCHMARK_H
+#define HARDWAREBENCHMARK_H
+
+#include <QObject>
+#include <QString>
+#include <QThread>
+
+struct HardwareCapabilities {
+    int cpuCores;
+    int recommendedThreads;
+    int maxParallelFtpScans;
+    int maxParallelHashing;
+    qint64 availableRamMB;
+    bool hasNPU;
+    bool hasGPU;
+    QString gpuName;
+    
+    // Performance scores (0-100)
+    int cpuScore;
+    int ioScore;
+    int networkScore;
+};
+
+class HardwareBenchmark : public QObject
+{
+    Q_OBJECT
+
+public:
+    explicit HardwareBenchmark(QObject *parent = nullptr);
+    
+    // Führt automatischen Hardware-Test durch
+    HardwareCapabilities detectAndBenchmark();
+    
+    // Einzelne Tests
+    int detectCpuCores();
+    qint64 detectAvailableRAM();
+    bool detectNPU();
+    bool detectGPU(QString &gpuName);
+    
+    // Performance-Tests
+    int benchmarkCpuSpeed();      // CPU Multi-Threading Test
+    int benchmarkDiskIO();        // Disk I/O Geschwindigkeit
+    int benchmarkNetworkSpeed();  // Netzwerk-Durchsatz Test
+    
+    // Empfohlene Einstellungen basierend auf Hardware
+    static int recommendThreadCount(int cpuCores, int cpuScore);
+    static int recommendFtpParallel(int cpuCores, int networkScore);
+    static int recommendHashParallel(int cpuCores, int ioScore);
+
+signals:
+    void benchmarkProgress(const QString &message, int progress);
+    void benchmarkComplete(const HardwareCapabilities &caps);
+
+private:
+    HardwareCapabilities m_capabilities;
+};
+
+#endif // HARDWAREBENCHMARK_H

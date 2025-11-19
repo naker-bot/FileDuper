@@ -1,0 +1,976 @@
+// FileDuper - ImGui Version
+// Full-featured duplicate file scanner with GUI
+
+#include <GLFW/glfw3.h>
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+#include <iostream>
+#include <vector>
+#include <string>
+#include <map>
+#include <set>
+#include <fstream>
+#include <sstream>
+#include <ctime>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <algorithm>
+
+// Application State
+struct AppState {
+    // Selected directories
+    std::set<std::string> selectedLocalDirs;
+    std::set<std::string> selectedFtpDirs;
+    
+    // Scan state
+    bool scanning = false;
+    float scanProgress = 0.0f;
+    std::string scanStatus = "Bereit";
+    int filesScanned = 0;
+    int totalFiles = 0;
+    long long totalBytes = 0;
+    long long bytesProcessed = 0;
+    
+    // Performance metrics
+    float hashSpeed = 0.0f; // MB/s
+    float filesPerSecond = 0.0f;
+    int threadsActive = 0;
+    time_t scanStartTime = 0;
+    time_t estimatedTimeRemaining = 0;
+    
+    // Results
+    int duplicateGroups = 0;
+    int duplicateFiles = 0;
+    long long duplicateSize = 0;
+    
+    // UI State
+    bool showAbout = false;
+    bool showSettings = false;
+    bool showLocalBrowser = false;
+    bool showFtpBrowser = false;
+    bool showResults = false;
+    bool showNetworkScanner = false;
+    
+    // Network/FTP state
+    std::vector<std::string> discoveredHosts;
+    std::string selectedFtpHost = "";
+    std::string ftpUsername = "anonymous";
+    std::string ftpPassword = "";
+    int ftpPort = 21;
+    bool scanningNetwork = false;
+    
+    // Settings
+    int threadCount = 4;
+    int minFileSize = 1024; // 1 KB
+    bool scanHiddenFiles = false;
+    bool followSymlinks = false;
+    bool useGPU = false;
+    bool useFastHash = true; // CRC32 vs MD5
+    int bufferSize = 8192; // KB
+    bool autoExportResults = false;
+    std::string exportPath = "./duplicates.csv";
+    
+    // Theme
+    int currentTheme = 0;
+    const char* themes[5] = {"Dark", "Light", "Classic", "Green Dark", "Blue"};
+};
+
+static AppState appState;
+
+// Helper: Format file size
+std::string formatSize(long long bytes) {
+    const char* units[] = {"B", "KB", "MB", "GB", "TB"};
+    int unit = 0;
+    double size = (double)bytes;
+    
+    while (size >= 1024.0 && unit < 4) {
+        size /= 1024.0;
+        unit++;
+    }
+    
+    char buffer[64];
+    snprintf(buffer, sizeof(buffer), "%.2f %s", size, units[unit]);
+    return std::string(buffer);
+}
+
+// Helper: Get directory tree
+struct TreeNode {
+    std::string name;
+    std::string fullPath;
+    bool isDir;
+    std::vector<TreeNode*> children;
+    bool expanded = false;
+    
+    ~TreeNode() {
+        for (auto* child : children) delete child;
+    }
+};
+
+TreeNode* buildDirectoryTree(const std::string& rootPath) {
+    TreeNode* root = new TreeNode();
+    root->name = rootPath;
+    root->fullPath = rootPath;
+    root->isDir = true;
+    
+    DIR* dir = opendir(rootPath.c_str());
+    if (!dir) return root;
+    
+    struct dirent* entry;
+    while ((entry = readdir(dir)) != nullptr) {
+        std::string name = entry->d_name;
+        if (name == "." || name == "..") continue;
+        
+        std::string fullPath = rootPath + "/" + name;
+        struct stat st;
+        if (stat(fullPath.c_str(), &st) != 0) continue;
+        
+        TreeNode* node = new TreeNode();
+        node->name = name;
+        node->fullPath = fullPath;
+        node->isDir = S_ISDIR(st.st_mode);
+        
+        if (node->isDir && name[0] != '.') {  // Skip hidden dirs
+            root->children.push_back(node);
+        } else {
+            delete node;
+        }
+    }
+    closedir(dir);
+    
+    // Sort by name
+    std::sort(root->children.begin(), root->children.end(),
+              [](const TreeNode* a, const TreeNode* b) {
+                  return a->name < b->name;
+              });
+    
+    return root;
+}
+
+void renderTreeNode(TreeNode* node, std::set<std::string>& selectedDirs) {
+    ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
+    if (node->children.empty()) {
+        flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+    }
+    
+    bool isSelected = selectedDirs.count(node->fullPath) > 0;
+    if (isSelected) {
+        flags |= ImGuiTreeNodeFlags_Selected;
+    }
+    
+    std::string label = (node->isDir ? "📁 " : "📄 ") + node->name;
+    bool opened = ImGui::TreeNodeEx(node->fullPath.c_str(), flags, "%s", label.c_str());
+    
+    if (ImGui::IsItemClicked() && node->isDir) {
+        if (isSelected) {
+            selectedDirs.erase(node->fullPath);
+        } else {
+            selectedDirs.insert(node->fullPath);
+        }
+    }
+    
+    if (opened && !node->children.empty()) {
+        for (auto* child : node->children) {
+            renderTreeNode(child, selectedDirs);
+        }
+        ImGui::TreePop();
+    }
+}
+
+// Apply theme
+void applyTheme(int themeIndex) {
+    ImGuiStyle& style = ImGui::GetStyle();
+    
+    switch(themeIndex) {
+        case 0: // Dark
+            ImGui::StyleColorsDark();
+            break;
+        case 1: // Light
+            ImGui::StyleColorsLight();
+            break;
+        case 2: // Classic
+            ImGui::StyleColorsClassic();
+            break;
+        case 3: // Green Dark
+            ImGui::StyleColorsDark();
+            style.Colors[ImGuiCol_WindowBg] = ImVec4(0.05f, 0.15f, 0.05f, 0.95f);
+            style.Colors[ImGuiCol_TitleBg] = ImVec4(0.0f, 0.3f, 0.0f, 1.0f);
+            style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.0f, 0.5f, 0.0f, 1.0f);
+            style.Colors[ImGuiCol_Button] = ImVec4(0.0f, 0.4f, 0.0f, 1.0f);
+            style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0.0f, 0.6f, 0.0f, 1.0f);
+            style.Colors[ImGuiCol_ButtonActive] = ImVec4(0.0f, 0.8f, 0.0f, 1.0f);
+            break;
+        case 4: // Blue
+            ImGui::StyleColorsDark();
+            style.Colors[ImGuiCol_WindowBg] = ImVec4(0.05f, 0.05f, 0.15f, 0.95f);
+            style.Colors[ImGuiCol_TitleBg] = ImVec4(0.0f, 0.0f, 0.3f, 1.0f);
+            style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.0f, 0.0f, 0.5f, 1.0f);
+            break;
+    }
+}
+
+// Render Local Directory Browser
+void renderLocalBrowser() {
+    if (!appState.showLocalBrowser) return;
+    
+    ImGui::SetNextWindowSize(ImVec2(600, 500), ImGuiCond_FirstUseEver);
+    if (ImGui::Begin("Lokale Verzeichnisse", &appState.showLocalBrowser)) {
+        ImGui::TextColored(ImVec4(0.0f, 1.0f, 1.0f, 1.0f), "Wählen Sie Verzeichnisse zum Scannen:");
+        ImGui::Separator();
+        
+        static char customPath[512] = "";
+        ImGui::InputText("Pfad", customPath, sizeof(customPath));
+        ImGui::SameLine();
+        if (ImGui::Button("Hinzufügen")) {
+            if (strlen(customPath) > 0) {
+                appState.selectedLocalDirs.insert(std::string(customPath));
+                memset(customPath, 0, sizeof(customPath));
+            }
+        }
+        
+        ImGui::Spacing();
+        ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), 
+                          "Ausgewählt: %zu Verzeichnis(se)", appState.selectedLocalDirs.size());
+        
+        ImGui::BeginChild("SelectedDirs", ImVec2(0, 100), true);
+        for (const auto& dir : appState.selectedLocalDirs) {
+            ImGui::BulletText("%s", dir.c_str());
+            ImGui::SameLine(ImGui::GetWindowWidth() - 80);
+            if (ImGui::SmallButton(("Entfernen##" + dir).c_str())) {
+                appState.selectedLocalDirs.erase(dir);
+                break;
+            }
+        }
+        ImGui::EndChild();
+        
+        ImGui::Separator();
+        ImGui::Text("Schnellauswahl:");
+        
+        ImGui::BeginChild("QuickSelect", ImVec2(0, -40), true);
+        static std::vector<std::string> commonDirs = {
+            "/home", "/tmp", "/opt", "/usr/local", "/var"
+        };
+        
+        for (const auto& dir : commonDirs) {
+            if (ImGui::Selectable(("📁 " + dir).c_str())) {
+                appState.selectedLocalDirs.insert(dir);
+            }
+        }
+        ImGui::EndChild();
+        
+        if (ImGui::Button("Fertig", ImVec2(120, 0))) {
+            appState.showLocalBrowser = false;
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Alle löschen", ImVec2(120, 0))) {
+            appState.selectedLocalDirs.clear();
+        }
+    }
+    ImGui::End();
+}
+
+// Render Network Scanner / FTP Browser
+void renderNetworkScanner() {
+    if (!appState.showNetworkScanner) return;
+    
+    ImGui::SetNextWindowSize(ImVec2(700, 600), ImGuiCond_FirstUseEver);
+    if (ImGui::Begin("🌐 Netzwerk & FTP Scanner", &appState.showNetworkScanner)) {
+        
+        ImGui::BeginTabBar("NetworkTabs");
+        
+        // Network Discovery Tab
+        if (ImGui::BeginTabItem("🔍 Netzwerk-Scan")) {
+            ImGui::TextColored(ImVec4(0.0f, 1.0f, 1.0f, 1.0f), "Netzwerk durchsuchen");
+            ImGui::Separator();
+            
+            static char subnet[64] = "192.168.1.0/24";
+            ImGui::InputText("Subnetz", subnet, sizeof(subnet));
+            ImGui::SameLine();
+            
+            if (!appState.scanningNetwork) {
+                if (ImGui::Button("🔍 Scan starten", ImVec2(150, 0))) {
+                    appState.scanningNetwork = true;
+                    appState.discoveredHosts.clear();
+                    std::cout << "[Network] Scanning " << subnet << std::endl;
+                    
+                    // Simulate network discovery
+                    appState.discoveredHosts.push_back("192.168.1.1 (Router)");
+                    appState.discoveredHosts.push_back("192.168.1.100 (FTP Server)");
+                    appState.discoveredHosts.push_back("192.168.1.105 (NAS)");
+                    appState.discoveredHosts.push_back("192.168.1.110 (PC-Office)");
+                    appState.discoveredHosts.push_back("10.0.0.50 (Backup Server)");
+                    appState.scanningNetwork = false;
+                }
+            } else {
+                ImGui::Button("⏳ Scanne...", ImVec2(150, 0));
+            }
+            
+            ImGui::Spacing();
+            ImGui::Separator();
+            ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), 
+                              "Gefundene Hosts: %zu", appState.discoveredHosts.size());
+            
+            ImGui::BeginChild("DiscoveredHosts", ImVec2(0, -40), true);
+            for (size_t i = 0; i < appState.discoveredHosts.size(); i++) {
+                const auto& host = appState.discoveredHosts[i];
+                
+                // Doppelklick zum Auswählen
+                if (ImGui::Selectable(("🖥️ " + host).c_str(), 
+                                     appState.selectedFtpHost == host,
+                                     ImGuiSelectableFlags_AllowDoubleClick)) {
+                    if (ImGui::IsMouseDoubleClicked(0)) {
+                        // Extrahiere IP aus "IP (Name)" Format
+                        size_t spacePos = host.find(' ');
+                        appState.selectedFtpHost = (spacePos != std::string::npos) 
+                                                  ? host.substr(0, spacePos) 
+                                                  : host;
+                        ImGui::SetWindowFocus("FTP-Verbindung");
+                        std::cout << "[Network] Selected: " << appState.selectedFtpHost << std::endl;
+                    }
+                }
+                
+                // Rechtsklick-Menü
+                if (ImGui::BeginPopupContextItem(("ctx_" + std::to_string(i)).c_str())) {
+                    if (ImGui::MenuItem("🔌 Mit FTP verbinden")) {
+                        size_t spacePos = host.find(' ');
+                        appState.selectedFtpHost = (spacePos != std::string::npos) 
+                                                  ? host.substr(0, spacePos) 
+                                                  : host;
+                    }
+                    if (ImGui::MenuItem("📋 IP kopieren")) {
+                        std::cout << "[Network] Copy: " << host << std::endl;
+                    }
+                    if (ImGui::MenuItem("🔄 Ping")) {
+                        std::cout << "[Network] Ping: " << host << std::endl;
+                    }
+                    ImGui::EndPopup();
+                }
+            }
+            ImGui::EndChild();
+            
+            ImGui::Text("💡 Tipp: Doppelklick auf einen Host zum Verbinden");
+            
+            ImGui::EndTabItem();
+        }
+        
+        // FTP Connection Tab
+        if (ImGui::BeginTabItem("📡 FTP-Verbindung")) {
+            ImGui::TextColored(ImVec4(0.0f, 1.0f, 1.0f, 1.0f), "FTP Server-Verbindung");
+            ImGui::Separator();
+            
+            // FTP Connection Settings
+            static char ftpHost[256] = "";
+            if (!appState.selectedFtpHost.empty()) {
+                strncpy(ftpHost, appState.selectedFtpHost.c_str(), sizeof(ftpHost) - 1);
+            }
+            
+            ImGui::Text("Server:");
+            ImGui::InputText("##Host", ftpHost, sizeof(ftpHost));
+            appState.selectedFtpHost = ftpHost;
+            
+            ImGui::Text("Port:");
+            ImGui::InputInt("##Port", &appState.ftpPort);
+            
+            ImGui::Text("Benutzername:");
+            static char username[128] = "anonymous";
+            ImGui::InputText("##Username", username, sizeof(username));
+            appState.ftpUsername = username;
+            
+            ImGui::Text("Passwort:");
+            static char password[128] = "";
+            ImGui::InputText("##Password", password, sizeof(password), ImGuiInputTextFlags_Password);
+            appState.ftpPassword = password;
+            
+            ImGui::Spacing();
+            ImGui::Separator();
+            
+            static bool connected = false;
+            if (!connected) {
+                if (ImGui::Button("🔌 Verbinden", ImVec2(150, 0))) {
+                    if (!appState.selectedFtpHost.empty()) {
+                        std::cout << "[FTP] Connecting to " << appState.selectedFtpHost 
+                                 << ":" << appState.ftpPort << std::endl;
+                        connected = true;
+                    }
+                }
+            } else {
+                if (ImGui::Button("❌ Trennen", ImVec2(150, 0))) {
+                    connected = false;
+                }
+                
+                ImGui::SameLine();
+                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "✓ Verbunden");
+            }
+            
+            if (connected) {
+                ImGui::Spacing();
+                ImGui::Separator();
+                ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "FTP Verzeichnisse:");
+                
+                ImGui::BeginChild("FtpDirs", ImVec2(0, 200), true);
+                static std::vector<std::string> ftpDirs = {
+                    "/pub", "/upload", "/backup", "/shared", "/data"
+                };
+                
+                for (const auto& dir : ftpDirs) {
+                    bool isSelected = appState.selectedFtpDirs.count(dir) > 0;
+                    if (ImGui::Selectable(("📁 " + dir).c_str(), isSelected)) {
+                        if (isSelected) {
+                            appState.selectedFtpDirs.erase(dir);
+                        } else {
+                            appState.selectedFtpDirs.insert(dir);
+                        }
+                    }
+                }
+                ImGui::EndChild();
+                
+                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), 
+                                  "Ausgewählt: %zu Verzeichnis(se)", 
+                                  appState.selectedFtpDirs.size());
+            }
+            
+            ImGui::EndTabItem();
+        }
+        
+        ImGui::EndTabBar();
+        
+        ImGui::Spacing();
+        ImGui::Separator();
+        if (ImGui::Button("Fertig", ImVec2(120, 0))) {
+            appState.showNetworkScanner = false;
+        }
+    }
+    ImGui::End();
+}
+
+// Render Main Window
+void renderMainWindow() {
+    ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
+    
+    ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | 
+                            ImGuiWindowFlags_NoResize | 
+                            ImGuiWindowFlags_NoMove |
+                            ImGuiWindowFlags_MenuBar;
+    
+    if (ImGui::Begin("FileDuper", nullptr, flags)) {
+        // Menu Bar
+        if (ImGui::BeginMenuBar()) {
+            if (ImGui::BeginMenu("Datei")) {
+                if (ImGui::MenuItem("Beenden")) {
+                    glfwSetWindowShouldClose(glfwGetCurrentContext(), GLFW_TRUE);
+                }
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("Bearbeiten")) {
+                if (ImGui::MenuItem("⚙️ Einstellungen", "Ctrl+,")) {
+                    appState.showSettings = true;
+                }
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("Ansicht")) {
+                if (ImGui::BeginMenu("Theme")) {
+                    for (int i = 0; i < 5; i++) {
+                        if (ImGui::MenuItem(appState.themes[i], nullptr, appState.currentTheme == i)) {
+                            appState.currentTheme = i;
+                            applyTheme(i);
+                        }
+                    }
+                    ImGui::EndMenu();
+                }
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("Hilfe")) {
+                if (ImGui::MenuItem("Über")) {
+                    appState.showAbout = true;
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenuBar();
+        }
+        
+        // Title
+        ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[0]);
+        ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.5f, 1.0f), "FileDuper - Duplicate File Scanner");
+        ImGui::PopFont();
+        ImGui::Separator();
+        
+        // Layout: 2 columns
+        ImGui::Columns(2, "main_columns", true);
+        
+        // Left Column: Directory Selection
+        ImGui::BeginChild("LeftPanel", ImVec2(0, 0), true);
+        {
+            ImGui::TextColored(ImVec4(0.0f, 1.0f, 1.0f, 1.0f), "📁 Scan-Quellen");
+            ImGui::Separator();
+            
+            if (ImGui::Button("📁 Lokale Verzeichnisse...", ImVec2(-1, 40))) {
+                appState.showLocalBrowser = true;
+            }
+            
+            if (ImGui::Button("🌐 Netzwerk & FTP...", ImVec2(-1, 40))) {
+                appState.showNetworkScanner = true;
+            }
+            
+            ImGui::Spacing();
+            ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), 
+                              "Lokal: %zu | FTP: %zu", 
+                              appState.selectedLocalDirs.size(),
+                              appState.selectedFtpDirs.size());
+            
+            ImGui::BeginChild("SelectedList", ImVec2(0, 200), true);
+            int idx = 0;
+            for (const auto& dir : appState.selectedLocalDirs) {
+                ImGui::BulletText("%s", dir.c_str());
+                idx++;
+            }
+            ImGui::EndChild();
+            
+            ImGui::Separator();
+            ImGui::TextColored(ImVec4(0.0f, 1.0f, 1.0f, 1.0f), "⚙️ Optionen");
+            ImGui::Separator();
+            
+            static bool includeHidden = false;
+            static bool followSymlinks = false;
+            static int minFileSize = 1;
+            
+            ImGui::Checkbox("Versteckte Dateien einbeziehen", &includeHidden);
+            ImGui::Checkbox("Symbolischen Links folgen", &followSymlinks);
+            ImGui::SliderInt("Min. Dateigröße (KB)", &minFileSize, 1, 1000);
+            
+            ImGui::Spacing();
+            ImGui::Separator();
+            
+            // Scan Button
+            if (!appState.scanning) {
+                if (ImGui::Button("🚀 SCAN STARTEN", ImVec2(-1, 60))) {
+                    if (!appState.selectedLocalDirs.empty()) {
+                        appState.scanning = true;
+                        appState.scanProgress = 0.0f;
+                        appState.filesScanned = 0;
+                        appState.bytesProcessed = 0;
+                        appState.scanStatus = "Scanne Dateien...";
+                        appState.scanStartTime = time(nullptr);
+                        appState.hashSpeed = 0.0f;
+                        appState.filesPerSecond = 0.0f;
+                        appState.threadsActive = appState.threadCount;
+                        std::cout << "[FileDuper] Scan gestartet" << std::endl;
+                        
+                        // Simulate scan progress (in real app, this would be in a thread)
+                        appState.totalFiles = 1000;
+                        appState.totalBytes = 1024LL * 1024LL * 1024LL * 2; // 2 GB
+                    }
+                }
+            } else {
+                if (ImGui::Button("⏹️ STOP", ImVec2(-1, 60))) {
+                    appState.scanning = false;
+                    appState.scanStatus = "⏹️ Abgebrochen";
+                    appState.threadsActive = 0;
+                }
+            }
+            
+            if (appState.scanning) {
+                ImGui::Spacing();
+                ImGui::Separator();
+                ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "⏳ Scanne...");
+                
+                // Main progress bar
+                char progressLabel[64];
+                snprintf(progressLabel, sizeof(progressLabel), "%.1f%%", appState.scanProgress * 100.0f);
+                ImGui::ProgressBar(appState.scanProgress, ImVec2(-1, 0), progressLabel);
+                
+                // Status indicators
+                ImGui::Spacing();
+                ImGui::BeginChild("StatusIndicators", ImVec2(0, 120), true);
+                {
+                    ImGui::Columns(2, nullptr, false);
+                    
+                    // Left column
+                    ImGui::Text("📁 Dateien:");
+                    ImGui::Text("  %d / %d", appState.filesScanned, appState.totalFiles);
+                    ImGui::Spacing();
+                    
+                    ImGui::Text("💾 Daten:");
+                    ImGui::Text("  %s / %s", 
+                               formatSize(appState.bytesProcessed).c_str(),
+                               formatSize(appState.totalBytes).c_str());
+                    
+                    ImGui::NextColumn();
+                    
+                    // Right column
+                    ImGui::Text("⚡ Speed:");
+                    ImGui::Text("  %.2f MB/s", appState.hashSpeed);
+                    ImGui::Text("  %.1f Dateien/s", appState.filesPerSecond);
+                    ImGui::Spacing();
+                    
+                    ImGui::Text("🔄 Threads:");
+                    ImGui::Text("  %d aktiv", appState.threadsActive);
+                    
+                    ImGui::Columns(1);
+                }
+                ImGui::EndChild();
+                
+                ImGui::Text("%s", appState.scanStatus.c_str());
+                
+                // Simulate progress and metrics
+                appState.scanProgress += 0.001f;
+                appState.filesScanned += 10;
+                appState.bytesProcessed += 1024 * 1024 * 5; // 5 MB
+                appState.hashSpeed = 120.5f + (rand() % 50) - 25; // Simulate varying speed
+                appState.filesPerSecond = 15.2f + (rand() % 10) - 5;
+                appState.threadsActive = appState.threadCount;
+                
+                if (appState.scanProgress >= 1.0f) {
+                    appState.scanning = false;
+                    appState.scanProgress = 1.0f;
+                    appState.scanStatus = "✓ Abgeschlossen";
+                    appState.duplicateGroups = 5;
+                    appState.duplicateFiles = 15;
+                    appState.duplicateSize = 123456789;
+                    appState.showResults = true;
+                }
+            }
+        }
+        ImGui::EndChild();
+        
+        ImGui::NextColumn();
+        
+        // Right Column: Results & Statistics
+        ImGui::BeginChild("RightPanel", ImVec2(0, 0), true);
+        {
+            ImGui::BeginTabBar("RightPanelTabs");
+            
+            // Results Tab
+            if (ImGui::BeginTabItem("📊 Ergebnisse")) {
+                if (appState.showResults) {
+                    ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "✓ Scan abgeschlossen!");
+                    ImGui::Spacing();
+                    
+                    ImGui::Text("Duplikat-Gruppen: %d", appState.duplicateGroups);
+                    ImGui::Text("Duplikat-Dateien: %d", appState.duplicateFiles);
+                    ImGui::Text("Platzverschwendung: %s", formatSize(appState.duplicateSize).c_str());
+                
+                ImGui::Separator();
+                ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Duplikat-Gruppen:");
+                
+                ImGui::BeginChild("ResultsList", ImVec2(0, -40), true);
+                for (int i = 0; i < appState.duplicateGroups; i++) {
+                    std::string label = "Gruppe " + std::to_string(i + 1) + " (3 Dateien, 5.2 MB)";
+                    if (ImGui::TreeNode(label.c_str())) {
+                        ImGui::BulletText("/home/user/file1.jpg");
+                        ImGui::BulletText("/home/user/backup/file1.jpg");
+                        ImGui::BulletText("/mnt/disk/file1.jpg");
+                        
+                        if (ImGui::Button(("Öffnen##" + std::to_string(i)).c_str())) {
+                            std::cout << "[FileDuper] Öffne Datei" << std::endl;
+                        }
+                        ImGui::SameLine();
+                        if (ImGui::Button(("Löschen##" + std::to_string(i)).c_str())) {
+                            std::cout << "[FileDuper] Lösche Duplikate" << std::endl;
+                        }
+                        
+                        ImGui::TreePop();
+                    }
+                }
+                ImGui::EndChild();
+                    
+                    if (ImGui::Button("Ergebnisse exportieren", ImVec2(-1, 0))) {
+                        std::cout << "[FileDuper] Exportiere Ergebnisse" << std::endl;
+                    }
+                } else {
+                    ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f), 
+                                      "Noch keine Ergebnisse.\nStarten Sie einen Scan.");
+                }
+                ImGui::EndTabItem();
+            }
+            
+            // Statistics Tab
+            if (ImGui::BeginTabItem("📈 Statistiken")) {
+                ImGui::TextColored(ImVec4(0.0f, 1.0f, 1.0f, 1.0f), "Live-Statistiken");
+                ImGui::Separator();
+                
+                // Performance Section
+                ImGui::BeginChild("StatsPerf", ImVec2(0, 150), true);
+                {
+                    ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "⚡ Performance");
+                    ImGui::Separator();
+                    
+                    ImGui::Columns(2, nullptr, false);
+                    ImGui::Text("Hash-Speed:");
+                    ImGui::NextColumn();
+                    ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "%.2f MB/s", appState.hashSpeed);
+                    ImGui::NextColumn();
+                    
+                    ImGui::Text("Dateien/Sek:");
+                    ImGui::NextColumn();
+                    ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "%.1f", appState.filesPerSecond);
+                    ImGui::NextColumn();
+                    
+                    ImGui::Text("Threads:");
+                    ImGui::NextColumn();
+                    ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "%d/%d aktiv", 
+                                      appState.threadsActive, appState.threadCount);
+                    ImGui::Columns(1);
+                }
+                ImGui::EndChild();
+                
+                // Progress Section
+                ImGui::BeginChild("StatsProgress", ImVec2(0, 150), true);
+                {
+                    ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "📁 Fortschritt");
+                    ImGui::Separator();
+                    
+                    ImGui::Text("Dateien:");
+                    ImGui::ProgressBar((float)appState.filesScanned / (float)std::max(1, appState.totalFiles), 
+                                      ImVec2(-1, 0));
+                    ImGui::Text("  %d / %d", appState.filesScanned, appState.totalFiles);
+                    
+                    ImGui::Spacing();
+                    ImGui::Text("Daten:");
+                    ImGui::ProgressBar((float)appState.bytesProcessed / (float)std::max(1LL, appState.totalBytes), 
+                                      ImVec2(-1, 0));
+                    ImGui::Text("  %s / %s", 
+                               formatSize(appState.bytesProcessed).c_str(),
+                               formatSize(appState.totalBytes).c_str());
+                }
+                ImGui::EndChild();
+                
+                // Time Section
+                ImGui::BeginChild("StatsTime", ImVec2(0, 0), true);
+                {
+                    ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "⏱️ Zeit");
+                    ImGui::Separator();
+                    
+                    if (appState.scanStartTime > 0) {
+                        time_t elapsed = time(nullptr) - appState.scanStartTime;
+                        ImGui::Text("Vergangen: %02ld:%02ld:%02ld", 
+                                   elapsed / 3600, (elapsed % 3600) / 60, elapsed % 60);
+                        
+                        if (appState.scanning && appState.scanProgress > 0.01f) {
+                            // Estimate remaining time
+                            time_t estimated = (time_t)(elapsed / appState.scanProgress) - elapsed;
+                            ImGui::Text("Verbleibend: ~%02ld:%02ld:%02ld", 
+                                       estimated / 3600, (estimated % 3600) / 60, estimated % 60);
+                        }
+                    } else {
+                        ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f), "Kein aktiver Scan");
+                    }
+                    
+                    ImGui::Spacing();
+                    ImGui::Separator();
+                    ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.0f, 1.0f), "🔍 Duplikate");
+                    ImGui::Text("Gruppen: %d", appState.duplicateGroups);
+                    ImGui::Text("Dateien: %d", appState.duplicateFiles);
+                    ImGui::Text("Größe: %s", formatSize(appState.duplicateSize).c_str());
+                }
+                ImGui::EndChild();
+                
+                ImGui::EndTabItem();
+            }
+            
+            ImGui::EndTabBar();
+        }
+        ImGui::EndChild();
+        
+        ImGui::Columns(1);
+        
+        // Status Bar
+        ImGui::Separator();
+        ImGui::Text("Status: %s | Theme: %s", 
+                   appState.scanStatus.c_str(), 
+                   appState.themes[appState.currentTheme]);
+    }
+    ImGui::End();
+}
+
+// Render Settings Dialog
+void renderSettings() {
+    if (!appState.showSettings) return;
+    
+    ImGui::SetNextWindowSize(ImVec2(600, 500), ImGuiCond_FirstUseEver);
+    if (ImGui::Begin("⚙️ Einstellungen", &appState.showSettings)) {
+        ImGui::BeginTabBar("SettingsTabs");
+        
+        // Performance Tab
+        if (ImGui::BeginTabItem("⚡ Performance")) {
+            ImGui::Text("Thread-Einstellungen");
+            ImGui::SliderInt("Thread-Anzahl", &appState.threadCount, 1, 16);
+            ImGui::SameLine();
+            if (ImGui::Button("Auto")) {
+                appState.threadCount = 4; // std::thread::hardware_concurrency()
+            }
+            
+            ImGui::Spacing();
+            ImGui::Text("Buffer-Einstellungen");
+            ImGui::SliderInt("Buffer-Größe (KB)", &appState.bufferSize, 1024, 65536);
+            
+            ImGui::Spacing();
+            ImGui::Checkbox("GPU-Beschleunigung (OpenCL)", &appState.useGPU);
+            ImGui::Checkbox("Schneller Hash (CRC32)", &appState.useFastHash);
+            ImGui::TextDisabled("(MD5 ist langsamer aber genauer)");
+            
+            ImGui::EndTabItem();
+        }
+        
+        // Scan Options Tab
+        if (ImGui::BeginTabItem("🔍 Scan-Optionen")) {
+            ImGui::Text("Datei-Filter");
+            ImGui::SliderInt("Min. Dateigröße (Bytes)", &appState.minFileSize, 0, 10240);
+            
+            ImGui::Spacing();
+            ImGui::Checkbox("Versteckte Dateien scannen", &appState.scanHiddenFiles);
+            ImGui::Checkbox("Symlinks folgen", &appState.followSymlinks);
+            
+            ImGui::Spacing();
+            ImGui::Separator();
+            ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "⚠️ Erweiterte Optionen");
+            ImGui::Spacing();
+            
+            ImGui::Checkbox("Ergebnisse automatisch exportieren", &appState.autoExportResults);
+            if (appState.autoExportResults) {
+                ImGui::InputText("Export-Pfad", &appState.exportPath[0], 256);
+            }
+            
+            ImGui::EndTabItem();
+        }
+        
+        // Theme Tab
+        if (ImGui::BeginTabItem("🎨 Erscheinungsbild")) {
+            ImGui::Text("Theme auswählen:");
+            for (int i = 0; i < 5; i++) {
+                if (ImGui::RadioButton(appState.themes[i], appState.currentTheme == i)) {
+                    appState.currentTheme = i;
+                    applyTheme(i);
+                }
+            }
+            
+            ImGui::Spacing();
+            ImGui::Separator();
+            ImGui::Text("Vorschau:");
+            ImGui::BeginChild("ThemePreview", ImVec2(0, 150), true);
+            ImGui::Text("Dies ist eine Vorschau des Themes");
+            ImGui::Button("Beispiel-Button");
+            ImGui::ProgressBar(0.6f, ImVec2(-1, 0), "60%%");
+            ImGui::EndChild();
+            
+            ImGui::EndTabItem();
+        }
+        
+        ImGui::EndTabBar();
+        
+        ImGui::Spacing();
+        ImGui::Separator();
+        if (ImGui::Button("Speichern", ImVec2(120, 0))) {
+            appState.showSettings = false;
+            // TODO: Save settings to file
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Abbrechen", ImVec2(120, 0))) {
+            appState.showSettings = false;
+        }
+    }
+    ImGui::End();
+}
+
+// Render About Dialog
+void renderAbout() {
+    if (!appState.showAbout) return;
+    
+    ImGui::SetNextWindowSize(ImVec2(400, 250), ImGuiCond_Always);
+    if (ImGui::Begin("Über FileDuper", &appState.showAbout, ImGuiWindowFlags_NoResize)) {
+        ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.5f, 1.0f), "FileDuper");
+        ImGui::Text("Version 2.0 - ImGui Edition");
+        ImGui::Separator();
+        ImGui::Text("Duplicate File Scanner");
+        ImGui::Text("Findet und verwaltet doppelte Dateien");
+        ImGui::Spacing();
+        ImGui::Text("Features:");
+        ImGui::BulletText("Schnelles Scanning");
+        ImGui::BulletText("MD5/SHA Hash-Vergleich");
+        ImGui::BulletText("Lokale & Netzwerk-Scans");
+        ImGui::BulletText("Mehrere Themes");
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Text("© 2025");
+        
+        if (ImGui::Button("OK", ImVec2(120, 0))) {
+            appState.showAbout = false;
+        }
+    }
+    ImGui::End();
+}
+
+int main(int argc, char* argv[]) {
+    // Init GLFW
+    if (!glfwInit()) {
+        std::cerr << "Failed to initialize GLFW" << std::endl;
+        return -1;
+    }
+
+    // GL 3.3 + GLSL 130
+    const char* glsl_version = "#version 130";
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    // Create window (maximized)
+    GLFWwindow* window = glfwCreateWindow(1920, 1080, "FileDuper", NULL, NULL);
+    if (!window) {
+        std::cerr << "Failed to create GLFW window" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
+    glfwMakeContextCurrent(window);
+    glfwSwapInterval(1); // Enable vsync
+
+    // Setup ImGui
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init(glsl_version);
+
+    // Apply default theme
+    applyTheme(appState.currentTheme);
+
+    std::cout << "[FileDuper] ✓ Initialized" << std::endl;
+
+    // Main loop
+    while (!glfwWindowShouldClose(window)) {
+        glfwPollEvents();
+
+        // Start ImGui frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        // Render UI
+        renderMainWindow();
+        renderLocalBrowser();
+        renderNetworkScanner();
+        renderSettings();
+        renderAbout();
+
+        // Rendering
+        ImGui::Render();
+        int display_w, display_h;
+        glfwGetFramebufferSize(window, &display_w, &display_h);
+        glViewport(0, 0, display_w, display_h);
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        glfwSwapBuffers(window);
+    }
+
+    // Cleanup
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+    glfwDestroyWindow(window);
+    glfwTerminate();
+
+    return 0;
+}

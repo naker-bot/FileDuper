@@ -1,0 +1,29 @@
+cmake_minimum_required(VERSION 3.21)
+project(FileDuper_Demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
+find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
+
+set(SOURCES
+    src/main_minimal.cpp
+    src/ftpdirectorydialog.cpp
+    src/hashengine.cpp
+    src/scanner.cpp
+    include/ftpdirectorydialog.h
+    include/hashengine.h
+    include/scanner.h
+)
+
+add_executable(FileDuper_Demo ${SOURCES})
+
+target_link_libraries(FileDuper_Demo
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+)
+
+target_include_directories(FileDuper_Demo PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)

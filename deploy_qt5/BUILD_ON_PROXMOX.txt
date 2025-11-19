@@ -1,0 +1,19 @@
+Qt5 Build Instructions for Proxmox
+===================================
+
+This version must be built directly on Proxmox because Qt5 is not available on this build system.
+
+On Proxmox, run:
+
+    apt-get update
+    apt-get install -y cmake g++ qt5-default libqt5widgets5 libcurl4-openssl-dev
+    
+    cd /path/to/source
+    mkdir build_qt5
+    cd build_qt5
+    cmake .. -DCMAKE_BUILD_TYPE=Release -DQT_VERSION_MAJOR=5
+    make -j$(nproc)
+    
+    # Install
+    install -m 755 FileDuper /usr/local/bin/FileDuper
+

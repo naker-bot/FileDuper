@@ -1,0 +1,76 @@
+$1 = std::atomic<long> = { 0 }
+Invalid thread ID: # Look for 'LWP 12345' in the output to find the gdb thread number.
+[Switching to thread 1 (Thread 0x7ffff6e497c0 (LWP 2864009))]
+#0  futex_wait (futex_word=0x5555557e8940 <nfsSearchCacheMutex>, expected=2, private=0) at ../sysdeps/nptl/futex-internal.h:146
+146	  int err = lll_futex_timed_wait (futex_word, expected, NULL, private);
+#0  futex_wait (futex_word=0x5555557e8940 <nfsSearchCacheMutex>, expected=2, private=0) at ../sysdeps/nptl/futex-internal.h:146
+        __ret = -512
+        err = <optimized out>
+#1  __GI___lll_lock_wait (futex=futex@entry=0x5555557e8940 <nfsSearchCacheMutex>, private=0) at lowlevellock.c:49
+#2  0x00007ffff6c9a021 in lll_mutex_lock_optimized (mutex=0x5555557e8940 <nfsSearchCacheMutex>) at pthread_mutex_lock.c:48
+        __futex = 0x5555557e8940 <nfsSearchCacheMutex>
+        private = <optimized out>
+#3  ___pthread_mutex_lock (mutex=0x5555557e8940 <nfsSearchCacheMutex>) at pthread_mutex_lock.c:93
+        type = <optimized out>
+        id = <optimized out>
+#4  0x00005555555e487c in __gthread_mutex_lock (__mutex=0x5555557e8940 <nfsSearchCacheMutex>) at /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/gthr-default.h:795
+#5  std::mutex::lock (this=0x5555557e8940 <nfsSearchCacheMutex>) at /usr/include/c++/15.2.1/bits/std_mutex.h:115
+        __e = 32767
+#6  0x00005555555ebe4d in ScopedNfsLock::ScopedNfsLock (this=0x7fffffffd6e0, w=0x555555748fe7 "clr_cancel") at main.cpp:4228
+        tid = 140737488344112
+        tid = <optimized out>
+#7  0x0000555555599d54 in renderNfsDirectoryBrowser () at main.cpp:6711
+        _nfs_lock___LINE__ = {where = 0x555555748fe7 "clr_cancel"}
+        it = {<std::__detail::_Node_iterator_base<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >, true>> = {_M_cur = 0x42c8000043480000}, <No data fields>}
+        iss = "j"
+        token = "j"
+        indexedMatches = std::vector of length 0, capacity 0
+        lowerCacheFilter = "j"
+        nfsCacheKey = "/mnt/nfs_share|j"
+        nfsLastSearchInputTime = 54.706746400508564
+        nfsSearchDirty = true
+        tmpRef = @0x555556c6e318: 200
+        nfsForceTreeFallback = std::unordered_set with 0 elements
+        cachedChildren = std::vector of length 6, capacity 8 = {"sdb", "sdc", "sdd", "sde", "sdf", "sdg"}
+        nfsShareMounted = true
+        lastRenderedNfsMount = "/mnt/nfs_share"
+        nfsSearchFilter = "j", '\000' <repeats 254 times>
+        lastNfsSelectionEvent = ""
+        displayRoot = "/mnt/nfs_share"
+        windowTitle = "📂 NFS Verzeichnisbaum - /mnt/nfs_share"
+        is_open = true
+        searchTerms = std::vector of length 1, capacity 1 = {"j"}
+        nfsFilterStr = "j"
+        lowerRenderKey = "j"
+        nfsFilterActive = true
+        nfsRenderLimit = std::unordered_map with 2 elements = {["j"] = 200, [""] = 200}
+        nfsLimit = 200
+        nfsAllowSearchBuild = true
+        nfsNow = 54.890196448366623
+        nfsFilterReady = true
+        nfsIndexUsed = false
+        nfsForceTreeFallback = std::unordered_set with 0 elements
+        formatDisplayPath = {<No data fields>}
+#8  0x00005555555cd339 in main (argc=4, argv=0x7fffffffe0b8) at main.cpp:15790
+        display_h = 997
+        nfsAutoTestStarted = false
+        now = std::chrono::_V2::steady_clock time_point = { 478305178730412ns }
+        elapsed = 997
+        display_w = 997283933
+        headless = false
+        autoMountDone = true
+        frameCount = 5991
+        cachedPwd = ""
+        envDisplay = 0x7fffffffeb13 ":99"
+        envWayland = 0x7fffffffe8a8 "wayland-0"
+        xdpy = 0x555555829e70
+        glsl_version = 0x55555575384a "#version 130"
+        window = 0x555555856410
+        display = 0x0
+        x11Window = 0
+        io = @0x555555cd0428: {ConfigFlags = 1, BackendFlags = 30, DisplaySize = {x = 1920, y = 1027}, DisplayFramebufferScale = {x = 1, y = 1}, DeltaTime = 0.00801323541, IniSavingRate = 5, IniFilename = 0x555555763604 "imgui.ini", LogFilename = 0x55555576360e "imgui_log.txt", UserData = 0x0, Fonts = 0x555555cd2e60, FontDefault = 0x0, FontAllowUserScaling = false, ConfigNavSwapGamepadButtons = false, ConfigNavMoveSetMousePos = false, ConfigNavCaptureKeyboard = true, ConfigNavEscapeClearFocusItem = true, ConfigNavEscapeClearFocusWindow = false, ConfigNavCursorVisibleAuto = true, ConfigNavCursorVisibleAlways = false, MouseDrawCursor = false, ConfigMacOSXBehaviors = false, ConfigInputTrickleEventQueue = true, ConfigInputTextCursorBlink = true, ConfigInputTextEnterKeepActive = false, ConfigDragClickToInputText = false, ConfigWindowsResizeFromEdges = true, ConfigWindowsMoveFromTitleBarOnly = false, ConfigWindowsCopyContentsWithCtrlC = false, ConfigScrollbarScrollByPage = true, ConfigMemoryCompactTimer = 60, MouseDoubleClickTime = 0.300000012, MouseDoubleClickMaxDist = 6, MouseDragThreshold = 6, KeyRepeatDelay = 0.275000006, KeyRepeatRate = 0.0500000007, ConfigErrorRecovery = true, ConfigErrorRecoveryEnableAssert = true, ConfigErrorRecoveryEnableDebugLog = true, ConfigErrorRecoveryEnableTooltip = true, ConfigDebugIsDebuggerPresent = false, ConfigDebugHighlightIdConflicts = true, ConfigDebugHighlightIdConflictsShowItemPicker = true, ConfigDebugBeginReturnValueOnce = false, ConfigDebugBeginReturnValueLoop = false, ConfigDebugIgnoreFocusLoss = false, ConfigDebugIniSettings = false, BackendPlatformName = 0x555555cbf5eb "imgui_impl_glfw (3400)", BackendRendererName = 0x5555557808db "imgui_impl_opengl3", BackendPlatformUserData = 0x555555cbf560, BackendRendererUserData = 0x555555cca2e0, BackendLanguageUserData = 0x0, WantCaptureMouse = true, WantCaptureKeyboard = true, WantTextInput = true, WantSetMousePos = false, WantSaveIniSettings = false, NavActive = true, NavVisible = false, Framerate = 13.1157112, MetricsRenderVertices = 7714, MetricsRenderIndices = 12423, MetricsRenderWindows = 10, MetricsActiveWindows = 11, MouseDelta = {x = 0, y = 0}, Ctx = 0x555555cd0400, MousePos = {x = 378, y = 215}, MouseDown = {false, false, false, false, false}, MouseWheel = 0, MouseWheelH = 0, MouseSource = ImGuiMouseSource_Mouse, KeyCtrl = false, KeyShift = false, KeyAlt = false, KeySuper = false, KeyMods = 0, KeysData = {{Down = false, DownDuration = -1, DownDurationPrev = -1, AnalogValue = 0} <repeats 155 times>}, WantCaptureMouseUnlessPopupClose = true, MousePosPrev = {x = 378, y = 215}, MouseClickedPos = {{x = 378, y = 215}, {x = 0, y = 0}, {x = 0, y = 0}, {x = 0, y = 0}, {x = 0, y = 0}}, MouseClickedTime = {52.674201370391529, 0, 0, 0, 0}, MouseClicked = {false, false, false, false, false}, MouseDoubleClicked = {false, false, false, false, false}, MouseClickedCount = {0, 0, 0, 0, 0}, MouseClickedLastCount = {1, 0, 0, 0, 0}, MouseReleased = {false, false, false, false, false}, MouseReleasedTime = {53.094490827235859, 0, 0, 0, 0}, MouseDownOwned = {true, false, false, false, false}, MouseDownOwnedUnlessPopupClose = {true, false, false, false, false}, MouseWheelRequestAxisSwap = false, MouseCtrlLeftAsRightClick = false, MouseDownDuration = {-1, -1, -1, -1, -1}, MouseDownDurationPrev = {-1, -1, -1, -1, -1}, MouseDragMaxDistanceSqr = {0, 0, 0, 0, 0}, PenPressure = 0, AppFocusLost = false, AppAcceptingEvents = true, InputQueueSurrogate = 0, InputQueueCharacters = {Size = 0, Capacity = 8, Data = 0x555556908620}, FontGlobalScale = 1, GetClipboardTextFn = 0x5555555cb9bc <_FUN(void*)>, SetClipboardTextFn = 0x5555555cb964 <_FUN(void*, char const*)>, ClipboardUserData = 0x555555856410}
+        fontConfig = {Name = '\000' <repeats 39 times>, FontData = 0x0, FontDataSize = 0, FontDataOwnedByAtlas = true, MergeMode = false, PixelSnapH = true, PixelSnapV = false, OversampleH = 2 '\002', OversampleV = 2 '\002', EllipsisChar = 0, SizePixels = 0, GlyphRanges = 0x0, GlyphExcludeRanges = 0x0, GlyphOffset = {x = 0, y = 0}, GlyphMinAdvanceX = 0, GlyphMaxAdvanceX = 3.40282347e+38, GlyphExtraAdvanceX = 0, FontNo = 0, FontLoaderFlags = 0, RasterizerMultiply = 1, RasterizerDensity = 1, Flags = 0, DstFont = 0x0, FontLoader = 0x0, FontLoaderData = 0x0}
+        ranges = {32, 255, 8192, 8303, 8592, 8703, 8704, 8959, 8960, 9215, 9472, 9599, 9600, 9631, 9632, 9727, 9728, 9983, 9984, 10175, 0}
+        lastHwUpdate = std::chrono::_V2::steady_clock time_point = { 478304181446479ns }
+Invalid character '#' in expression.
+$2 = (class std::mutex *) 0x5555557e8940 <nfsSearchCacheMutex>

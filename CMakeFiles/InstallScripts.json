@@ -1,0 +1,8 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/nex/c++/cmake_install.cmake",
+		"/home/nex/c++/lib/imgui/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

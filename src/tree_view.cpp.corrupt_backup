@@ -1,0 +1,193 @@
+// Modern C++ implementation for directory tree rendering with POSIX APIs
+#include "tree_view.h"
+#include <imgui.h>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <fnmatch.h>
+#include <cstring>
+#include <set>
+#include <functional>
+#include <memory>
+
+// RAII wrapper for DIR* to ensure proper cleanup
+class DirectoryHandle {
+public:
+    explicit DirectoryHandle(const std::string& path) : dir_(opendir(path.c_str())) {}
+    ~DirectoryHandle() { if (dir_) closedir(dir_); }
+    
+    DirectoryHandle(const DirectoryHandle&) = delete;
+    DirectoryHandle& operator=(const DirectoryHandle&) = delete;
+    
+    explicit operator bool() const noexcept { return dir_ != nullptr; }
+    DIR* get() const noexcept { return dir_; }
+    
+private:
+    DIR* dir_;
+};
+
+static bool matchesPattern(const std::string& name, const std::vector<std::string>& patterns) noexcept {
+    if (patterns.empty()) return false;
+    return std::any_of(patterns.begin(), patterns.end(), [&name](const auto& pattern) {
+        return fnmatch(pattern.c_str(), name.c_str(), 0) == 0;
+    });
+}
+
+static bool shouldSkip(const std::string& name, const std::vector<std::string>& notLike,
+                       const std::vector<std::string>& like) noexcept {
+    if (!notLike.empty() && matchesPattern(name, notLike)) return true;
+    if (!like.empty() && !matchesPattern(name, like)) return true;
+    return false;
+}
+
+static std::string toLower(std::string str) {
+    std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+    return str;
+}
+
+static bool pathMatchesSearchTerms(const std::string& path, const std::vector<std::string>& searchTerms) {
+    if (searchTerms.empty()) return true;
+    const auto lowerPath = toLower(path);
+    return std::any_of(searchTerms.begin(), searchTerms.end(), [&lowerPath](const auto& term) {
+        return lowerPath.find(term) != std::string::npos;
+    });
+}
+
+// internal recursive function
+// New recursive renderer supporting optional multi-selection and search highlighting.
+void renderDirectoryTreeRecursive(const std::string& root, int depth, int maxDepth,
+                                    const std::vector<std::string>& notLike,
+                                    const std::vector<std::string>& like,
+                                    std::string& selectedPath,
+                                    std::set<std::string>* selectedPaths,
+                                    const std::vector<std::string>& searchTerms) {
+    if (depth > maxDepth) return;
+
+    DirectoryHandle dir(root);
+    if (!dir) return;
+
+    std::vector<std::pair<std::string,bool>> entries;
+    struct dirent* ent;
+    while ((ent = readdir(d)) != nullptr) {
+        if (ent->d_name[0] == '.') continue; // skip hidden
+        std::string name = ent->d_name;
+        if (shouldSkip(name, notLike, like)) continue;
+
+        std::string full = root + "/" + name;
+        struct stat st;
+        bool isDir = false;
+        if (stat(full.c_str(), &st) == 0) {
+            isDir = S_ISDIR(st.st_mode);
+        }
+        entries.emplace_back(std::move(name), isDir);
+    }
+
+    std::sort(entries.begin(), entries.end(), [](const auto& a, const auto& b) {st auto& b) {
+        // Directories first, then lexical order
+        if (a.second != b.second) return a.second > b.second;
+        return a.first < b.first;
+    });
+
+    for (const auto& [name, isDir] : entries) {Dir] : entries) {
+        const std::string full = root + "/" + name;
+        ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
+        if (!isDir) flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+
+        // Check if this node or any descendant matches searchTerms
+        bool matchesSearch = pathMatchesSearchTerms(full, searchTerms);
+
+          // If not matching, check descendants for a match
+          if (!matchesSearch && isDir) {
+              // A small DFS to check for a descendant match (depth-limited to avoid heavy scans)
+              std::function<bool(const std::string&, int)> hasMatch = [&](const std::string &p, int d)->bool {
+                  if (d > 6) return false; // limit search lookahead
+                  DIR *dtd = opendir(p.c_str());
+                  if (!dtd) return false;
+                  struct dirent *ent2;
+                  while ((ent2 = readdir(dtd)) != nullptr) {
+                      if (ent2->d_name[0] == '.') continue;
+                      std::string child = p + "/" + ent2->d_name;
+                      std::string childLower = child;
+                      std::transform(childLower.begin(), childLower.end(), childLower.begin(), ::tolower);
+                      for (const auto &term : searchTerms) { if (childLower.find(term) != std::string::npos) { closedir(dtd); return true; } }
+                      struct stat st2; if (stat(child.c_str(), &st2) == 0 && S_ISDIR(st2.st_mode)) {
+                          if (hasMatch(child, d+1)) { closedir(dtd); return true; }
+                      }
+                  }
+                  closedir(dtd);
+                  return false;
+              };
+              matchesSearch = hasMatch(full, 0);
+          }
+
+        // Skip nodes that don't match search criteria
+        if (!matchesSearch) continue;
+
+        const bool opened = ImGui::TreeNodeEx(name.c_str(), flags | ImGuiTreeNodeFlags_DefaultOpen);
+        
+        // Multi-selection checkbox (optional)
+        if (selectedPaths) {
+              bool isSelected = (selectedPaths->count(full) > 0);
+              ImGui::SameLine(ImGui::GetContentRegionAvail().x - 60.0f);
+              bool selected = isSelected;
+              std::string cbid = std::string("##sel_") + full;
+              // Avoid huge id slashes confusing widgets - replace with '#'
+              for (char &c : cbid) if (c == '/') c = '#';
+            if (ImGui::Checkbox(checkboxId.c_str(), &selected)) {
+                if (selected) {
+                    // Remove redundant child selections when parent is selected
+                    const std::string prefix = full + "/";
+                    std::vector<std::string> toRemove;
+                    for (const auto& path : *selectedPaths) {
+                        if (path.starts_with(prefix)) {
+                            toRemove.push_back(path);
+                        }
+                    }
+                    for (const auto& path : toRemove) {
+                        selectedPaths->erase(path);
+                    }
+                    selectedPaths->insert(full);
+                } else {
+                    selectedPaths->erase(full);
+                }
+            }
+            
+            // Show tooltip if already covered by parent selection
+            if (!isSelected) {
+                for (const auto& parentPath : *selectedPaths) {
+                    if (parentPath != full && full.starts_with(parentPath + "/")) {
+                        ImGui::SameLine();
+                        ImGui::TextDisabled("(Bereits durch Eltern ausgewählt)");
+                        break;
+                    }
+                }
+            }
+        }        if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0)) {
+            selectedPath = full;
+        }
+
+        if (opened && isDir) {
+            renderDirectoryTreeRecursive(full, depth + 1, maxDepth, notLike, like, 
+                                       selectedPath, selectedPaths, searchTerms);
+            ImGui::TreePop();
+        }
+    }
+}bool renderDirectoryTreeUI(const std::string& root,
+                           int maxDepth,
+                           bool showRootName,
+                           const std::vector<std::string>& notLike,
+                           const std::vector<std::string>& like,
+                           std::string& selectedPath,
+                           std::set<std::string>* selectedPaths,
+                           const std::vector<std::string>& searchTerms)
+{
+    if (showRootName) {
+        ImGui::Text("%s", root.c_str());
+    }
+    ImGui::BeginChild((std::string("Tree-") + root).c_str(), ImVec2(0, -20), true);
+    renderDirectoryTreeRecursive(root, 0, maxDepth, notLike, like, selectedPath, selectedPaths, searchTerms);
+    ImGui::EndChild();
+    return !selectedPath.empty();
+}

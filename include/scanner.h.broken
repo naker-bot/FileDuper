@@ -1,0 +1,236 @@
+#ifndef SCANNER_H
+#define SCANNER_H
+
+#include <QObject>
+#include <QString>
+#include <QStringList>
+#include <QTimer>
+#include <QMutex>
+#include <QQueue>
+#include <QFileInfo>
+#include <atomic>
+    qint64 calculateChunkSize(const QList<FileInfo> &chunk);
+};ThreadPool>
+#include <QFutureWatcher>
+#include <QDirIterator>
+#include <QSet>
+
+class HashEngine;
+class PresetManager;
+class FtpClient;
+
+struct FileInfo
+{
+    QString filePath;
+    QString fileName;
+    qint64 size;
+    qint64 lastModified;
+    QString hash;
+    bool isLocal;
+    QString networkType;
+    QString ftpUrl;
+    
+    FileInfo() : size(0), lastModified(0), isLocal(true) {}
+};
+
+struct DuplicateGroup
+{
+    FileInfo original;          // Yellow background - keep this
+    QList<FileInfo> duplicates; // Green background - delete candidates
+    QString hash;
+    qint64 size;
+};
+
+struct DuplicateGroups
+{
+    QList<DuplicateGroup> groups;
+    int totalFiles;
+    int duplicateFiles;
+    qint64 duplicateSize;
+};
+
+class Scanner : public QObject
+{
+    Q_OBJECT
+
+public:
+    explicit Scanner(QObject *parent = nullptr);
+    ~Scanner();
+
+    // Scan control
+    void startScan(const QStringList &directories, const QString &hashAlgorithm, const QString &fileFilter);
+    void stopScan();
+    
+    // 🚀 ULTRA PERFORMANCE METHODS
+    void startRadicalParallelProcessing(const QStringList &ftpDirectories);
+    void processFileChunkParallel(const QList<FileInfo> &chunk, int engineIndex);
+    void processFileChunkParallelWithPoolEngine(const QList<FileInfo> &chunk, int engineIndex, HashEngine* poolEngine);
+    
+    // 🔧 UTILITY METHODS
+    QString getCanonicalPath(const QString &filePath);
+    QString extractFileName(const QString &filePath);
+    void collectFiles();
+    void collectFilesMultithreaded();
+    void collectDirectoryWorker(const QString &directory, QSet<QString> &processedFiles);
+    void collectFtpDirectory(const QString &ftpDirectory);
+    void deleteDuplicateFiles(const QList<FileInfo> &filesToDelete);
+    void deleteFtpFile(const QString &ftpUrl);
+    
+    // 🌐 FTP METHODS
+    int testFtpConnectionLimit(const QString &host, int port, const QString &user, const QString &pass);
+    void collectFtpDirectoryMultiConnection(const QString &ftpDirectory);
+    void setupFtpConnectionPool(const QString &host, int port, const QString &user, const QString &pass, int maxConnections);
+    void collectFtpDirectoryRadicalParallel(const QString &ftpDirectory);
+    void collectFtpDirectoryRadicalParallelSimple(const QString &ftpDirectory);
+    int testFtpConnectionLimitFast(const QString &host, int port, const QString &user, const QString &pass);
+    void pauseScan();
+    void resumeScan();
+
+    // Configuration
+    void setHashEngine(HashEngine *engine);
+    void setPresetManager(PresetManager *manager);
+    void setFtpClient(FtpClient *client);
+    void setNpuEnabled(bool enabled);
+
+    // Status
+    bool isScanning() const;
+    bool isPaused() const;
+
+signals:
+    void filesCollected(int totalFiles);
+    void hashingStarted(int filesToHash);
+    void comparingStarted();
+    void scanCompleted(const DuplicateGroups &groups);
+    void scanProgress(int current, int total, int duplicates);
+    void scanStatusChanged(const QString &status);
+    void error(const QString &message);
+    void scanPhaseCompleted(int phase);
+    
+    // ✅ POOL ENGINE SIGNALS: Duplikat-Erkennung für GUI
+    void duplicatesDetected(const QList<DuplicateGroup> &groups);
+    
+    // 🌐 ADDITIONAL SIGNALS FOR MAINWINDOW
+    void currentFileProcessing(const QString &fileName, const QString &processType, int fileNumber, int totalFiles);
+    void processActivityUpdate(const QString &activity, const QString &details);
+    void fileComparisonProgress(const QString &fileName, const QString &processType, int current, int total);
+    void pathProcessingUpdate(const QString &currentPath, const QString &action, int pathNumber, int totalPaths);
+    void duplicateDetectionUpdate(int duplicatesFound, int totalGroups, const QString &lastFile);
+    void hardwareUsageUpdate(const QString &processingUnit, int utilizationPercent, const QString &currentTask);
+    
+    // Additional signals for NPU and FTP operations
+    void npuActivityUpdate(int processed, int duplicates);
+    void deleteProgress(const QString &file, bool success, const QString &message);
+
+public slots:
+    Q_INVOKABLE void stopAllEngines();
+
+private slots:
+    void processNextFile();
+    void onHashCalculated(const QString &filePath, const QString &hash);
+
+private:
+    void filterBySize();
+    void startHashing();
+    void compareHashes();
+    void generateResults();
+
+    // Path optimization to prevent redundant comparisons
+    QStringList deduplicateDirectories(const QStringList &directories);
+    bool isDuplicateFile(const QString &filePath, const QList<FileInfo> &existingFiles);
+
+    // ✅ POOL ENGINE SYNCHRONISATION: Hash-Sammlung für Duplikat-Erkennung
+    void processHashResult(const FileInfo &fileInfo, const QString &hash);
+    void emitDuplicatesFound();
+
+private:
+    HashEngine *hashEngine;
+    PresetManager *presetManager;
+    
+    // 🚀 POOL ENGINE PERFORMANCE OPTIMIZATION
+    QList<HashEngine*> enginePool;
+    QThreadPool *threadPool;
+    QFutureWatcher<void> *futureWatcher;
+
+    QTimer *processTimer;
+    QStringList scanDirectories;
+    QString currentHashAlgorithm;
+    QString currentFileFilter;
+
+    QList<FileInfo> allFiles;
+    QHash<qint64, QList<FileInfo>> fileSizeGroups;
+    QHash<QString, QList<FileInfo>> hashGroups;
+
+    std::atomic<bool> scanning;
+    std::atomic<bool> paused;
+
+    // Missing variables for FTP and NPU processing
+    bool npuEnabled = false;                           // 🔒 Default: NPU aus, Hash-only Pipeline
+    int deleteAttempted = 0;
+    int deleteSucceeded = 0;
+    int engineChunkSize = 100;                         // Files per engine chunk
+
+    enum ScanPhase
+    {
+        IDLE,
+        COLLECTING,
+        SIZE_FILTERING,
+        HASHING,
+        COMPARING,
+        COMPLETED
+    } currentPhase;
+    
+    // 🌐 FTP & MULTITHREADING SUPPORT
+    FtpClient *ftpClient;
+    QMutex filesMutex;
+    QSet<QString> globalProcessedFiles;
+    QSet<QString> globalHashedFiles;
+    QStringList pendingFtpDirectories;
+    QStringList completedFtpDirectories;
+    int ftpDirectoriesProcessed;
+    int currentFileIndex;
+    int activeEngines;
+    int maxEngines;
+    int maxFtpConnections;
+    QList<FtpClient*> ftpConnectionPool;
+    QString currentFtpHost;
+    int currentFtpPort;
+    QString currentFtpUser;
+    QString currentFtpPass;
+    int currentFtpConnectionIndex;
+    
+    // ✅ POOL ENGINE SYNCHRONISATION: Hash-Sammlung für zentrale Duplikat-Erkennung
+    QHash<QString, QList<FileInfo>> sharedHashGroups;
+    QMutex sharedHashGroupsMutex;
+    std::atomic<int> processedFiles;
+    std::atomic<int> completedEngines;
+    
+    // 🌐 MULTI-HOST FTP SUPPORT
+    QHash<QString, QList<FtpClient*>> ftpConnectionPools; // Host -> List of FtpClients
+    QMutex ftpPoolsMutex;
+    int maxConnectionsPerHost;
+    
+    // 🔧 UTILITY FUNCTIONS
+    void clearDeduplicationCaches();
+    bool isFileAlreadyProcessed(const QString &filePath);
+    void checkScanProgress();
+    void collectFtpFiles(const QString &ftpDirectory, QSet<QString> &processedFiles);
+    void onFtpFilesReceived(const QString &directory, const QStringList &files, bool success);
+    void onFtpListFinished(const QStringList &allDirs, bool success);  // 🔧 Neue Slot-Methode für FtpClient::listFinished
+    void onNpuImageBatchProcessed(const QStringList &processedImages);
+    void onFtpRemoveFinished(const QString &remoteFile, bool ok);
+    void onCollectionFinished();
+    void startNextEngineIfNeeded(int completedEngineIndex);
+    
+    // 🌐 MULTI-HOST FTP CONNECTION POOL MANAGEMENT
+    void setupMultiHostFtpConnectionPool(const QSet<QString> &ftpHosts);
+    FtpClient* getFtpClientForHost(const QString &host);
+    void returnFtpClientToPool(const QString &host, FtpClient *client);
+    void cleanupFtpConnectionPools();
+    
+    // 🧠 INTELLIGENT FILE DISTRIBUTION
+    QList<QList<FileInfo>> createBalancedFileChunks(const QList<FileInfo> &files, int numEngines);
+    void sortFilesBySize(QList<FileInfo> &files);
+    qint64 calculateChunkSize(const QList<FileInfo> &chunk);
+};
+
+#endif // SCANNER_H

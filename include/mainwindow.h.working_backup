@@ -1,0 +1,173 @@
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
+
+#include <QMainWindow>
+#include <QTreeWidget>
+#include <QTableWidget>
+#include <QProgressBar>
+#include <QLabel>
+#include <QComboBox>
+#include <QPushButton>
+#include <QSplitter>
+#include <QGroupBox>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QDateTime>
+#include <QAction>
+#include <memory>
+
+// Forward declarations
+class NetworkDirectoryDialog;
+
+// Include headers with the actual struct definitions
+#include "scanner.h"
+#include "networkscanner.h"
+#include "directoryselectordialog.h"
+
+QT_BEGIN_NAMESPACE
+class QTreeWidgetItem;
+class QCloseEvent;
+QT_END_NAMESPACE
+
+// Forward declarations for our custom classes
+class PresetManager;
+class ActivityIndicator;
+class FtpClient;
+class HashEngine;
+
+class MainWindow : public QMainWindow
+{
+    Q_OBJECT
+
+public:
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
+
+signals:
+    // ✅ KRITISCH: Signal für thread-sichere FTP-GUI-Updates
+    void ftpDirectoriesReady(const QString &ip, const QStringList &directories);
+
+private slots:
+    // Directory management
+    void addDirectory();
+    void removeSelectedDirectories();
+    void updateDirectoryTree();
+    void updateDirectorySummary();  // ✅ Neue Funktion für Summary-Label
+    void updateSelectedDirectoriesDisplay();  // ✅ SICHERE GUI-Aktualisierung ohne Tree-Manipulation
+    void updateItemSelectionState(QTreeWidgetItem *item);  // ✅ Hilfsfunktion für visuelles Feedback
+
+    // Duplicate scanning
+    void startDuplicateScan();
+    void stopDuplicateScan();
+
+    // Directory tree interactions
+    void onDirectoryDoubleClicked(QTreeWidgetItem *item, int column);
+    void showDirectoryContextMenu(const QPoint &pos);
+    void onDirectoryItemExpanded(QTreeWidgetItem *item); // Lazy loading
+
+    // Network tree interactions
+    void onNetworkServiceDoubleClicked(QTreeWidgetItem *item, int column);
+    void showNetworkContextMenu(const QPoint &pos);
+    void addFtpDirectoryToScanner(QTreeWidgetItem *ftpDirItem);
+
+    // Network scanning
+    void startNetworkDiscovery();
+    void onNetworkServiceFound(const QString &ip, int port, const QString &service);
+    void showLoginDialog(const QString &ip, int port, const QString &service);
+
+    // Scan results handling
+    void onScanProgress(int current, int total);
+    void onScanCompleted(const QList<QStringList> &duplicateGroups);
+    void displayResults(const QList<QStringList> &duplicateGroups);
+    void addResultRow(const QString &filePath, bool isOriginal, int row = -1);
+    void setHashForRow(int row, const QString &hash);
+    void handleScanError(const QString &error);
+
+    // Settings and preferences
+    void applyTheme(int index);
+    void showSettingsDialog();
+    void showPresetManager();
+    void showAboutDialog();
+    void startDemoScan();
+    void createTestDuplicates();
+
+    // FTP/Network workflow
+    void connectAndShowDirectoryTree(const QString &ip, int port, const QString &service,
+                                     const QString &username, const QString &password);
+    void handleFtpDirectoriesReady(const QString &ip, const QStringList &directories);
+    void buildHierarchicalFtpTree(const QString &ip, const QStringList &directories);
+    void requestFtpSubdirectories(const QString &ip, const QString &path);
+    void requestFtpSubdirectoriesForDialog(const QString &ip, const QString &path, NetworkDirectoryDialog *dialog);
+
+
+    // Settings persistence
+    void loadSettings();
+    void saveSettings();
+
+private:
+    // UI setup methods
+    void setupProgrammaticGUI(); // Replaces all old setupUI methods
+    void setupConnections();
+    void setupMenuBar();
+    void setupToolBar();
+    void createActions();
+    void initializeComponents();
+    void initializeBackgroundServices();
+
+    // +++ NEUE FUNKTIONEN FÜR VERZEICHNISBAUM +++
+    void loadLocalDirectoryTreeWithCheckboxes();
+    void loadSubDirectories(QTreeWidgetItem *parentItem, const QString &path);
+    void addNetworkService(const QString &ip, int port, const QString &service);
+    
+    // Helper functions for file display
+    QString formatFileSize(qint64 size);
+    qint64 getDirSize(const QString &path);
+    bool hasSubdirectories(const QString &path); // ✅ Echte Unterverzeichnis-Prüfung
+
+
+protected:
+    void closeEvent(QCloseEvent *event) override;
+
+private:
+    // PImpl pattern for better encapsulation
+    struct Impl;
+    std::unique_ptr<Impl> d;
+
+    // Core components
+    Scanner *m_scanner;
+    NetworkScanner *m_networkScanner;
+    PresetManager *m_presetManager;
+    ActivityIndicator *m_activityIndicator;
+    HashEngine *m_hashEngine;
+    FtpClient *m_ftpClient;  // Shared FTP client for scanner integration
+
+    // UI components for programmatic GUI
+    QTreeWidget *directoryTree;
+    QTreeWidget *networkTree;
+    QTableWidget *resultsTable;
+    QProgressBar *progressBar;
+    QComboBox *hashComboBox;
+    QComboBox *hardwareComboBox;
+    QComboBox *themeComboBox;
+    QLabel *networkProgressLabel;
+    QPushButton *selectDirBtn;
+    QPushButton *scanSelectedBtn;
+
+    // State management
+    QStringList m_selectedDirectories;
+    bool m_isScanning;
+
+    // Actions for menu and toolbar
+    QAction *m_addDirectoryAction;
+    QAction *m_removeDirectoryAction;
+    QAction *m_startScanAction;
+    QAction *m_stopScanAction;
+    QAction *m_networkScanAction;
+    QAction *m_settingsAction;
+    QAction *m_presetManagerAction;
+    QAction *m_aboutAction;
+    QAction *m_documentationAction;
+    QAction *m_exitAction;
+};
+
+#endif // MAINWINDOW_H

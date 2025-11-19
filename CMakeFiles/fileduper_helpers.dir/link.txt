@@ -1,0 +1,2 @@
+"/usr/bin/gcc-ar" qc libfileduper_helpers.a CMakeFiles/fileduper_helpers.dir/src/nfs_helpers.cpp.o
+"/usr/bin/gcc-ranlib" libfileduper_helpers.a

@@ -1,0 +1,82 @@
+cmake_minimum_required(VERSION 3.16)
+project(FileDuper VERSION 1.0.0 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Qt6 Dependencies
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Network Gui)
+
+# Enable Qt MOC processing
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+
+# Optional OpenCL for hardware acceleration
+option(ENABLE_OPENCL "Enable OpenCL hardware acceleration" ON)
+if(ENABLE_OPENCL)
+    find_package(OpenCL QUIET)
+    if(OpenCL_FOUND)
+        add_definitions(-DENABLE_OPENCL)
+    endif()
+endif()
+
+# Find libcurl
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(CURL REQUIRED libcurl)
+
+# Source files
+set(SOURCES
+    src/main.cpp
+    src/mainwindow.cpp
+    src/scanner.cpp
+    src/networkscanner.cpp
+    src/ftpclient.cpp
+    src/sftpclient.cpp
+    src/smbclient.cpp
+    src/nfsclient.cpp
+    src/presetmanager.cpp
+    src/hashengine.cpp
+    src/npumanager.cpp
+    src/activityindicator.cpp
+    src/directoryselectiondialog.cpp
+)
+
+set(HEADERS
+    include/mainwindow.h
+    include/scanner.h
+    include/networkscanner.h
+    include/ftpclient.h
+    include/presetmanager.h
+    include/hashengine.h
+    include/npumanager.h
+    include/activityindicator.h
+    include/directoryselectiondialog.h
+)
+
+# Create executable
+add_executable(FileDuper ${SOURCES} ${HEADERS})
+
+# Include directories
+target_include_directories(FileDuper PRIVATE include)
+
+# Link libraries
+target_link_libraries(FileDuper
+    Qt6::Core
+    Qt6::Widgets
+    Qt6::Network
+    Qt6::Gui
+    ${CURL_LIBRARIES}
+)
+
+# Add OpenCL if available
+if(OpenCL_FOUND)
+    target_link_libraries(FileDuper ${OpenCL_LIBRARIES})
+    target_include_directories(FileDuper PRIVATE ${OpenCL_INCLUDE_DIRS})
+endif()
+
+# Compiler flags
+target_compile_options(FileDuper PRIVATE ${CURL_CFLAGS_OTHER})
+
+# Install
+install(TARGETS FileDuper DESTINATION bin)

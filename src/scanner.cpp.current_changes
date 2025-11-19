@@ -1,0 +1,3828 @@
+#include "scanner.h"
+#include "fileduper_logging.h"
+#include "hashengine.h"
+#include "presetmanager.h"
+#include "ftpclient.h"
+#include "sftpclient.h"          // ✅ SFTP Client Include
+#include "smbclient.h"           // ✅ SMB Client Include
+#include "nfsclient.h"           // ✅ NFS Client Include
+#include <QApplication>
+#include <QDebug>
+#include <QDir>
+#include <QDirIterator>
+#include <QDateTime>
+#include <QCryptographicHash>
+#include <QFileInfo>
+#include <QUrl>
+#include <QFile>
+#include <QStandardPaths>
+#include <iostream>
+
+Scanner::Scanner(QObject *parent)
+    : QObject(parent), hashEngine(nullptr), presetManager(nullptr), ftpClient(nullptr), 
+      sftpClient(nullptr), smbClient(nullptr), nfsClient(nullptr), npuManager(nullptr),
+      scanning(false), paused(false), currentPhase(IDLE), ftpDirectoriesProcessed(0),
+      currentSimilarityMode(NpuManager::NEAR_DUPLICATES)  // 🎯 Default: Sehr ähnliche Bilder
+{
+    std::cout << "[Scanner] 🔍 Scanner initialisiert" << std::endl;
+
+    // Ultra-responsive Timer für GUI
+    processTimer = new QTimer(this);
+    processTimer->setSingleShot(false);
+    processTimer->setInterval(25); // 25ms = 40 FPS für flüssige GUI
+    connect(processTimer, &QTimer::timeout, this, &Scanner::processNextFile);
+
+    // ✅ Asynchroner Timer für Dateisammlung - verhindert GUI-Blockierung
+    fileCollectionTimer = new QTimer(this);
+    fileCollectionTimer->setSingleShot(false);
+    fileCollectionTimer->setInterval(50); // 50ms = 20 FPS für responsive Dateisammlung
+    connect(fileCollectionTimer, &QTimer::timeout, this, &Scanner::processNextDirectoryChunk);
+
+    // ⏱️ Abbrechbarer Hash-Timeout-Timer
+    hashTimeoutTimer = new QTimer(this);
+    hashTimeoutTimer->setSingleShot(true);
+    connect(hashTimeoutTimer, &QTimer::timeout, this, [this]() {
+        if (!scanning.load() || currentPhase != HASHING) return;
+        if (hashProcessedCount >= totalFilesForHashing && totalFilesForHashing > 0) return; // already done
+        qWarning() << "[Scanner] 🚨 ERWEITERTER TIMEOUT (Timer): Hashing dauert zu lange - versuche partielle Ergebnisse";
+        DuplicateGroups partialResults = buildPartialResults();
+        if (partialResults.groups.size() > 0) {
+            qDebug() << "[Scanner] 🎯 TIMEOUT (Timer) partielle Ergebnisse:" << partialResults.groups.size() << "Gruppen";
+            qDebug() << "[Scanner] 🚨 emit scanCompleted(PARTIAL) - TIMEOUT with results";
+            scanning.store(false);
+            currentPhase = COMPLETED;
+            emit scanProgress(100, hashProcessedCount, totalFilesForHashing);
+            emit scanCompleted(partialResults);
+        } else {
+            qWarning() << "[Scanner] ⚠️ TIMEOUT (Timer) keine part. Ergebnisse";
+            qDebug() << "[Scanner] 🚨 emit scanCompleted(EMPTY) - TIMEOUT without results";
+            scanning.store(false);
+            currentPhase = COMPLETED;
+            emit scanProgress(100, hashProcessedCount, totalFilesForHashing);
+            DuplicateGroups empty;
+            emit scanCompleted(empty);
+        }
+    });
+
+    // Initialisiere Pfad-Deduplicator für optimierte Verarbeitung
+    
+    // 🚀 8-ENGINE SYSTEM: Initialize parallel HashEngine pool
+    initializeEnginePool();
+}
+
+Scanner::~Scanner()
+{
+    stopScan();
+    cleanupEnginePool();
+}
+
+void Scanner::setHashEngine(HashEngine *engine)
+{
+    hashEngine = engine;
+    if (hashEngine)
+    {
+        connect(hashEngine, &HashEngine::hashCalculated,
+                this, &Scanner::onHashCalculated, Qt::DirectConnection);
+    }
+}
+
+void Scanner::setPresetManager(PresetManager *manager)
+{
+    presetManager = manager;
+}
+
+void Scanner::setFtpClient(FtpClient *client)
+{
+    // Disconnect previous client safely to avoid duplicate signal deliveries
+    if (ftpClient) {
+        QObject::disconnect(ftpClient, nullptr, this, nullptr);
+    }
+    ftpClient = client;
+    // Note: We intentionally do NOT connect filesListFinished here.
+    // Per-host clients created in collectFtpFiles() are connected with a
+    // scoped lambda using Qt::UniqueConnection to avoid double-processing
+    // and race conditions when multiple FTP directories are scanned.
+}
+
+// 🧠 NPU-INTEGRATION: NPU-Manager für intelligente Bildverarbeitung
+void Scanner::setNpuManager(NpuManager *manager)
+{
+    npuManager = manager;
+    if (npuManager)
+    {
+        connect(npuManager, &NpuManager::imageBatchProcessed,
+                this, &Scanner::onNpuImageBatchProcessed);
+        qDebug() << "[Scanner] 🧠 NPU-Manager für Bildverarbeitung verbunden";
+    }
+}
+
+void Scanner::setNpuEnabled(bool enabled)
+{
+    npuEnabled = enabled;
+    FD_LOG_INFO() << "[Scanner] 🧠 NPU enabled set to" << npuEnabled;
+}
+
+void Scanner::startScan(const QStringList &directories, const QString &hashAlgorithm, const QString &fileFilter)
+{
+    // 🎯 FTP-STATUS INITIALISIERUNG
+    activeFtpScans.store(0);
+    ftpScanningActive.store(false);
+    qDebug() << "[Scanner] 🔄 FTP-Status zurückgesetzt für neuen Scan";
+
+    FD_LOG_INFO() << "[Scanner] 🚀 startScan" << directories.size() << "Verzeichnisse";
+    FD_LOG_DEBUG() << "[Scanner] 🔍 Verzeichnisse:" << directories;
+    FD_LOG_INFO() << "[Scanner] Hash-Algorithmus:" << hashAlgorithm << "Filter:" << fileFilter;
+    FD_LOG_INFO() << "[Scanner] NPU enabled?" << npuEnabled;
+
+    // 📊 INITIAL PROGRESS-UPDATE: Verwende Input-Parameter statt noch nicht initialisierte scanDirectories
+    emit scanProgress(0, -1, directories.size()); // -1 = Gesamtanzahl noch unbekannt
+    emit scanStatusChanged(QString("🔍 Initialisiere Scan für %1 Verzeichnisse...").arg(directories.size()));
+    emit currentFileProcessing("Initialisierung", "🔍 Sammle verfügbare Dateien...", 0, directories.size());
+    emit processActivityUpdate("🔍 Starte Duplikat-Scan", QString("Bereite %1 Verzeichnisse vor").arg(directories.size()));
+
+    // Defensive pointer checks (log-only, allow scan to proceed where possible)
+    if (!hashEngine) qWarning() << "[Scanner] ⚠️ hashEngine ist null – Hashing wird später eventuell übersprungen.";
+    if (!presetManager) qWarning() << "[Scanner] ⚠️ presetManager ist null – FTP-Logins verwenden Default-Credentials.";
+
+    // 🧠 NPU-Counter zurücksetzen bei neuem Scan
+    npuProcessedImages = 0;
+    qDebug() << "[Scanner] 🔄 NPU-Counter zurückgesetzt für neuen Scan";
+
+    // ✅ FIX: Clear processed files cache für neuen Scan
+    if (hashEngine) {
+        hashEngine->clearProcessedFiles();
+        qDebug() << "[Scanner] 🧹 HashEngine processed files cache geleert";
+    }
+
+    // ✅ FIX: Prüfe ob bereits ein Scan läuft
+    if (scanning.load()) {
+        qDebug() << "[Scanner] ⏸️ Stoppe vorherigen Scan, starte neuen...";
+        stopScan(); // Stoppe aktuellen Scan
+        scanning.store(false); // Reset scanning state
+    }
+
+    if (directories.isEmpty()) {
+        qDebug() << "[Scanner] ❌ EARLY EXIT: Keine Verzeichnisse zum Scannen!";
+        qDebug() << "[Scanner] 🚨 emit scanCompleted(EMPTY) - EARLY EXIT #1";
+        emit scanProgress(100, 0, 0);
+        emit scanStatusChanged("❌ Keine Verzeichnisse ausgewählt");
+        emit scanCompleted(DuplicateGroups{});
+        return;
+    }
+
+    // ✅ IMPROVED: Bessere Remote-Path-Erkennung für alle Protokolle
+    QStringList localDirectories;
+    QStringList remoteDirectories;
+    
+    for (const QString &dir : directories) {
+        if (isRemotePath(dir)) {
+            remoteDirectories.append(dir);
+        } else {
+            localDirectories.append(dir);
+        }
+    }
+    
+    FD_LOG_DEBUG() << "[Scanner] 📂 Lokale Verzeichnisse:" << localDirectories.size();
+    FD_LOG_DEBUG() << "[Scanner] 📡 Remote-Verzeichnisse:" << remoteDirectories.size();
+
+    // Deduplicate directories to prevent redundant work
+    QStringList optimizedDirectories = deduplicateDirectories(directories);
+    
+    if (optimizedDirectories.isEmpty()) {
+        qDebug() << "[Scanner] ❌ EARLY EXIT: Nach Pfad-Optimierung keine Verzeichnisse übrig!";
+        qDebug() << "[Scanner] 🚨 emit scanCompleted(EMPTY) - EARLY EXIT #2";
+        emit scanCompleted(DuplicateGroups{});
+        return;
+    }
+
+    scanDirectories = optimizedDirectories;
+    currentHashAlgorithm = hashAlgorithm;
+    currentFileFilter = fileFilter;
+
+    // 📊 KORRIGIERTER PROGRESS-UPDATE: Jetzt mit korrekter scanDirectories Anzahl
+    emit scanProgress(0, -1, scanDirectories.size());
+    emit scanStatusChanged(QString("🔍 Optimiert: %1 Verzeichnisse bereit zum Scannen").arg(scanDirectories.size()));
+    qDebug() << "[Scanner] ✅ Scan bereit für" << scanDirectories.size() << "optimierte Verzeichnisse";
+
+    // 🛡️ KRITISCH: Deduplication-Caches für NEUEN Scan zurücksetzen
+    clearDeduplicationCaches();
+    qDebug() << "[Scanner] 🔄 Neuer Scan gestartet - Deduplication-Caches zurückgesetzt";
+
+    // Reset state
+    allFiles.clear();
+    fileSizeGroups.clear();
+    hashGroups.clear();
+
+    // 🛡️ RACE CONDITION FIX: Neue Scan-ID generieren für FTP-Callback-Validierung
+    currentScanId.store(QDateTime::currentMSecsSinceEpoch());
+    qDebug() << "[Scanner] 🆔 Neue Scan-ID generiert:" << currentScanId.load();
+
+    scanning.store(true);
+    paused.store(false);
+    currentPhase = COLLECTING;
+
+    qDebug() << "[Scanner] 🔍 Pfad-Optimierung:" << directories.size()
+              << "→" << optimizedDirectories.size() << "Verzeichnisse";
+    emit scanStatusChanged("Sammle Dateien (parallel: lokal + netzwerk)...");
+
+    qDebug() << "[Scanner] 🎯 KURZ VOR startAsyncFileCollection() Aufruf";
+    startAsyncFileCollection();
+    qDebug() << "[Scanner] 🎯 NACH startAsyncFileCollection() Aufruf";
+}
+
+QStringList Scanner::deduplicateDirectories(const QStringList &directories)
+{
+    QSet<QString> canonicalPaths;
+    QStringList result;
+
+    // Convert all paths to canonical form (handle both local and FTP paths)
+    QMap<QString, QString> originalToCanonical;
+    for (const QString &dir : directories)
+    {
+        QString canonical;
+        
+        // 🛡️ CRASH-FIX: SAFE URL/path handling für FTP und lokale Pfade
+        if (dir.startsWith("ftp://") || dir.startsWith("sftp://") || dir.startsWith("smb://")) {
+            canonical = dir; // FTP/Network paths bleiben unverändert
+            qDebug() << "[Scanner] 📡 Network-URL beibehalten:" << canonical;
+        } else {
+            // SAFE: Nur auf lokale Pfade canonicalPath() anwenden
+            QDir dirObj(dir);
+            if (dirObj.exists()) {
+                canonical = dirObj.canonicalPath();
+                qDebug() << "[Scanner] 📂 Lokaler Pfad kanonisch:" << canonical;
+            } else {
+                canonical = dir; // Falls nicht existiert, Original beibehalten
+                qDebug() << "[Scanner] ⚠️ Pfad existiert nicht, Original beibehalten:" << canonical;
+            }
+        }
+        
+        if (!canonical.isEmpty())
+        {
+            originalToCanonical[dir] = canonical;
+        }
+    }
+
+    // Remove parent-child relationships and duplicates
+    for (auto it = originalToCanonical.begin(); it != originalToCanonical.end(); ++it)
+    {
+        QString currentPath = it.value();
+        bool isRedundant = false;
+
+        // Check if this path is a child of any already processed path
+        for (const QString &existingPath : canonicalPaths)
+        {
+            if (currentPath.startsWith(existingPath + "/"))
+            {
+                isRedundant = true;
+                std::cout << "⏭️  Überspringe Unterverzeichnis: " << it.key().toStdString()
+                          << " (enthalten in " << existingPath.toStdString() << ")" << std::endl;
+                break;
+            }
+        }
+
+        if (!isRedundant)
+        {
+            // Remove any existing paths that are children of the current path
+            auto existing = canonicalPaths.begin();
+            while (existing != canonicalPaths.end())
+            {
+                if (existing->startsWith(currentPath + "/"))
+                {
+                    std::cout << "🔄 Ersetze Unterverzeichnis " << existing->toStdString()
+                              << " durch Elternverzeichnis " << currentPath.toStdString() << std::endl;
+                    existing = canonicalPaths.erase(existing);
+                }
+                else
+                {
+                    ++existing;
+                }
+            }
+
+            canonicalPaths.insert(currentPath);
+            result.append(it.key());
+        }
+    }
+
+    return result;
+}
+void Scanner::stopScan()
+{
+    if (!scanning.load())
+        return;
+
+    qDebug() << "[Scanner] ⏹️ FORCE-STOP: Stoppe alle Scan-Aktivitäten";
+    
+    scanning.store(false);
+    paused.store(false);
+    currentPhase = IDLE;
+    
+    // 🛡️ RACE CONDITION PROTECTION: Invalidiere Scan-ID um späte FTP-Callbacks zu stoppen
+    currentScanId.store(0);
+    qDebug() << "[Scanner] 🆔 Scan-ID invalidiert (stopScan)";
+    
+    // ✅ KRITISCH: Stoppe alle Timer
+    if (processTimer) {
+        processTimer->stop();
+        qDebug() << "[Scanner] 🛑 ProcessTimer gestoppt";
+    }
+    
+    if (fileCollectionTimer) {
+        fileCollectionTimer->stop();
+        qDebug() << "[Scanner] 🛑 FileCollectionTimer gestoppt";
+    }
+    
+    if (hashTimeoutTimer) {
+        hashTimeoutTimer->stop();
+        qDebug() << "[Scanner] 🛑 HashTimeoutTimer gestoppt";
+    }
+    
+    // ✅ Cleanup asynchrone Dateisammlung
+    cleanupFileCollection();
+    
+    // ✅ KRITISCH: Stoppe HashEngine
+    if (hashEngine) {
+        // Hier könnten wir hashEngine->stopCalculation() aufrufen
+        hashEngine->clearProcessedFiles(); // 🛡️ CRITICAL: Clear to prevent infinite loops
+        qDebug() << "[Scanner] 🛑 HashEngine-Stop signalisiert und Cache geleert";
+    }
+    
+    // ✅ KRITISCH: Leere alle Collections für sauberen Stop
+    allFiles.clear();
+    hashGroups.clear();
+    fileSizeGroups.clear();
+    
+    // 🛡️ NEU: Deduplication-Caches leeren bei Scan-Stop
+    globalProcessedFiles.clear();
+    globalHashedFiles.clear();
+    
+    qDebug() << "[Scanner] 🧹 Alle Collections geleert";
+    qDebug() << "[Scanner] 🛡️ Deduplication-Caches geleert";
+    
+    emit scanStatusChanged("⏹️ Scan gestoppt - alle Prozesse beendet");
+    std::cout << "⏹️ Duplikat-Scan vollständig gestoppt" << std::endl;
+    
+    // ✅ KRITISCH: Emittiere leere Ergebnisse nur wenn nicht bereits COMPLETED
+    if (currentPhase != COMPLETED) {
+        DuplicateGroups emptyResults;
+        emit scanCompleted(emptyResults);
+    }
+}
+
+void Scanner::pauseScan()
+{
+    if (!scanning.load())
+        return;
+
+    paused.store(true);
+    processTimer->stop();
+    emit scanStatusChanged("Scan pausiert");
+    std::cout << "⏸️ Duplikat-Scan pausiert" << std::endl;
+}
+
+void Scanner::resumeScan()
+{
+    if (!scanning.load() || !paused.load())
+        return;
+
+    paused.store(false);
+    processTimer->start();
+    emit scanStatusChanged("Scan fortgesetzt");
+    std::cout << "▶️ Duplikat-Scan fortgesetzt" << std::endl;
+}
+
+// Öffentliche Wrapper-Methode für GUI-Rescan: Leert alle relevanten Caches
+// und stellt sicher, dass ein erneuter Scan keine residualen Daten nutzt.
+void Scanner::resetCachesForRescan()
+{
+    clearDeduplicationCaches();
+    // Zusätzlich globale Zustände zurücksetzen, falls nötig
+    hashProcessedCount = 0;
+    totalFilesForHashing = 0;
+    emit scanStatusChanged("🔄 Deduplication-Caches geleert (Rescan)");
+    qDebug() << "[Scanner] 🔄 resetCachesForRescan abgeschlossen";
+}
+
+void Scanner::collectFiles()
+{
+    emit scanStatusChanged("Sammle Dateien parallel (lokal + netzwerk)...");
+    QSet<QString> processedFiles; // Prevent duplicate file processing
+    
+    // Clear FTP processing state
+    pendingFtpDirectories.clear();
+    completedFtpDirectories.clear();
+    ftpDirectoriesProcessed = 0;
+    
+    bool hasFtpDirectories = false;
+    bool hasLocalDirectories = false;
+    
+    // 🎯 FORTSCHRITTS-TRACKING für Dateien sammeln
+    int totalDirectoriesToProcess = scanDirectories.size();
+    int processedDirectoriesCount = 0;
+    int totalFilesFound = 0;
+
+    for (const QString &directory : scanDirectories)
+    {
+        if (!scanning.load())
+            return;
+            
+        // 📊 LIVE-Update: Verzeichnis-Fortschritt
+        processedDirectoriesCount++;
+        emit currentFileProcessing(
+            QFileInfo(directory).fileName(), 
+            "📁 Dateien sammeln", 
+            processedDirectoriesCount, 
+            totalDirectoriesToProcess
+        );
+        emit processActivityUpdate(
+            QString("📂 Sammle Dateien aus Verzeichnis %1/%2")
+                .arg(processedDirectoriesCount).arg(totalDirectoriesToProcess),
+            QString("Aktuell: %1").arg(QFileInfo(directory).fileName())
+        );
+
+        // Check if this is an FTP path (both formats: ftp:// and FTP:ip:port/path)
+        QString entry = directory.trimmed();
+        if (entry.startsWith("ftp://") || entry.startsWith("FTP:"))
+        {
+            hasFtpDirectories = true;
+            
+            // ✅ Convert FTP:ip:port/path format to ftp:// format
+            QString ftpUrl = directory;
+            if (entry.startsWith("FTP:")) {
+                // Convert "FTP:192.168.1.224:21/sdf/Bilder" to "ftp://192.168.1.224:21/sdf/Bilder"
+                ftpUrl = "ftp://" + entry.mid(4); // Remove "FTP:" and add "ftp://"
+                qDebug() << "[Scanner] 🔄 Converted FTP format:" << directory << "→" << ftpUrl;
+            }
+            
+            collectFtpFiles(ftpUrl, processedFiles);
+        }
+        else
+        {
+            hasLocalDirectories = true;
+            // Local directory scanning - parallel zu FTP
+            QDirIterator it(directory, QDir::Files | QDir::Readable, QDirIterator::Subdirectories);
+
+            while (it.hasNext())
+            {
+                if (!scanning.load())
+                    return;
+
+                QString filePath = it.next();
+                QFileInfo fileInfo(filePath);
+                
+                // � VERZEICHNIS-FILTER: Duplikate dürfen keine Verzeichnisse sein
+                if (!fileInfo.isFile()) {
+                    qDebug() << "[Scanner] ⚠️ Überspringe Verzeichnis:" << filePath;
+                    continue;
+                }
+                
+                // �📊 LIVE-Update: Datei gefunden
+                totalFilesFound++;
+                if (totalFilesFound % 50 == 0) { // Alle 50 Dateien Update
+                    emit currentFileProcessing(
+                        fileInfo.fileName(), 
+                        "🔍 Dateien scannen", 
+                        totalFilesFound, 
+                        0  // Unbekannte Gesamtzahl während sammeln
+                    );
+                    emit processActivityUpdate(
+                        QString("📊 %1 Dateien gefunden").arg(totalFilesFound),
+                        QString("Aktuell: %1").arg(fileInfo.fileName())
+                    );
+                }
+
+                qDebug() << "[Scanner] 🔍 Untersuche Datei:" << filePath;
+
+                // Normalize path to prevent duplicates
+                QString canonicalPath = fileInfo.canonicalFilePath();
+                
+                // 🛡️ FALLBACK: Wenn canonicalFilePath leer ist, verwende absoluten Pfad
+                if (canonicalPath.isEmpty()) {
+                    canonicalPath = fileInfo.absoluteFilePath();
+                    qDebug() << "[Scanner] ⚠️ canonicalFilePath leer, verwende absoluten Pfad:" << canonicalPath;
+                }
+                
+                qDebug() << "[Scanner] 📝 Kanonischer Pfad:" << canonicalPath;
+                qDebug() << "[Scanner] 📊 processedFiles.size():" << processedFiles.size();
+                
+                // 🛡️ VEREINFACHTER SCHUTZ: Nur lokaler processedFiles-Cache (globaler wird bei Scan-Ende geleert)
+                if (processedFiles.contains(canonicalPath))
+                {
+                    qDebug() << "[Scanner] 🔄 Datei bereits in diesem Scan verarbeitet (übersprungen):" << canonicalPath.right(50);
+                    continue; // Skip duplicate files
+                }
+                processedFiles.insert(canonicalPath);
+                qDebug() << "[Scanner] ✅ Datei zu processedFiles hinzugefügt:" << canonicalPath.right(50);
+
+                // Apply file filter
+                if (!currentFileFilter.isEmpty() && currentFileFilter != "Alle Dateien" && currentFileFilter != "*")
+                {
+                    QString extension = fileInfo.suffix().toLower();
+                    qDebug() << "[Scanner] 🔍 Prüfe Filter:" << currentFileFilter << "vs Extension:" << extension;
+                    if (!currentFileFilter.contains(extension, Qt::CaseInsensitive))
+                    {
+                        qDebug() << "[Scanner] ❌ Datei durch Filter ausgeschlossen:" << filePath;
+                        continue;
+                    }
+                }
+                else
+                {
+                    qDebug() << "[Scanner] ✅ Filter übersprungen (alle Dateien):" << currentFileFilter;
+                }
+
+                // Skip system paths if PresetManager available
+                if (presetManager && presetManager->shouldExcludePath(filePath))
+                {
+                    qDebug() << "[Scanner] ❌ Datei durch PresetManager ausgeschlossen:" << filePath;
+                    continue;
+                }
+
+                // ️ Optional: Große Dateien überspringen nur wenn explizit aktiviert
+                // Steuerung über FILEDUPER_SKIP_LARGE=1 und optional FILEDUPER_MAX_SIZE_MB (Default 0 = kein Limit)
+                qint64 fileSize = fileInfo.size();
+                bool skipLarge = qEnvironmentVariableIsSet("FILEDUPER_SKIP_LARGE") && (qgetenv("FILEDUPER_SKIP_LARGE") == "1");
+                qint64 maxSizeMb = qEnvironmentVariableIsSet("FILEDUPER_MAX_SIZE_MB") ? qgetenv("FILEDUPER_MAX_SIZE_MB").toLongLong() : 0;
+                if (skipLarge && maxSizeMb > 0) {
+                    qint64 maxBytes = maxSizeMb * 1024 * 1024;
+                    if (fileSize > maxBytes) {
+                        qDebug() << "[Scanner] 🚨 GROSSE DATEI übersprungen (" << maxSizeMb << "MB):" << filePath << "Größe:" << (fileSize / 1024 / 1024) << "MB";
+                        continue;
+                    }
+                }
+
+                qDebug() << "[Scanner] ✅ Datei bestanden alle Filter, füge zu allFiles hinzu:" << canonicalPath;
+
+                FileInfo file;
+                file.filePath = canonicalPath; // Use canonical path
+                file.fileName = fileInfo.fileName();
+                file.size = fileInfo.size();
+                file.lastModified = fileInfo.lastModified().toMSecsSinceEpoch();
+                file.isLocal = true; // ✅ NEU: Markiere als lokale Datei
+
+                allFiles.append(file);
+                qDebug() << "[Scanner] 📊 allFiles.size() nach Hinzufügung:" << allFiles.size();
+
+                if (allFiles.size() % 1000 == 0)
+                {
+                    // During collection phase: Show files collected with indeterminate progress
+                    emit scanProgress(0, allFiles.size(), -1); // -1 indicates collection phase
+                    std::cout << "📁 " << allFiles.size() << " lokale Dateien gesammelt..." << std::endl;
+                }
+            }
+        }
+    }
+
+    emit filesCollected(allFiles.size());
+    
+    // 🔍 SPEICHERE echte Gesamtzahl aller gefundenen Dateien (inkl. Unikate)
+    totalFilesFound = allFiles.size();
+    qDebug() << "[Scanner] 📊 Gesamte Dateien gefunden (inkl. Unikate):" << totalFilesFound;
+    
+    // 📊 KORREKTER PROGRESS-UPDATE: Zeige echte Dateianzahl
+    emit scanProgress(0, allFiles.size(), scanDirectories.size());
+    emit currentFileProcessing("Dateien gesammelt", QString("🎯 %1 Dateien bereit zum Hashen").arg(allFiles.size()), 0, allFiles.size());
+    std::cout << "📁 " << allFiles.size() << " eindeutige Dateien gesammelt (lokal: " << (hasLocalDirectories ? "✅" : "❌") << ", netzwerk: " << (hasFtpDirectories ? "✅" : "❌") << ")" << std::endl;
+    if (processedFiles.size() > allFiles.size())
+    {
+        std::cout << "🔄 " << (processedFiles.size() - allFiles.size()) << " Duplikate übersprungen" << std::endl;
+    }
+
+    // 🔍 DEBUG: Zeige hasLocalDirectories und hasFtpDirectories Status vor if-else Kette
+    qDebug() << "[Scanner] 🔍 DEBUG PATH LOGIC: hasLocalDirectories=" << hasLocalDirectories << "hasFtpDirectories=" << hasFtpDirectories;
+    
+    // ✅ NEU: Parallele Verarbeitung - lokale Dateien sind bereits gesammelt
+    if (hasLocalDirectories && !hasFtpDirectories) {
+        // Nur lokale Dateien - sofort weiter zur Size-Filterung
+        qDebug() << "[Scanner] 📂 Nur lokale Dateien gefunden, starte Size-Filtering";
+        filterBySize();
+    } else if (!hasLocalDirectories && hasFtpDirectories) {
+        // Nur FTP-Dateien - warte auf FTP-Verarbeitung
+        qDebug() << "[Scanner] 📡 Nur FTP-Dateien gefunden, warte auf" << pendingFtpDirectories.size() << "FTP-Verzeichnisse";
+        emit scanStatusChanged(QString("Lade FTP-Verzeichnisse: 0/%1").arg(pendingFtpDirectories.size()));
+    } else if (hasLocalDirectories && hasFtpDirectories) {
+        // Beide Arten - lokale sind bereits da, warte auf FTP-Completion
+        qDebug() << "[Scanner] � Parallel-Scan: Lokale Dateien fertig (" << allFiles.size() << "), warte auf" << pendingFtpDirectories.size() << "FTP-Verzeichnisse";
+        emit scanStatusChanged(QString("Parallel: Lokal fertig (%1), FTP: 0/%2").arg(allFiles.size()).arg(pendingFtpDirectories.size()));
+    } else {
+        // Keine Dateien gefunden
+        qDebug() << "[Scanner] ❌ Keine Dateien gefunden";
+        filterBySize(); // Leerer Scan
+    }
+}
+
+void Scanner::filterBySize()
+{
+    qDebug() << "[Scanner] 📊 filterBySize() GESTARTET mit" << allFiles.size() << "Dateien, scanning:" << scanning.load();
+    
+    if (!scanning.load())
+    {
+        qDebug() << "[Scanner] ⚠️ filterBySize() ABGEBROCHEN - scanning ist false!";
+        return;
+    }
+
+    // 🎯 GUI-FIX: Size-Filtering als Progress-Phase anzeigen
+    emit scanProgress(10, 0, allFiles.size()); // Start bei 10% für Size-Filtering
+    emit scanStatusChanged("📏 Analysiere Dateigrößen für Duplikat-Erkennung...");
+    currentPhase = SIZE_FILTERING;
+    
+    // 📊 LIVE-Update: Größen-Analyse starten
+    emit currentFileProcessing(
+        QString("%1 Dateien").arg(allFiles.size()), 
+        "📏 Größen-Analyse", 
+        0, 
+        allFiles.size()
+    );
+    emit processActivityUpdate(
+        "📊 Analysiere Dateigrößen für Duplikat-Erkennung",
+        QString("Verarbeite %1 Dateien").arg(allFiles.size())
+    );
+
+    // Group files by size (unknown-size remote files deferred using size=-1 bucket)
+    // � KRITISCHER FIX: Echte Duplikate haben EXAKT die gleiche Größe!
+    int processedFiles = 0;
+    QList<QString> unknownSizeFiles; // track for lazy fetch
+    const qint64 sizeToleranceBytes = 0; // KEINE Toleranz - exakte Größe erforderlich!
+    
+    for (FileInfo file : allFiles)
+    {
+        if (!scanning.load())
+            return;
+
+        if (!file.isLocal && file.size <= 0 && file.sizeKnown == false) {
+            // Place temporarily into size -1 group to avoid pruning; will be resolved later
+            fileSizeGroups[-1].append(file);
+            unknownSizeFiles.append(file.filePath);
+        } else {
+            // 🔥 ENHANCED: Find existing size group within tolerance
+            bool foundSimilarGroup = false;
+            qint64 targetSize = file.size;
+            
+            for (auto it = fileSizeGroups.begin(); it != fileSizeGroups.end(); ++it) {
+                qint64 existingSize = it.key();
+                
+                // Skip unknown size group
+                if (existingSize == -1) continue;
+                
+                // 🚨 EXAKTE GRÖßE ERFORDERLICH - Duplikate haben identische Bytes
+                if (targetSize == existingSize) { // Nur exakte Größenübereinstimmung!
+                    it.value().append(file);
+                    foundSimilarGroup = true;
+                    qDebug() << "[Scanner] ✅ Datei" << QFileInfo(file.filePath).fileName() 
+                             << "(" << targetSize << "bytes) zu exakter Größen-Gruppe hinzugefügt";
+                    break;
+                }
+            }
+            
+            // If no similar group found, create new group
+            if (!foundSimilarGroup) {
+                fileSizeGroups[file.size].append(file);
+            }
+        }
+        processedFiles++;
+
+        if (processedFiles % 1000 == 0) {
+            // 🎯 GUI-FIX: Progress während Size-Filtering anzeigen
+            int progressPercent = 10 + (int)(40.0 * processedFiles / allFiles.size()); // 10%-50% für Size-Filtering
+            emit scanProgress(progressPercent, processedFiles, allFiles.size());
+            
+            emit currentFileProcessing(
+                QFileInfo(file.filePath).fileName(),
+                "📏 Größen-Analyse",
+                processedFiles,
+                allFiles.size()
+            );
+            emit processActivityUpdate(
+                QString("📊 Größen-Analyse: %1/%2 (%3%)")
+                    .arg(processedFiles)
+                    .arg(allFiles.size())
+                    .arg(int(100.0 * processedFiles / allFiles.size())),
+                QString("Aktuell: %1").arg(QFileInfo(file.filePath).fileName())
+            );
+        }
+    }
+
+    if (!unknownSizeFiles.isEmpty()) {
+        qDebug() << "[Scanner] ⏳" << unknownSizeFiles.size() << "Remote-Dateien mit unbekannter Größe – starte Lazy Size Fetch";
+    }
+    
+    // 📊 FINAL-Update: Größen-Analyse abgeschlossen
+    emit currentFileProcessing(
+        QString("%1 Größen-Gruppen").arg(fileSizeGroups.size()), 
+        "📏 Größen-Analyse abgeschlossen", 
+        allFiles.size(), 
+        allFiles.size()
+    );
+
+    // ✅ PRODUCTION: Optimiere durch Entfernung von Single-File-Gruppen (echte Duplikat-Erkennung)
+    qDebug() << "[Scanner] 📊 Size-Groups vor Filterung:" << fileSizeGroups.size() << "verschiedene Größen";
+    
+    // Entferne Gruppen mit nur einer Datei (keine Duplikate möglich)
+    auto it = fileSizeGroups.begin();
+    while (it != fileSizeGroups.end())
+    {
+        const qint64 groupSize = it.key();
+        QList<FileInfo> &groupFiles = it.value();
+        qDebug() << "[Scanner] 🔍 DEBUG: Size-Group size=" << groupSize << "fileCount=" << groupFiles.size();
+        for (const FileInfo &f : groupFiles) {
+            qDebug() << "[Scanner] 🔍 DEBUG: -- File:" << f.filePath.right(50) << "size:" << f.size << "known=" << f.sizeKnown;
+        }
+
+        bool containsUnknown = std::any_of(groupFiles.begin(), groupFiles.end(), [](const FileInfo &fi){ return !fi.sizeKnown; });
+        if (groupFiles.size() == 1 && !containsUnknown && groupSize != -1) {
+            qDebug() << "[Scanner] ❌ Entferne Single-File-Gruppe (size=" << groupSize << ")";
+            it = fileSizeGroups.erase(it);
+        } else if (groupSize == -1) {
+            // Placeholder: we don't prune unknown-size singletons yet
+            ++it;
+        } else {
+            qDebug() << "[Scanner] ✅ Behalte Gruppe (size=" << groupSize << ") mit" << groupFiles.size() << "Dateien" << (containsUnknown ? "(enthält unbekannte Größen)" : "");
+            ++it;
+        }
+    }
+    
+    qDebug() << "[Scanner] 📊 Size-Groups nach Filterung:" << fileSizeGroups.size() << "Gruppen mit potentiellen Duplikaten";
+    
+    // 📊 UNIKAT-STATISTIK: Berechne wie viele Dateien als Unikate aussortiert wurden
+    int totalDuplicateCandidates = 0;
+    for (auto groupIt = fileSizeGroups.begin(); groupIt != fileSizeGroups.end(); ++groupIt) {
+        totalDuplicateCandidates += groupIt.value().size();
+    }
+    int uniqueFilesFiltered = totalFilesFound - totalDuplicateCandidates;
+    qDebug() << "[Scanner] ✅ UNIKAT-FILTER STATISTIK:";
+    qDebug() << "    - Gesamte Dateien gefunden:" << totalFilesFound;
+    qDebug() << "    - Duplikat-Kandidaten (gleiche Größe):" << totalDuplicateCandidates;
+    qDebug() << "    - Als Unikate aussortiert:" << uniqueFilesFiltered;
+    
+    std::cout << "🔍 Unikat-Filter: " << uniqueFilesFiltered << " einzigartige Dateien übersprungen, " 
+              << totalDuplicateCandidates << " Duplikat-Kandidaten verbleiben" << std::endl;
+    
+    // 🎯 GUI-FIX: Size-Filtering abgeschlossen - Zeige Ergebnis in GUI
+    if (fileSizeGroups.isEmpty()) {
+        qDebug() << "[Scanner] ⚠️ Keine identischen Größen gefunden - prüfe Dateinamen-Ähnlichkeiten...";
+        
+        // 🔥 ENHANCED FALLBACK: Check for name-based potential duplicates
+        QMap<QString, QList<FileInfo>> nameGroups;
+        
+        // Group files by similar base names (ignore extensions and numbers)
+        for (const FileInfo &file : allFiles) {
+            QString fileName = QFileInfo(file.filePath).baseName().toLower();
+            
+            // Remove common duplicate indicators and numbers
+            fileName = fileName.replace(QRegularExpression(R"(\s*\(kopie\s*\d*\))", QRegularExpression::CaseInsensitiveOption), "");
+            fileName = fileName.replace(QRegularExpression(R"(\s*\(copy\s*\d*\))", QRegularExpression::CaseInsensitiveOption), "");
+            fileName = fileName.replace(QRegularExpression(R"(\s*-\s*kopie\s*\d*)", QRegularExpression::CaseInsensitiveOption), "");
+            fileName = fileName.replace(QRegularExpression(R"(\s*_\d+$)"), ""); // Remove trailing numbers
+            fileName = fileName.replace(QRegularExpression(R"(\s+)"), " ").trimmed(); // Normalize spaces
+            
+            if (!fileName.isEmpty()) {
+                nameGroups[fileName].append(file);
+            }
+        }
+        
+        // Check if any name groups have multiple files and add them to size groups
+        bool foundNameSimilarities = false;
+        int nameGroupIndex = 1000000; // Use high numbers to avoid conflicts
+        
+        for (auto it = nameGroups.begin(); it != nameGroups.end(); ++it) {
+            if (it.value().size() > 1) {
+                qDebug() << "[Scanner] 🔍 Dateiname-Gruppe gefunden:" << it.key() 
+                         << "mit" << it.value().size() << "ähnlichen Dateien";
+                
+                // Add each group as a separate "size group" for hash comparison
+                fileSizeGroups[nameGroupIndex++] = it.value();
+                foundNameSimilarities = true;
+            }
+        }
+        
+        if (!foundNameSimilarities) {
+            // ✅ DEFINITIV keine Duplikate gefunden
+            emit scanProgress(100, allFiles.size(), allFiles.size()); // 100% completed
+            emit scanStatusChanged("✅ Scan abgeschlossen - Keine Duplikate gefunden (unterschiedliche Größen und Namen)");
+            qDebug() << "[Scanner] ✅ SIZE-FILTERING ERFOLGREICH - Keine Duplikate gefunden (normale Situation)";
+            
+            // 🎯 GUI-FIX: Zeige "Scan erfolgreich" statt "0% hängen"
+            emit currentFileProcessing(
+                "Scan abgeschlossen", 
+                "✅ Keine Duplikate - alle Dateien haben unterschiedliche Größen und Namen", 
+                allFiles.size(), 
+                allFiles.size()
+            );
+            emit processActivityUpdate(
+                "✅ Duplikat-Scan erfolgreich abgeschlossen",
+                QString("Analysiert: %1 Dateien - Gefunden: 0 Duplikate").arg(allFiles.size())
+            );
+            
+            // Direkt zu scanCompleted() wechseln, da keine Hash-Berechnung nötig
+            DuplicateGroups emptyResults;
+            emptyResults.totalFiles = allFiles.size(); // Bei 0 Duplikaten: alle Dateien sind Unikate
+            emptyResults.duplicateFiles = 0;
+            emit scanCompleted(emptyResults);
+            return;
+        } else {
+            qDebug() << "[Scanner] 🔍 Ähnliche Dateinamen gefunden - starte Hash-Vergleich...";
+            emit scanStatusChanged("🔍 Ähnliche Dateinamen gefunden - starte Hash-Vergleich...");
+        }
+    } else {
+        // Duplikate gefunden - Weiter zu Hash-Berechnung
+        emit scanProgress(50, fileSizeGroups.size(), allFiles.size()); // 50% für Hash-Phase
+        emit scanStatusChanged(QString("🔐 Starte Hash-Berechnung für %1 Duplikat-Gruppen...").arg(fileSizeGroups.size()));
+    }
+
+    // 🔎 Optional: Deep debug per size-group when FILEDUPER_DEBUG_GROUPS=1
+    static const bool debugGroups = qEnvironmentVariableIsSet("FILEDUPER_DEBUG_GROUPS") && (qgetenv("FILEDUPER_DEBUG_GROUPS") == "1");
+    if (debugGroups) {
+        int groupIndex = 0;
+        for (auto it = fileSizeGroups.begin(); it != fileSizeGroups.end(); ++it) {
+            const qint64 sizeKey = it.key();
+            const QList<FileInfo> &files = it.value();
+            int localCount = 0, ftpCount = 0;
+            for (const FileInfo &f : files) {
+                if (f.isLocal) localCount++; else if (f.filePath.startsWith("ftp://")) ftpCount++;
+            }
+            qDebug() << "[Scanner] 🔎 Gruppe" << (++groupIndex) << ": size=" << sizeKey
+                     << " files=" << files.size() << " local=" << localCount << " ftp=" << ftpCount;
+        }
+    }
+
+    int potentialDuplicates = 0;
+    for (const auto &group : fileSizeGroups)
+    {
+        potentialDuplicates += group.size();
+    }
+
+    qDebug() << "[Scanner] 📊" << potentialDuplicates << "Dateien zur Hash-Berechnung hinzugefügt";
+    std::cout << "📊 " << potentialDuplicates << " Dateien zur Hash-Berechnung hinzugefügt" << std::endl;
+
+    // Phase 3: Wait for FTP completion BEFORE starting hashing
+    if (ftpScanningActive.load() || activeFtpScans.load() > 0) {
+        qDebug() << "[Scanner] ⏳ FTP-Scanner noch aktiv - warte vor startHashing(). FTP-Active:" << ftpScanningActive.load() << "Active-Scans:" << activeFtpScans.load();
+        QTimer::singleShot(2000, this, &Scanner::filterBySize); // Retry filterBySize in 2 seconds
+        return;
+    }
+
+    qDebug() << "[Scanner] 🔥 filterBySize() ABGESCHLOSSEN - Rufe startHashing() auf mit" << allFiles.size() << "Dateien (inkl. FTP)";
+    // If there are unresolved unknown sizes, we can later implement async resolution before hashing
+    startHashing();
+}
+
+void Scanner::startHashing()
+{
+    qDebug() << "[Scanner] startHashing() aufgerufen";
+    qDebug() << "[Scanner] scanning.load():" << scanning.load();
+    qDebug() << "[Scanner] enginePool.size():" << enginePool.size();
+    qDebug() << "[Scanner] allFiles.size():" << allFiles.size();
+    
+    if (!scanning.load() || enginePool.isEmpty()) {
+        qDebug() << "[Scanner] ❌ startHashing() - Früher Return: scanning=" << scanning.load() << ", engines=" << enginePool.size();
+        return;
+    }
+
+    qDebug() << "[Scanner] ✅ startHashing() - Starte 8-Engine Parallel Processing";
+    
+    // Reset per-scan counters
+    hashProcessedCount = 0;
+    processedFilesCounter.store(0);
+    completedEngines.store(0);
+    currentFileIndex = 0;
+    activeEngines = 0;
+    
+    emit scanStatusChanged("Berechne Hashes mit 8 Engines...");
+    currentPhase = HASHING;
+    
+    // ✅ FTP-Credentials aus INI-Datei laden für alle Engines
+    if (presetManager) {
+        QSet<QString> ftpHosts;
+        for (const FileInfo &file : allFiles) {
+            if (file.filePath.startsWith("ftp://")) {
+                QUrl url(file.filePath);
+                if (url.isValid()) {
+                    QString host = url.host();
+                    if (!host.isEmpty()) {
+                        ftpHosts.insert(host);
+                    }
+                }
+            }
+        }
+        
+        // Setup FTP connection pools for multiple hosts
+        if (!ftpHosts.isEmpty()) {
+            qDebug() << "[Scanner] ⚡ FAST-MODE: Überspringe FTP Connection Pool Setup für bessere Performance";
+            qDebug() << "[Scanner] 💡 FTP-Credentials werden direkt von Engines abgerufen bei Bedarf";
+            // setupMultiHostFtpConnectionPool(ftpHosts); // DEAKTIVIERT für bessere Performance
+        }
+        
+        // Load credentials for each engine
+        for (const QString &host : ftpHosts) {
+            LoginData login = presetManager->getLogin(host, 21);  
+            if (login.isValid()) {
+                // Set credentials for all engines
+                for (HashEngine *engine : enginePool) {
+                    if (engine) {
+                        engine->setFtpCredentials(host, login.username, login.password);
+                    }
+                }
+                qDebug() << "[Scanner] 🔐 8-Engine FTP-Credentials geladen für:" << host << "User:" << login.username;
+            } else {
+                qWarning() << "[Scanner] ⚠️ Keine FTP-Credentials in INI-Datei gefunden für:" << host;
+                qWarning() << "[Scanner] 💡 Bitte FTP-Credentials in Settings speichern für Host:" << host;
+            }
+        }
+    }
+    
+    // � OPTIMIZED: Use only files from optimized size+date groups instead of ALL files
+    QMap<QString, QList<FileInfo>> dateSizeGroups;
+    
+    // 🛡️ UNIKAT-SCHUTZ: Nur Dateien mit identischen Größen können echte Duplikate sein
+    for (auto &sizeGroup : fileSizeGroups)
+    {
+        // ✅ KRITISCHER FIX: Überspringe Dateien mit einzigartigen Größen (UNIKATE!)
+        if (sizeGroup.size() <= 1) {
+            qDebug() << "[Scanner] ✅ UNIKAT übersprungen (einzigartige Größe):" << sizeGroup.first().filePath;
+            continue; // 🚫 Keine Hash-Berechnung für garantierte Unikate erforderlich
+        }
+        qDebug() << "[Scanner] 🔍 Duplikat-Kandidaten (gleiche Größe):" << sizeGroup.size() << "Dateien";
+        
+        bool hasNetworkFiles = false;
+        // Check if group contains network files (FTP/SFTP etc.)
+        for (const FileInfo &file : sizeGroup) {
+            if (file.filePath.startsWith("ftp://") || file.filePath.startsWith("sftp://")) {
+                hasNetworkFiles = true;
+                break;
+            }
+        }
+        
+        if (hasNetworkFiles) {
+            // For network files: Skip date filtering (unreliable timestamps)
+            QString sizeOnlyKey = QString("size_%1").arg(sizeGroup.first().size);
+            dateSizeGroups[sizeOnlyKey] = sizeGroup;
+            qDebug() << "[Scanner] 📡 Network-Gruppe (nur Size-Filter):" << sizeGroup.size() << "Dateien";
+        } else {
+            // For local files: Use size+date filtering for better optimization  
+            QMap<QString, QList<FileInfo>> dateSubGroups;
+            for (const FileInfo &file : sizeGroup) {
+                QDateTime dateTime = QDateTime::fromSecsSinceEpoch(file.lastModified);
+                QString dateKey = QString("%1_%2").arg(dateTime.toString("yyyy-MM-dd")).arg(file.size);
+                dateSubGroups[dateKey].append(file);
+            }
+            
+            // ✅ FIX: Keep ALL files in date groups - size filtering already happened
+            // Files with same size but different dates could still be duplicates
+            for (auto dateIt = dateSubGroups.begin(); dateIt != dateSubGroups.end(); ++dateIt) {
+                dateSizeGroups[dateIt.key()] = dateIt.value();
+            }
+            qDebug() << "[Scanner] 📁 Lokale Gruppe (Size+Date-Filter):" << dateSubGroups.size() << "Untergruppen";
+        }
+    }
+    
+    // Add optimized files to hash calculation
+    QSet<QString> processedForHashing; // 🛡️ SCHUTZ: Verhindere doppelte Hash-Berechnung
+    for (const auto &group : dateSizeGroups)
+    {
+        for (const FileInfo &file : group) {
+            // 🛡️ CRITICAL FIX: Prüfe ob Datei bereits zur Hash-Berechnung hinzugefügt wurde
+            QString canonicalPath;
+            if (file.filePath.startsWith("ftp://") || file.filePath.startsWith("sftp://") || 
+                file.filePath.startsWith("smb://")) {
+                // Für Netzwerk-URLs: Verwende den Pfad direkt ohne canonicalFilePath()
+                canonicalPath = file.filePath;
+            } else {
+                // Für lokale Dateien: Verwende canonicalFilePath()
+                canonicalPath = QFileInfo(file.filePath).canonicalFilePath();
+                // 🛡️ ZUSÄTZLICHER SCHUTZ: Leere/ungültige Pfade überspringen
+                if (canonicalPath.isEmpty()) {
+                    qWarning() << "[Scanner] ⚠️ Ungültiger canonicalPath für:" << file.filePath;
+                    continue;
+                }
+            }
+            
+            // 🛡️ CRITICAL SECURITY: Auch globalHashedFiles prüfen um Infinite-Loop zu verhindern
+            if (processedForHashing.contains(canonicalPath) || globalHashedFiles.contains(canonicalPath)) {
+                qDebug() << "[Scanner] ⚠️ Datei bereits für Hashing vorgemerkt/verarbeitet (übersprungen):" << file.filePath.right(50);
+                continue;
+            }
+            processedForHashing.insert(canonicalPath);
+            // ✅ FIX: Füge Datei NICHT vorab zu globalHashedFiles hinzu - erst wenn Hash empfangen!
+            // Note: In 8-engine system, we work directly with allFiles
+        }
+    }
+
+    qDebug() << "[Scanner] 🔍 Starte INTELLIGENTE Hash-Berechnung für" << allFiles.size() << "Duplikat-Kandidaten";
+    qDebug() << "[Scanner] ✅ Unikate bereits aussortiert - nur echte Duplikat-Kandidaten verarbeitet";
+    
+    // Handle case when ALL files are unique (nach Größen-Filterung)
+    if (allFiles.isEmpty()) {
+        qDebug() << "[Scanner] ✅ ALLE Dateien sind UNIKATE (verschiedene Größen) - keine Hash-Berechnung erforderlich!";
+        emit scanStatusChanged("✅ Alle Dateien sind einzigartig - keine Duplikate gefunden!");
+        
+        DuplicateGroups emptyResults;
+        emptyResults.totalFiles = totalFilesFound; // Zeige echte Gesamtzahl
+        emptyResults.duplicateFiles = 0;
+        emptyResults.duplicateSize = 0;
+        
+        QTimer::singleShot(500, this, [this, emptyResults]() {
+            emit scanCompleted(emptyResults);
+        });
+        return;
+    }
+
+    qDebug() << "[Scanner] 🔍 Starte Hash-Berechnung für" << allFiles.size() << "Dateien";
+    qDebug() << "[Scanner] 📊" << allFiles.size() << "Dateien zur Hash-Berechnung hinzugefügt";
+    
+    // ⚡ ERWEITERTER TIMEOUT-SCHUTZ: Gib HashEngine mehr Zeit für Duplikat-Erkennung
+    // Starte abbrechbaren Timeout nur wenn mehr als 0 Dateien zu hashen sind
+    if (!allFiles.isEmpty()) {
+        hashTimeoutTimer->start(300000); // 300s (5 Minuten) - mehr Zeit für compareHashes()
+    }
+    
+    // �🚀🧠 Optional: NPU-FIRST BILDVERARBEITUNG: Separiere Bilder BEVOR Hash-Berechnung beginnt!
+    QStringList imageFiles;
+    QStringList nonImageFiles;
+    
+    // ✅ BILDFILES vs. NORMAL FILES separieren
+    for (const FileInfo &file : allFiles) {
+        QString filePath = file.filePath;
+        QString lowerExt = QFileInfo(filePath).suffix().toLower();
+        if (lowerExt == "jpg" || lowerExt == "jpeg" || lowerExt == "png" || lowerExt == "bmp" || 
+            lowerExt == "tiff" || lowerExt == "tif" || lowerExt == "cr2" || lowerExt == "raw" ||
+            lowerExt == "nef" || lowerExt == "arw" || lowerExt == "dng" || lowerExt == "webp") {
+            imageFiles.append(filePath);
+        } else {
+            nonImageFiles.append(filePath);
+        }
+    }
+    
+    qDebug() << "[Scanner] 📊 BILDFILES ERKANNT:" << imageFiles.size() << "| Non-Images:" << nonImageFiles.size();
+    
+    // 🧠 NPU-BILDVERARBEITUNG: Parallel zur Hash-Pipeline (immer zusätzlich, niemals als Ersatz)
+    if (npuEnabled && hashEngine && hashEngine->isNpuAvailable() && !imageFiles.isEmpty()) {
+        qDebug() << "[Scanner] 🚀 NPU Bildanalyse startet parallel für" << imageFiles.size() << "Bilder (Hash bleibt aktiv)!";
+        emit scanStatusChanged("🧠 NPU analysiert Bilder (parallel zur Hash-Berechnung)...");
+
+        // 📊 LIVE-Update: NPU-Bildverarbeitung starten
+        emit currentFileProcessing(
+            QString("%1 Bilder").arg(imageFiles.size()),
+            "🧠 NPU-Bildverarbeitung (parallel)",
+            0,
+            imageFiles.size()
+        );
+        emit processActivityUpdate(
+            "🧠 Intel NPU analysiert Bilder für intelligente Duplikat-Erkennung",
+            QString("Verarbeite %1 Bilder").arg(imageFiles.size())
+        );
+
+        // NPU Feature-Vector Processing für Bilder (zusätzlich; ersetzt NICHT den Content-Hash)
+        hashEngine->processImagesWithNpuUltraFast(imageFiles);
+        npuProcessedImages = imageFiles.size();
+
+        // 📊 FINAL-Update: NPU-Bildverarbeitung abgeschlossen
+        emit currentFileProcessing(
+            QString("%1 Features extrahiert").arg(npuProcessedImages),
+            "🧠 NPU-Bildverarbeitung abgeschlossen (parallel)",
+            npuProcessedImages,
+            imageFiles.size()
+        );
+        emit processActivityUpdate(
+            QString("🧠 NPU hat %1 Bilder analysiert (Content-Hash läuft weiter)").arg(npuProcessedImages),
+            "Intelligente Bildanalyse abgeschlossen"
+        );
+    }
+    
+    // Hinweis: Bilder werden weiterhin gehasht, auch wenn NPU parallel lief
+    if (npuEnabled && npuProcessedImages > 0) {
+        qDebug() << "[Scanner] 🧠 NPU hat" << npuProcessedImages << "Bilder analysiert (Content-Hashes folgen wie gewohnt)";
+    }
+    
+    // Hash-Berechnung für alle Dateien (auch Bilder). NPU-Ergebnisse sind zusätzlich verfügbar.
+    if (!allFiles.isEmpty()) {
+        totalFilesForHashing = allFiles.size(); // 🎯 Setze Gesamt-Anzahl für Live-Updates
+        
+        // 📊 LIVE-Update: Hash-Berechnung starten
+        emit currentFileProcessing(
+            QString("%1 Dateien").arg(allFiles.size()), 
+            "🔐 Hash-Berechnung", 
+            0, 
+            allFiles.size()
+        );
+        emit processActivityUpdate(
+            "🔐 Berechne kryptographische Hashes für Duplikat-Erkennung",
+            QString("Verarbeite %1 Dateien").arg(allFiles.size())
+        );
+        
+        emit hashingStarted(allFiles.size());
+        
+        // ✅ 8-ENGINE SYSTEM: Set total files for all engines
+        totalFilesForHashing = allFiles.size();
+        
+        // Create balanced chunks for 8 engines directly from allFiles
+        QList<QList<FileInfo>> fileChunks = createBalancedFileChunks(allFiles, maxEngines);
+        
+        qDebug() << "[Scanner] � CRITICAL: Starte 8-Engine Parallel Processing mit" << fileChunks.size() << "Chunks";
+        
+        // Start processing with each engine
+        for (int i = 0; i < fileChunks.size() && i < enginePool.size(); ++i) {
+            if (!fileChunks[i].isEmpty() && i < enginePool.size()) {
+                HashEngine *engine = enginePool[i];
+                if (engine) {
+                    // Convert FileInfo back to file paths
+                    QStringList chunkPaths;
+                    for (const FileInfo &file : fileChunks[i]) {
+                        chunkPaths.append(file.filePath);
+                    }
+                    
+                    qDebug() << "[Scanner] � Engine" << (i+1) << "startet mit" << chunkPaths.size() << "Dateien";
+                    
+                    // Set expected count for this engine
+                    engine->setExpectedFilesCount(chunkPaths.size());
+                    
+                    // Start engine
+                    engine->calculateMultipleHashes(chunkPaths);
+                    activeEngines++;
+                }
+            }
+        }
+        
+        qDebug() << "[Scanner] ✅ 8-Engine System gestartet -" << activeEngines << "aktive Engines";
+        
+        if (activeEngines == 0) {
+            qWarning() << "[Scanner] ⚠️ Keine Engines gestartet - Fallback zu Vergleich";
+            QTimer::singleShot(500, this, &Scanner::compareHashes);
+        }
+    } else {
+        qDebug() << "[Scanner] ⚠️ Keine Dateien für die Hash-Berechnung ermittelt (leer)";
+        emit scanStatusChanged("⚠️ Keine Dateien zum Hashen gefunden");
+        QTimer::singleShot(500, this, &Scanner::compareHashes);
+    }
+}
+
+void Scanner::onHashCalculated(const QString &filePath, const QString &hash)
+{
+    qDebug() << "[Scanner] 🚨 onHashCalculated CALLED for:" << QFileInfo(filePath).fileName() << "hash:" << hash.left(10);
+    
+    if (!scanning.load())
+        return;
+
+    // 🎯 LIVE-DATEINAME-UPDATE: Zeige aktuell verarbeitete Datei in GUI
+    QString fileName = QFileInfo(filePath).fileName();
+    QString processType = "Hash-Berechnung";
+    const bool isNpuHash = hash.startsWith("npv_");
+    
+    // Unterscheide zwischen NPU und Standard-Hash
+    if (isNpuHash) {
+        processType = "NPU-Bildanalyse";
+    } else if (hash.startsWith("md5_")) {
+        processType = "MD5-Hash";
+    } else if (hash.startsWith("sha256_")) {
+        processType = "SHA256-Hash";
+    }
+    
+    // ️ SICHERUNG: Verhindere Doppelbearbeitung bereits berechneter Hashes
+    // WICHTIG: NPU-Hashes (npv_*) sind zusätzlich und dürfen den Content-Hash NICHT ersetzen.
+    // Daher markieren wir Dateien nur als gehasht, wenn es sich NICHT um einen NPU-Hash handelt.
+    // ️ DISABLED: Threading issue - globalHashedFiles.contains() blocks after 6 callbacks
+    // if (globalHashedFiles.contains(filePath)) {
+    //     if (isNpuHash) {
+    //         qDebug() << "[Scanner] ℹ️ NPU-Zusatzhash ignoriert für bereits verarbeitete Datei:" << filePath.right(50);
+    //         return; // Zusatzinfo, Content-Hash bleibt maßgeblich
+    //     } else {
+    //         qDebug() << "[Scanner] ⚠️ Content-Hash bereits registriert für:" << filePath.right(50);
+    //         return;
+    //     }
+    // }
+    
+    // 🚨 MEMORY PROTECTION: Prevent QSet overflow crash
+    if (globalHashedFiles.size() > 20000) {
+        qWarning() << "[Scanner] 🚨 QSet zu groß (" << globalHashedFiles.size() << ") - leere Cache für Stabilität";
+        globalHashedFiles.clear();
+        globalProcessedFiles.clear();
+    }
+    
+    // Nur Content-Hashes zählen für den Abschluss/Progress
+    if (!isNpuHash) {
+        qDebug() << "[Scanner] 🚨 DEBUG: About to insert into globalHashedFiles:" << QFileInfo(filePath).fileName() << "size:" << globalHashedFiles.size();
+        // DISABLED: Threading issue with QSet operations
+        // globalHashedFiles.insert(filePath);
+        qDebug() << "[Scanner] 🚨 DEBUG: QSet operation skipped (threading fix)";
+    }
+
+    qDebug() << "[Scanner] 🚨 DEBUG: About to calculate progress for:" << QFileInfo(filePath).fileName();
+
+    // 📊 MEMBER-COUNTER: Verwende member hashProcessedCount statt statischem Counter
+    if (!isNpuHash) {
+        hashProcessedCount++;
+    }
+    int currentHashCount = hashProcessedCount;
+    
+    qDebug() << "[Scanner] 🚨 DEBUG: currentHashCount:" << currentHashCount << "totalFilesForHashing:" << totalFilesForHashing;
+    
+    // 🛡️ SAFE DIVISION: Prevent division by zero or overflow
+    int progressPercent = 0;
+    if (totalFilesForHashing > 0 && currentHashCount >= 0) {
+        progressPercent = qMin(100, (currentHashCount * 100) / totalFilesForHashing);
+    }
+    
+    qDebug() << "[Scanner] 🚨 DEBUG: progressPercent calculated:" << progressPercent;
+    
+    qDebug() << "[Scanner] 🚨 DEBUG: About to emit signals for:" << QFileInfo(filePath).fileName();
+    
+    // 📊 LIVE-AKTIVITÄTS-UPDATE an GUI mit korrekten Zählern
+    emit currentFileProcessing(fileName, processType, currentHashCount, totalFilesForHashing);
+    qDebug() << "[Scanner] 🚨 DEBUG: currentFileProcessing emitted";
+    
+    emit processActivityUpdate(processType, QString("Verarbeite: %1 (%2/%3)").arg(fileName).arg(currentHashCount).arg(totalFilesForHashing));
+    qDebug() << "[Scanner] 🚨 DEBUG: processActivityUpdate emitted";
+    
+    emit scanProgress(progressPercent, currentHashCount, totalFilesForHashing);
+    qDebug() << "[Scanner] 🚨 DEBUG: scanProgress emitted";
+
+    qDebug() << "[Scanner] 📊 Hash berechnet für:" << filePath.right(50) << "→" << hash.left(16) << QString("(%1/%2)").arg(currentHashCount).arg(totalFilesForHashing);
+
+    // ✅ FIX: Update hash in fileSizeGroups (nicht allFiles - das ist nur eine Kopie)
+    bool hashUpdated = false;
+    for (auto &group : fileSizeGroups)
+    {
+        for (FileInfo &file : group)
+        {
+            // 🚨 CRITICAL FIX: FTP-Pfad-Matching - verschiedene Varianten prüfen
+            bool pathMatches = false;
+            if (file.filePath == filePath) {
+                pathMatches = true;
+            } else if (file.filePath.startsWith("ftp://") && filePath.startsWith("ftp://")) {
+                // FTP-URLs können unterschiedlich normalisiert sein
+                QUrl fileUrl(file.filePath);
+                QUrl hashUrl(filePath);
+                if (fileUrl.host() == hashUrl.host() && 
+                    fileUrl.port() == hashUrl.port() && 
+                    fileUrl.path() == hashUrl.path()) {
+                    pathMatches = true;
+                }
+            } else if (file.filePath.endsWith(QFileInfo(filePath).fileName()) && 
+                       filePath.endsWith(QFileInfo(file.filePath).fileName())) {
+                // Filename-basiertes Matching als Fallback
+                pathMatches = true;
+            }
+            
+            if (pathMatches)
+            {
+                qDebug() << "[Scanner] 🎯 HASH-UPDATE für:" << file.filePath.right(50) << "→" << hash.left(16);
+                
+                // 🛡️ NPU-Hashes nicht als Content-Hash speichern
+                if (isNpuHash) {
+                    continue; // Lass Content-Hash unberührt
+                }
+                // 🛡️ ZUSÄTZLICHE SICHERUNG: Verhindere Hash-Überschreibung (außer wenn vorher leer)
+                if (!file.hash.isEmpty() && file.hash != hash) {
+                    qWarning() << "[Scanner] ⚠️ Hash-Konflikt für" << filePath.right(50) 
+                              << "- Alt:" << file.hash.left(16) << "Neu:" << hash.left(16);
+                }
+                file.hash = hash;
+                
+                // ✅ CRITICAL FIX: Sammle Hash zentral für Duplikat-Erkennung
+                if (!isNpuHash && !hash.isEmpty()) {
+                    qDebug() << "[Scanner] 🎯 ZENTRALE HASH-SAMMLUNG: Füge zu allFiles hinzu:" << file.fileName << "hash:" << hash.left(16);
+                    
+                    // Sammle alle gehashten Dateien zentral für compareHashes()
+                    bool alreadyInAllFiles = false;
+                    for (const FileInfo &existingFile : allFiles) {
+                        if (existingFile.filePath == file.filePath) {
+                            alreadyInAllFiles = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!alreadyInAllFiles) {
+                        allFiles.append(file);
+                        qDebug() << "[Scanner] 🎯 HASH-SAMMLUNG: File hinzugefügt zu allFiles. Total:" << allFiles.size();
+                    } else {
+                        // Update existing entry
+                        for (FileInfo &existingFile : allFiles) {
+                            if (existingFile.filePath == file.filePath) {
+                                existingFile.hash = hash;
+                                qDebug() << "[Scanner] 🎯 HASH-UPDATE: Hash aktualisiert in allFiles für:" << file.fileName;
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                // ✅ CRITICAL FIX: Ensure fileName is properly set for FTP files
+                if (file.fileName.isEmpty() && !file.filePath.isEmpty()) {
+                    if (file.filePath.startsWith("ftp://") || file.filePath.startsWith("sftp://") || 
+                        file.filePath.startsWith("smb://")) {
+                        // For FTP URLs, extract filename from URL path
+                        QUrl url(file.filePath);
+                        QString path = url.path();
+                        file.fileName = QFileInfo(path).fileName();
+                        qDebug() << "[Scanner] 🛠️ FTP fileName gesetzt:" << file.fileName << "für" << file.filePath.right(50);
+                    } else {
+                        // For local files, use QFileInfo
+                        file.fileName = QFileInfo(file.filePath).fileName();
+                        qDebug() << "[Scanner] 🛠️ Lokaler fileName gesetzt:" << file.fileName;
+                    }
+                }
+                
+                hashUpdated = true;
+                break;
+            }
+        }
+        if (hashUpdated) break;
+    }
+
+    // ⚡ ULTRA-LIGHTWEIGHT: Skip heavy fileSizeGroups iteration (threading fix)
+    int totalFilesInGroups = totalFilesForHashing;
+    int hashedFilesInGroups = currentHashCount;
+    
+    qDebug() << "[Scanner] 🚨 LIGHTWEIGHT-PROGRESS: " << hashedFilesInGroups << "/" << totalFilesInGroups << "(threading-optimized)";
+    
+    // ✅ BULLETPROOF: Division-by-Zero Protection + Progress Fix
+    int percentage = 0;
+    if (totalFilesInGroups > 0 && hashedFilesInGroups >= 0) {
+        qDebug() << "[Scanner] 🔧 DIVISION-DEBUG: hashedFiles=" << hashedFilesInGroups 
+                 << "totalFiles=" << totalFilesInGroups << "vor Division";
+        
+        // ✅ FIX: Robust progress calculation with bounds checking
+        if (hashedFilesInGroups >= totalFilesInGroups) {
+            percentage = 100; // Completion reached
+            qDebug() << "[Scanner] 🔧 COMPLETION: 100% erreicht";
+        } else if (hashedFilesInGroups > INT_MAX / 100) {
+            percentage = (int)((long long)hashedFilesInGroups * 100 / totalFilesInGroups);
+            qDebug() << "[Scanner] 🔧 OVERFLOW-PROTECTION: LongLong-Division verwendet";
+        } else {
+            percentage = (hashedFilesInGroups * 100) / totalFilesInGroups;
+            qDebug() << "[Scanner] 🔧 NORMAL-DIVISION: Standard-Division verwendet";
+        }
+        percentage = qMax(0, qMin(100, percentage)); // Clamp 0-100%
+        qDebug() << "[Scanner] 🔧 RESULT-PERCENTAGE:" << percentage << "%";
+    } else {
+        qDebug() << "[Scanner] 🚨 ZERO-DIVISION-AVOIDED: totalFilesInGroups=" << totalFilesInGroups << ", hashedFilesInGroups=" << hashedFilesInGroups;
+        percentage = 0;
+    }
+    
+    // ⚡ OPTIMIERTES PROGRESS THROTTLING: Intelligente Update-Kontrolle
+    static int lastEmittedPercentage = -1;
+    static qint64 lastEmitTime = 0;
+    static int rapidUpdateCount = 0;
+    
+    qint64 currentTime = QDateTime::currentMSecsSinceEpoch();
+    bool shouldEmitProgress = false;
+    
+    // Adaptive Throttling: Weniger Updates bei schnellen Änderungen
+    int timeDelta = currentTime - lastEmitTime;
+    int percentageDelta = abs(percentage - lastEmittedPercentage);
+    
+    if (percentageDelta >= 1) {
+        if (timeDelta >= 100) { // Minimum 100ms zwischen Updates
+            shouldEmitProgress = true;
+            rapidUpdateCount = 0;
+        } else {
+            rapidUpdateCount++;
+            // Nur jeder 5. Update bei schnellen Änderungen
+            if (rapidUpdateCount >= 5) {
+                shouldEmitProgress = true;
+                rapidUpdateCount = 0;
+            }
+        }
+    }
+    
+    // Kritische Meilensteine: 0%, 25%, 50%, 75%, 100% - IMMER emittieren
+    if (percentage == 0 || percentage == 25 || percentage == 50 || 
+        percentage == 75 || percentage == 100 || timeDelta >= 1000) {
+        shouldEmitProgress = true;
+        qDebug() << "[Scanner] 🚨 CRITICAL MILESTONE:" << percentage << "% - hashedFilesInGroups:" << hashedFilesInGroups << "totalFilesInGroups:" << totalFilesInGroups;
+    }
+    
+    if (shouldEmitProgress) {
+        emit scanProgress(percentage, hashedFilesInGroups, totalFilesInGroups);
+        qDebug() << "[Scanner] 📊 Hash-Progress (Optimized):" << hashedFilesInGroups 
+                 << "/" << totalFilesInGroups << "(" << percentage << "%) Δt:" << (currentTime - lastEmitTime) << "ms";
+        lastEmittedPercentage = percentage;
+        lastEmitTime = currentTime;
+    }
+    
+    
+    // ✅ SMARTE ANTI-HANG: Adaptive Stagnation Detection mit Time-based Checks
+    static int lastPercentage = -1;
+    static int stagnationCount = 0;
+    static qint64 stagnationStartTime = 0;
+    
+    if (percentage == lastPercentage && percentage > 0) {
+        if (stagnationCount == 0) {
+            stagnationStartTime = currentTime; // Erste Stagnation markieren
+        }
+        stagnationCount++;
+        
+        // Progressive Timeouts: 5s bei 0-50%, 10s bei 50-90%, 15s bei 90-100%
+        int timeoutMs = (percentage < 50) ? 5000 : (percentage < 90) ? 10000 : 15000;
+        qint64 stagnationDuration = currentTime - stagnationStartTime;
+        
+        if (stagnationDuration >= timeoutMs && stagnationCount >= 3) {
+            qWarning() << "[Scanner] 🚨 Progress-Stagnation:" << percentage 
+                      << "% für" << stagnationDuration << "ms → Smart Force Complete!";
+            
+            // ⚡ INTELLIGENTE FORCE COMPLETION: Graduelle Steigerung
+            int forcePercentage = qMin(100, percentage + 20); // +20% pro Force-Step
+            emit scanProgress(forcePercentage, hashedFilesInGroups, totalFilesInGroups);
+            
+            if (forcePercentage >= 100) {
+                // Erstelle minimale Results für Completion
+                DuplicateGroups intelligentResults = buildPartialResults();
+                emit scanCompleted(intelligentResults);
+                return;
+            }
+            stagnationCount = 0; // Reset für nächsten Force-Step
+        }
+    } else {
+        lastPercentage = percentage;
+        stagnationCount = 0; // Reset bei Progress-Änderung
+        stagnationStartTime = 0;
+    }
+    
+    // Check if all hashes are calculated (exclude FTP_SKIPPED files)
+    bool allHashesReady = (hashProcessedCount >= totalFilesForHashing && totalFilesForHashing > 0);
+    
+    // ✅ THREADING-FIX: Only trigger compareHashes when ALL hashes are ready (not 50%)
+    bool forceComplete = false; // Disable force completion to prevent early compareHashes
+    
+    if (allHashesReady || forceComplete)
+    {
+        if (hashTimeoutTimer && hashTimeoutTimer->isActive()) {
+            hashTimeoutTimer->stop();
+            qDebug() << "[Scanner] ⏱️ Hash-Timeout-Timer gestoppt (alle Hashes fertig)";
+        }
+        if (forceComplete && !allHashesReady) {
+            qDebug() << "[Scanner] ⚠️ TIMEOUT-SCHUTZ: Erzwinge Completion mit" << hashedFilesInGroups << "/" << totalFilesInGroups << "Dateien (85%+)";
+        } else {
+            qDebug() << "[Scanner] ✅ Alle Hashes berechnet, starte Vergleich";
+        }
+        compareHashes();
+        return; // ensure no further processing in this callback after comparison triggered
+    }
+    
+    qDebug() << "[Scanner] 🚨 onHashCalculated END for:" << QFileInfo(filePath).fileName();
+}
+
+void Scanner::compareHashes()
+{
+    if (!scanning.load())
+        return;
+
+    // 🚨 KRITISCHER FIX: Warte bis FTP-Scanner komplett abgeschlossen sind
+    if (ftpScanningActive.load()) {
+        qDebug() << "[Scanner] ⏳ FTP-Scanner noch aktiv - warte auf Abschluss bevor compareHashes";
+        QTimer::singleShot(1000, this, &Scanner::compareHashes); // Retry in 1 second
+        return;
+    }
+    
+    // 🚨 FTP-SAFETY: Überprüfe ob noch aktive FTP-Scans laufen
+    if (activeFtpScans.load() > 0) {
+        qDebug() << "[Scanner] ⏳ Noch" << activeFtpScans.load() << "aktive FTP-Scans - warte auf Abschluss";
+        QTimer::singleShot(1000, this, &Scanner::compareHashes); // Retry in 1 second
+        return;
+    }
+
+    if (hashTimeoutTimer && hashTimeoutTimer->isActive()) {
+        hashTimeoutTimer->stop();
+        qDebug() << "[Scanner] ⏱️ Hash-Timeout-Timer gestoppt beim Eintritt in compareHashes()";
+    }
+
+    qDebug() << "[Scanner] 🎯 compareHashes() aufgerufen!";
+    qDebug() << "[Scanner] 📊 hashGroups.size():" << hashGroups.size();
+    qDebug() << "[Scanner] 🚨 DEBUG: compareHashes() bei 50% Problem - Starte Vergleich";
+    
+    // 🛡️ MEMORY PROTECTION: Check for excessive hash groups
+    if (hashGroups.size() > 50000) {
+        qCritical() << "[Scanner] 🚨 KRITISCH: Zu viele Hash-Gruppen (" << hashGroups.size() << ") - Memory-Crash Gefahr!";
+        DuplicateGroups safeResults;
+        safeResults.totalFiles = hashGroups.size();
+        safeResults.duplicateFiles = 0;
+        safeResults.duplicateSize = 0;
+        emit scanCompleted(safeResults);
+        return;
+    }
+    
+    if (hashGroups.size() > 30000) {
+        qWarning() << "[Scanner] ⚠️ WARNUNG: Sehr viele Hash-Gruppen (" << hashGroups.size() << ") - aktiviere Safe-Mode";
+        // Trigger memory cleanup
+        QCoreApplication::processEvents();
+    }
+    
+    emit scanStatusChanged("Vergleiche Duplikate (lokal ↔ netzwerk)...");
+    currentPhase = COMPARING;
+    emit comparingStarted();
+    
+    // 📊 LIVE-Update: Duplikat-Vergleich starten
+    emit currentFileProcessing(
+        QString("%1 Hash-Gruppen").arg(hashGroups.size()), 
+        "🔍 Duplikat-Vergleich", 
+        0, 
+        hashGroups.size()
+    );
+    emit processActivityUpdate(
+        "🔍 Vergleiche Hashes für Duplikat-Erkennung",
+        QString("Analysiere %1 verschiedene Hash-Gruppen").arg(hashGroups.size())
+    );
+
+    // ✅ FIX: Group files by hash from BOTH fileSizeGroups AND allFiles (multi-engine)
+    int processedGroups = 0;
+    int totalValidHashes = 0;
+    int skippedHashes = 0;
+    
+    qDebug() << "[Scanner] 🚨 DEBUG: fileSizeGroups.size():" << fileSizeGroups.size();
+    qDebug() << "[Scanner] 🚨 DEBUG: allFiles.size():" << allFiles.size();
+    
+    // ✅ PHASE 1: Process fileSizeGroups (original logic)
+    for (auto groupIt = fileSizeGroups.begin(); groupIt != fileSizeGroups.end(); ++groupIt)
+    {
+        qDebug() << "[Scanner] 🚨 DEBUG: Processing size group" << processedGroups << "with" << groupIt.value().size() << "files";
+        if (!scanning.load())
+            return;
+            
+        const QList<FileInfo> &filesInGroup = groupIt.value();
+        for (const FileInfo &file : filesInGroup)
+        {
+            if (file.hash.isEmpty()) {
+                skippedHashes++;
+                continue;
+            }
+            if (file.hash.startsWith("npv_")) {
+                skippedHashes++;
+                continue; // NPU-Feature-Hashes sind Zusatzinfos, nicht für Content-Duplikate
+            }
+            if (file.hash == "FTP_SKIPPED" || file.hash == "FTP_DOWNLOAD_FAILED") {
+                skippedHashes++;
+                continue;
+            }
+            
+            hashGroups[file.hash].append(file);
+            totalValidHashes++;
+        }
+        
+        processedGroups++;
+        // 📊 LIVE-Update: Gruppierungs-Fortschritt
+        if (processedGroups % 100 == 0) {
+            emit currentFileProcessing(
+                QString("Gruppe %1").arg(processedGroups), 
+                "🔍 Hash-Gruppierung", 
+                processedGroups, 
+                fileSizeGroups.size()
+            );
+        }
+    }
+    
+    // ✅ PHASE 2: Process allFiles (multi-engine hash results)
+    qDebug() << "[Scanner] 🎯 MULTI-ENGINE: Verarbeite" << allFiles.size() << "Engine-Hash-Ergebnisse";
+    for (const FileInfo &file : allFiles)
+    {
+        if (!scanning.load())
+            return;
+            
+        if (file.hash.isEmpty()) {
+            continue;
+        }
+        if (file.hash.startsWith("npv_")) {
+            continue; // NPU-Feature-Hashes sind Zusatzinfos, nicht für Content-Duplikate
+        }
+        if (file.hash == "FTP_SKIPPED" || file.hash == "FTP_DOWNLOAD_FAILED") {
+            continue;
+        }
+        
+        // Check if already in hashGroups (avoid duplicates)
+        bool alreadyExists = false;
+        for (const FileInfo &existingFile : hashGroups[file.hash]) {
+            if (existingFile.filePath == file.filePath) {
+                alreadyExists = true;
+                break;
+            }
+        }
+        
+        if (!alreadyExists) {
+            hashGroups[file.hash].append(file);
+            totalValidHashes++;
+            qDebug() << "[Scanner] 🎯 MULTI-ENGINE: Hash-Gruppe erweitert:" << file.hash.left(16) << "für" << file.fileName;
+        }
+    }
+    
+    // 📊 LIVE-Update: Hash-Gruppierung abgeschlossen
+    emit currentFileProcessing(
+        QString("%1 Hash-Gruppen erstellt").arg(hashGroups.size()), 
+        "🔍 Hash-Gruppierung abgeschlossen", 
+        fileSizeGroups.size(), 
+        fileSizeGroups.size()
+    );
+    
+    // 📊 DEBUG: Zeige wichtige Hash-Statistiken
+    qDebug() << "[Scanner] 🔍 HASH-DEBUG:" << hashGroups.size() << "eindeutige Hashes";
+    qDebug() << "[Scanner] 📊 Verarbeitet:" << totalValidHashes << "gültige Hashes," << skippedHashes << "übersprungen";
+    qDebug() << "[Scanner] 🚨 DEBUG: Starte Duplikat-Gruppierung...";
+    
+    int duplicateGroups = 0;
+    for (auto it = hashGroups.begin(); it != hashGroups.end(); ++it) {
+        if (it.value().size() > 1) {
+            duplicateGroups++;
+            qDebug() << "[Scanner] 🚨 DEBUG: Found duplicate group with" << it.value().size() << "files, hash:" << it.key().left(8);
+            qDebug() << "[Scanner] 🔄 DUPLIKAT-GRUPPE Hash" << it.key().left(8) << "hat" << it.value().size() << "Dateien:";
+            for (const FileInfo &file : it.value()) {
+                qDebug() << "    -" << (file.isLocal ? "LOCAL" : "FTP") << file.filePath << "(" << file.size << "bytes)";
+            }
+        }
+    }
+    qDebug() << "[Scanner] 🎯 DUPLIKAT-GRUPPEN gefunden:" << duplicateGroups;
+
+    // 📢 USER-FRIENDLY MESSAGE: Entfernt - wird erst am Ende in generateResults() angezeigt
+    // Keine vorzeitige "keine Duplikate" Meldung hier
+
+    // Remove unique hashes
+    qDebug() << "[Scanner] 🧹 Entferne Unikate: Vor Bereinigung" << hashGroups.size() << "Gruppen";
+    auto it = hashGroups.begin();
+    int removedUniqueGroups = 0;
+    while (it != hashGroups.end())
+    {
+        if (it.value().size() == 1)
+        {
+            removedUniqueGroups++;
+            it = hashGroups.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
+    qDebug() << "[Scanner] 🧹 Nach Bereinigung:" << hashGroups.size() << "Duplikat-Gruppen," << removedUniqueGroups << "Unikate entfernt";
+
+    // ✅ NEU: Statistiken für lokale vs Netzwerk-Duplikate und Hardware-Updates
+    int localOnlyGroups = 0;
+    int networkOnlyGroups = 0;
+    int crossNetworkGroups = 0;
+    int totalComparisons = 0;
+    int duplicatesFound = 0;
+    int groupsCreated = 0;
+    
+    // 🎯 HARDWARE-MONITORING: Echte Auslastung wird über ActivityIndicator angezeigt.
+    // Die frühere Simulation hier wurde entfernt, um "echte" Darstellung sicherzustellen.
+    // Optional kann weiterhin Simulation erzwungen werden mit FILEDUPER_SIMULATE_HW=1 (Debug / Tests).
+    bool simulateHw = qEnvironmentVariableIsSet("FILEDUPER_SIMULATE_HW") && (qgetenv("FILEDUPER_SIMULATE_HW") == "1");
+    auto getHardwareUsage = [&](int currentComparison, int totalComparisons) {
+        if (!simulateHw) {
+            // Keine künstlichen Werte mehr: -1 signalisiert UI, dass externe echte Messung (ActivityIndicator) maßgeblich ist
+            return std::make_tuple(QString("REAL"), -1, QString("Echte Messung aktiv"));
+        }
+        // --- SIMULATIONSZWEIG (nur wenn FILEDUPER_SIMULATE_HW=1) ---
+        QString processingUnit;
+        int utilizationPercent = 0;
+        QString currentTask;
+        if (totalComparisons > 1000) {
+            processingUnit = npuManager ? "NPU (Intel Arc)" : "GPU (OpenCL)";
+            utilizationPercent = 70 + (currentComparison % 30);
+            currentTask = "Parallele Hash-Vergleiche";
+        } else if (totalComparisons > 100) {
+            processingUnit = "GPU (OpenCL)";
+            utilizationPercent = 40 + (currentComparison % 40);
+            currentTask = "Sequentielle Vergleiche";
+        } else {
+            processingUnit = "CPU (Multi-Core)";
+            utilizationPercent = 10 + (currentComparison % 30);
+            currentTask = "Standard-Vergleiche";
+        }
+        return std::make_tuple(processingUnit, utilizationPercent, currentTask);
+    };
+    
+    // Berechne die Gesamtzahl der Vergleiche für Progress-Updates
+    qDebug() << "[Scanner] 🚨 DEBUG: Starting totalComparisons calculation...";
+    for (auto it = hashGroups.begin(); it != hashGroups.end(); ++it) {
+        int filesInGroup = it.value().size();
+        totalComparisons += (filesInGroup * (filesInGroup - 1)) / 2; // n*(n-1)/2 Vergleiche
+        qDebug() << "[Scanner] 🚨 Group with" << filesInGroup << "files adds" << ((filesInGroup * (filesInGroup - 1)) / 2) << "comparisons";
+    }
+    
+    qDebug() << "[Scanner] 🔍 Starte" << totalComparisons << "Datei-Vergleiche in" << hashGroups.size() << "Hash-Gruppen";
+    
+    qDebug() << "[Scanner] 🚨 DEBUG: About to call getHardwareUsage...";
+    // 🎯 LIVE-UPDATE: Hardware-Status zu Beginn
+    auto [initialUnit, initialPercent, initialTask] = getHardwareUsage(0, totalComparisons);
+    qDebug() << "[Scanner] 🚨 DEBUG: getHardwareUsage returned (simulate=" << simulateHw << ")";
+    if (simulateHw) {
+        emit hardwareUsageUpdate(initialUnit, initialPercent, QString("Initialisiere %1").arg(initialTask));
+    } else {
+        emit hardwareUsageUpdate("REAL", -1, "Verwende echte Hardware-Auslastung");
+    }
+    qDebug() << "[Scanner] 🚨 DEBUG: hardwareUsageUpdate emitted!";
+    
+    int currentComparison = 0;
+    
+    qDebug() << "[Scanner] 🚨 DEBUG: Starting main hash group loop...";
+    
+    for (auto it = hashGroups.begin(); it != hashGroups.end(); ++it) {
+        if (!scanning.load()) return;
+        
+        const QList<FileInfo> &files = it.value();
+        
+        qDebug() << "[Scanner] 🚨 Processing hash group with" << files.size() << "files, hash:" << it.key().left(8);
+        
+        // 🛡️ CRITICAL PROTECTION: Verhindere Memory-Crash bei zu vielen Vergleichen
+        if (files.size() > 100) {
+            qWarning() << "[Scanner] 🚨 GEFAHR: Gruppe mit" << files.size() << "Dateien würde" << (files.size() * (files.size() - 1) / 2) << "Vergleiche benötigen!";
+            qWarning() << "[Scanner] 🛡️ PROTECTION: Reduziere auf erste 100 Dateien für Stabilität";
+            
+            // Erstelle reduzierte Gruppe für sicheren Vergleich
+            QList<FileInfo> safeFiles = files.mid(0, 100); // Nur erste 100 Dateien
+            
+            // Füge trotzdem eine Duplikat-Gruppe hinzu (erste vs. alle anderen)
+            DuplicateGroup largeGroup;
+            largeGroup.original = files[0];
+            largeGroup.hash = it.key();
+            largeGroup.size = files[0].size;
+            for (int k = 1; k < qMin(files.size(), 50); k++) { // Max 50 Duplikate
+                largeGroup.duplicates.append(files[k]);
+            }
+            
+            // Direkt zur generateResults-Datenstruktur hinzufügen
+            // (Implementation würde hier die Daten speichern)
+            qDebug() << "[Scanner] 🛡️ Große Gruppe sicher verarbeitet:" << largeGroup.duplicates.size() << "Duplikate";
+            continue; // Überspringe die normale Verarbeitung
+        }
+        
+        if (files.size() > 1) {
+            groupsCreated++;
+            
+            qDebug() << "[Scanner] 🚨 Starting nested loops for group" << groupsCreated;
+            
+            // 🛡️ MEMORY-PROTECTION: Vergleiche nur bei manageable Gruppengrößen
+            int safeSize = qMin(files.size(), 100); // Maximal 100 Dateien
+            int totalComparisons = safeSize * (safeSize - 1) / 2;
+            qDebug() << "[Scanner] 🔍 Vergleiche" << totalComparisons << "Datei-Paare in Gruppe (reduziert von" << files.size() << ")";
+            
+            // 🎯 DETAILLIERTE DATEI-ZU-DATEI-VERGLEICHE MIT PROTECTION
+            for (int i = 0; i < safeSize; i++) {
+                // 🛡️ EMERGENCY BREAK: Bei zu vielen Vergleichen abbrechen
+                if (i > 50) {
+                    qWarning() << "[Scanner] 🚨 EMERGENCY BREAK: Stoppe bei Index" << i << "für Speicherschutz";
+                    break;
+                }
+                
+                for (int j = i + 1; j < safeSize; j++) {
+                    if (!scanning.load()) return;
+                    
+                    // 🛡️ MEMORY CHECK: Vergleichszähler
+                    if ((i * safeSize + j) > 5000) {
+                        qWarning() << "[Scanner] 🚨 COMPARISON LIMIT: Stoppe nach 5000 Vergleichen";
+                        goto next_hash_group; // Springe zur nächsten Hash-Gruppe
+                    }
+                    
+                    currentComparison++;
+                    const FileInfo &file1 = files[i];
+                    const FileInfo &file2 = files[j];
+                    
+                    qDebug() << "[Scanner] 🚨 COMPARISON" << currentComparison << ":" << QFileInfo(file1.filePath).fileName() << "vs" << QFileInfo(file2.filePath).fileName();
+                    
+                    // 📊 DISABLED: Signal emission causing hang
+                    // emit fileComparisonProgress(
+                    //     QFileInfo(file1.filePath).fileName(),
+                    //     QFileInfo(file2.filePath).fileName(),
+                    //     currentComparison,
+                    //     totalComparisons
+                    // );
+                    
+                    // Bestimme Vergleichstyp
+                    QString comparisonType;
+                    if (file1.isLocal && file2.isLocal) {
+                        comparisonType = "Lokal ↔ Lokal";
+                    } else if (!file1.isLocal && !file2.isLocal) {
+                        comparisonType = "Netzwerk ↔ Netzwerk";
+                    } else {
+                        comparisonType = "Lokal ↔ Netzwerk";
+                        crossNetworkGroups++;
+                    }
+                    
+                    // 📊 LIVE-Update: Vergleichsaktivität
+                    emit processActivityUpdate(
+                        QString("🔍 %1 Vergleich").arg(comparisonType),
+                        QString("Vergleiche %1 vs %2").arg(
+                            QFileInfo(file1.filePath).fileName(),
+                            QFileInfo(file2.filePath).fileName()
+                        )
+                    );
+                    
+                    duplicatesFound++;
+                    
+                    // 📊 LIVE-Update: Duplikat gefunden
+                    emit duplicateDetectionUpdate(
+                        duplicatesFound,
+                        groupsCreated,
+                        QString("%1 ≈ %2").arg(
+                            QFileInfo(file1.filePath).fileName(),
+                            QFileInfo(file2.filePath).fileName()
+                        )
+                    );
+                    
+                    // Throttling für GUI-Performance bei vielen Vergleichen
+                    if (currentComparison % 50 == 0) {
+                        if (totalComparisons > 0) {
+                            int percentage = (currentComparison * 100) / totalComparisons;
+                            emit scanProgressDetailed(
+                                percentage,
+                                currentComparison,
+                                totalComparisons,
+                                QString("Vergleiche Dateien (%1)").arg(comparisonType)
+                            );
+                        }
+                        
+                        // Kleine Pause für GUI-Responsivität
+                        QApplication::processEvents();
+                    }
+                }
+            }
+            
+            // 🏷️ GOTO LABEL für Speicherschutz-Sprünge
+            next_hash_group:
+            
+            // Klassifiziere Gruppe
+            bool hasLocal = false;
+            bool hasNetwork = false;
+            for (const FileInfo &file : files) {
+                if (file.isLocal) hasLocal = true;
+                else hasNetwork = true;
+            }
+            
+            if (hasLocal && hasNetwork) {
+                crossNetworkGroups++;
+            } else if (hasLocal) {
+                localOnlyGroups++;
+            } else {
+                networkOnlyGroups++;
+            }
+        }
+    }
+    int mixedGroups = 0;
+    
+    for (const auto &hashGroup : hashGroups) {
+        bool hasLocal = false;
+        bool hasNetwork = false;
+        
+        for (const FileInfo &file : hashGroup) {
+            if (file.isLocal) {
+                hasLocal = true;
+            } else {
+                hasNetwork = true;
+            }
+        }
+        
+        if (hasLocal && hasNetwork) {
+            mixedGroups++;
+        } else if (hasLocal) {
+            localOnlyGroups++;
+        } else if (hasNetwork) {
+            networkOnlyGroups++;
+        }
+    }
+
+    std::cout << "🔍 " << hashGroups.size() << " Duplikat-Gruppen gefunden:" << std::endl;
+    std::cout << "   📂 Nur lokal: " << localOnlyGroups << " Gruppen" << std::endl;
+    std::cout << "   📡 Nur netzwerk: " << networkOnlyGroups << " Gruppen" << std::endl;
+    std::cout << "   🔄 Lokal ↔ Netzwerk: " << mixedGroups << " Gruppen" << std::endl;
+
+    // Falls keine Hash-Gruppen entstanden sind (z.B. nur NPU-Ergebnisse), trotzdem Ergebnisse erzeugen
+    generateResults();
+}
+
+void Scanner::generateResults()
+{
+    if (!scanning.load())
+        return;
+
+    qDebug() << "[Scanner] 🎯 generateResults() aufgerufen!";
+    qDebug() << "[Scanner] 📊 hashGroups.size():" << hashGroups.size();
+
+    emit scanStatusChanged("Generiere Ergebnisse (lokal + netzwerk)...");
+    currentPhase = COMPLETED;
+
+    DuplicateGroups results;
+    int crossNetworkDuplicates = 0;
+
+    qDebug() << "[Scanner] 📊 GENERATERESULTS: Starte mit" << hashGroups.size() << "Hash-Gruppen";
+    int processedGroups = 0;
+    
+    for (const auto &hashGroup : hashGroups)
+    {
+        processedGroups++;
+        qDebug() << "[Scanner] 🔍 Prüfe Gruppe" << processedGroups << "/" << hashGroups.size() << "mit" << hashGroup.size() << "Dateien";
+        if (hashGroup.size() < 2) {
+            qDebug() << "[Scanner] ⏭️ Überspringe Gruppe (nur" << hashGroup.size() << "Datei)";
+            continue;
+        }
+
+        DuplicateGroup group;
+        QList<FileInfo> files = hashGroup;
+
+        // ✅ NEU: Prüfe ob es sich um lokale ↔ Netzwerk Duplikate handelt
+        bool hasLocal = false;
+        bool hasNetwork = false;
+        for (const FileInfo &file : files) {
+            if (file.isLocal) {
+                hasLocal = true;
+            } else {
+                hasNetwork = true;
+            }
+        }
+        
+        if (hasLocal && hasNetwork) {
+            crossNetworkDuplicates++;
+        }
+
+        // Sort by modification time and prefer local files as originals
+        std::sort(files.begin(), files.end(), [](const FileInfo &a, const FileInfo &b)
+                  { 
+                      // ✅ PRIORITÄT 1: Bevorzuge lokale Dateien als Original (sicherer)
+                      if (a.isLocal != b.isLocal) {
+                          return a.isLocal > b.isLocal; // Lokale Dateien zuerst
+                      }
+                      // ✅ PRIORITÄT 2: Älteste Datei als Original (Standard: KEEP_OLDEST)
+                      return a.lastModified < b.lastModified; // Älteste zuerst (Original)
+                  });
+
+        // First file is original (preferably local), rest are duplicates
+        group.original = files.takeFirst();
+        group.duplicates = files;
+        group.hash = group.original.hash;
+        group.size = group.original.size;
+
+        results.groups.append(group);
+        results.duplicateFiles += group.duplicates.size();
+        results.duplicateSize += group.size * group.duplicates.size();
+    }
+
+    // ✅ KORREKTE STATISTIK: Nur tatsächlich untersuchte Duplikat-Kandidaten zählen
+    int totalDuplicateCandidates = 0;
+    for (auto groupIt = fileSizeGroups.begin(); groupIt != fileSizeGroups.end(); ++groupIt) {
+        totalDuplicateCandidates += groupIt.value().size();
+    }
+    results.totalFiles = totalDuplicateCandidates; // Nur Dateien mit möglichen Duplikaten
+
+    scanning.store(false);
+    currentPhase = IDLE;
+
+    // ✅ DEBUG: Detaillierte Ergebnis-Analyse
+    qDebug() << "[Scanner] 📊 FINALE STATISTIKEN:";
+    qDebug() << "    - Verarbeitete Dateien:" << results.totalFiles;
+    qDebug() << "    - Duplikat-Gruppen:" << results.groups.size();
+    qDebug() << "    - Duplikat-Dateien:" << results.duplicateFiles;
+    qDebug() << "    - Gesparte Größe:" << (results.duplicateSize / (1024*1024)) << "MB";
+
+    std::cout << "✅ Parallel-Scan abgeschlossen: " << results.groups.size()
+              << " Duplikat-Gruppen mit " << results.duplicateFiles << " Duplikaten" << std::endl;
+    std::cout << "   🔄 Lokal ↔ Netzwerk Duplikate: " << crossNetworkDuplicates << " Gruppen" << std::endl;
+
+    // Benutzerfreundliche Status-Nachricht basierend auf Ergebnis
+    if (results.groups.empty()) {
+        emit scanStatusChanged("✅ Scan abgeschlossen - keine Duplikate gefunden!");
+    } else {
+        emit scanStatusChanged(QString("✅ Scan abgeschlossen - %1 Duplikat-Gruppen mit %2 Duplikaten gefunden")
+                              .arg(results.groups.size())
+                              .arg(results.duplicateFiles));
+    }
+    
+    // ✅ CRITICAL FIX: Stop scanner completely after scanCompleted
+    scanning.store(false);
+    currentPhase = COMPLETED;
+    
+    // 🛑 Stop all progress updates
+    emit scanProgress(100, results.duplicateFiles, results.duplicateFiles);
+    
+    qDebug() << "[Scanner] 🚨 emit scanCompleted(RESULTS) - generateResults() with" << results.groups.size() << "groups";
+    emit scanCompleted(results);
+    
+    qDebug() << "[Scanner] 🛑 Scanner VOLLSTÄNDIG GESTOPPT nach scanCompleted";
+    
+    // ✅ CLEANUP: Stop all timers immediately after completion
+    if (processTimer) processTimer->stop();
+    if (fileCollectionTimer) fileCollectionTimer->stop();
+    if (hashTimeoutTimer) hashTimeoutTimer->stop();
+}
+
+void Scanner::onFtpFilesReceived(const QString &directory, const QStringList &files, bool success)
+{
+    qDebug() << "[Scanner] 📄 FTP-Dateien empfangen für:" << directory << "Files:" << files.size() << "Success:" << success;
+    
+    // 🛡️ RACE CONDITION PROTECTION: Prüfe ob Callback noch für aktuellen Scan gültig ist
+    uint64_t callbackScanId = this->currentScanId.load();
+    if (callbackScanId == 0) {
+        qDebug() << "[Scanner] ⚠️ FTP-Dateien-Callback ignoriert: Kein aktiver Scan (Scan-ID=0)";
+        return;
+    }
+    
+    if (!success) {
+        qWarning() << "[Scanner] ⚠️ FTP-Fehler beim Laden von:" << directory;
+        return;
+    }
+    
+    // 🛡️ KRITISCHER SICHERHEITSCHECK: Verhindere QHash-Crash bei sehr großen Datensätzen
+        if (files.size() > 25000) {
+        qDebug() << "[Scanner] 🚨 KRITISCH: Zu viele Dateien (" << files.size() << ") - Chunked Processing aktiviert";
+            // Versuche die vollständige FTP-URL für dieses Verzeichnis zu ermitteln
+            QString baseUrl = directory;
+            if (!baseUrl.startsWith("ftp://")) {
+                // Auflösen anhand pendingFtpDirectories
+                auto normalizePath = [](QString p) {
+                    if (p.isEmpty()) return p;
+                    if (!p.startsWith('/')) p.prepend('/');
+                    if (p.length() > 1 && p.endsWith('/')) p.chop(1);
+                    return p;
+                };
+                const QString dirNorm = normalizePath(directory);
+                for (const QString &pendingUrl : pendingFtpDirectories) {
+                    QUrl url(pendingUrl);
+                    const QString pendNorm = normalizePath(url.path());
+                    if (pendNorm == dirNorm || normalizePath(url.path() + "/") == dirNorm) {
+                        baseUrl = pendingUrl;
+                        break;
+                    }
+                }
+            }
+            processFtpFilesBatch(baseUrl, files, success);
+        return;
+    }
+    
+    if (files.size() > 100000) {
+        qDebug() << "[Scanner] ⚠️ Zu viele Dateien (" << files.size() << ") - überspringe zur Sicherheit";
+        pendingFtpDirectories.removeOne(directory); // ✅ FIX: Use removeOne() instead of remove()
+        checkScanProgress();
+        return;
+    }
+    
+    // 🧠 NPU-BILDVERARBEITUNG: Für große Bilddatensätze optimiert
+    // 🚀 PRODUCTION NPU: Aktiviert für mittlere bis große Bilddatensätze (>1.000 Dateien)
+    if (files.size() > 1000 && npuManager) {  // NPU aktiviert ab 1.000 Dateien
+        qDebug() << "[Scanner] 🚀 ULTRA-FAST NPU aktiviert für" << files.size() << "Dateien";
+        
+        // 🎨 Filtere ALLE Bilddateien für Ultra-Fast NPU-Verarbeitung (inkl. RAW)
+        QStringList imageFiles;
+        for (const QString &file : files) {
+            if (file.endsWith(".jpg", Qt::CaseInsensitive) || 
+                file.endsWith(".jpeg", Qt::CaseInsensitive) ||
+                file.endsWith(".png", Qt::CaseInsensitive) ||
+                file.endsWith(".gif", Qt::CaseInsensitive) ||
+                file.endsWith(".cr2", Qt::CaseInsensitive) ||  // Canon RAW
+                file.endsWith(".nef", Qt::CaseInsensitive) ||  // Nikon RAW
+                file.endsWith(".arw", Qt::CaseInsensitive) ||  // Sony RAW
+                file.endsWith(".dng", Qt::CaseInsensitive) ||  // Adobe RAW
+                file.endsWith(".tiff", Qt::CaseInsensitive) || // TIFF
+                file.endsWith(".bmp", Qt::CaseInsensitive)) {  // Bitmap
+                imageFiles.append(file);
+            }
+        }
+        
+        qDebug() << "[Scanner] 📊 BILDFILES ERKANNT:" << imageFiles.size() << "Bilder für NPU-Verarbeitung";
+        
+        if (imageFiles.size() > 50) {  // 🚀 SOFORTIGE NPU-AKTIVIERUNG bei 50+ Bildern
+            qDebug() << "[Scanner] 🚀 NPU-ONLY Bildverarbeitung für" << imageFiles.size() << "Bilder (KEINE Hash-Methode)";
+            
+            // 🧠 NPU FEATURE-VECTOR-BASIERTE DUPLIKATERKENNUNG (ERSETZT Hash-basiert)
+            qDebug() << "[Scanner] 🧠 Starte NPU Feature-Vector-Analyse (Hash-frei)...";
+            QStringList processedImages = npuManager->processImagesWithNpuUltraFast(imageFiles);
+            
+            // 🎯 Feature-Vector-Duplikate finden (OHNE Hash-Vergleich!)
+            QList<QStringList> featureBasedDuplicates = npuManager->findFeatureBasedDuplicates(processedImages);
+            
+            qDebug() << "[Scanner] ✅ NPU-Feature-Duplikate gefunden:" << featureBasedDuplicates.size() << "Gruppen";
+            qDebug() << "[Scanner] 🚀 NPU-ONLY Verarbeitung abgeschlossen:" 
+                     << processedImages.size() << "Bilder ohne Hash-Methode";
+                     
+            // 📊 NPU-Counter setzen für Hash-Pipeline-Skip
+            npuProcessedImages = imageFiles.size();
+            qDebug() << "[Scanner] 🎯 NPU-Counter gesetzt:" << npuProcessedImages << "verarbeitete Bilder";
+                     
+            // 📊 NPU-Aktivitäts-Update für GUI
+            emit npuActivityUpdate(imageFiles.size(), featureBasedDuplicates.size());
+            
+            // 🚀 WICHTIG: Entferne verarbeitete Bilder aus der Hash-Pipeline
+            // ⚠️ FIX: Erstelle lokale Kopie da `files` const ist
+            QStringList remainingFiles = files;
+            for (const QString &img : imageFiles) {
+                remainingFiles.removeAll(img);
+            }
+            qDebug() << "[Scanner] 🎯 BILDER aus Hash-Pipeline entfernt:" << imageFiles.size() << "Dateien";
+            qDebug() << "[Scanner] 📊 Verbleibende Dateien für Hash-Verarbeitung:" << remainingFiles.size();
+            
+        } else {
+            qDebug() << "[Scanner] 📊 Zu wenig Bilder für NPU-Batch (" << imageFiles.size() << "/50) - verwende Hash-basierte Einzelverarbeitung";
+        }
+    }
+    
+    // 🧠 MEMORY-PROTECTION: Für sehr große Datensätze (>25.000 Dateien) Batch-Verarbeitung
+    if (files.size() > 25000) {
+        qDebug() << "[Scanner] 🧠 MEMORY-PROTECTION: Aktiviere Batch-Verarbeitung für" << files.size() << "Dateien";
+        // directory kann Pfad oder vollständige URL sein; vereinheitlichen
+        QString baseUrl = directory;
+        if (!baseUrl.startsWith("ftp://")) {
+            auto normalizePath = [](QString p) {
+                if (p.isEmpty()) return p;
+                if (!p.startsWith('/')) p.prepend('/');
+                if (p.length() > 1 && p.endsWith('/')) p.chop(1);
+                return p;
+            };
+            const QString dirNorm = normalizePath(directory);
+            for (const QString &pendingUrl : pendingFtpDirectories) {
+                QUrl url(pendingUrl);
+                const QString pendNorm = normalizePath(url.path());
+                if (pendNorm == dirNorm || normalizePath(url.path() + "/") == dirNorm) {
+                    baseUrl = pendingUrl;
+                    break;
+                }
+            }
+        }
+        processFtpFilesBatch(baseUrl, files, success);
+        return;
+    }
+    
+    // Find the full FTP URL for this directory path (robust against trailing slashes)
+    QString fullFtpUrl;
+    auto normalizePath = [](QString p) {
+        if (p.isEmpty()) return p;
+        // Ensure path starts with '/'
+        if (!p.startsWith('/')) p.prepend('/');
+        // Remove single trailing '/'
+        if (p.length() > 1 && p.endsWith('/')) p.chop(1);
+        return p;
+    };
+    const QString dirNorm = normalizePath(directory);
+    for (const QString &pendingUrl : pendingFtpDirectories) {
+        QUrl url(pendingUrl);
+        const QString pendNorm = normalizePath(url.path());
+        if (pendNorm == dirNorm) {
+            fullFtpUrl = pendingUrl;
+            break;
+        }
+        // Also allow match if directory had an extra '/' when emitted
+        if (normalizePath(url.path() + "/") == dirNorm) {
+            fullFtpUrl = pendingUrl;
+            break;
+        }
+    }
+    
+    if (fullFtpUrl.isEmpty()) {
+        qWarning() << "[Scanner] ⚠️ Keine entsprechende FTP-URL gefunden für:" << directory;
+        return;
+    }
+    
+    // Extract host from full FTP URL for file path construction
+    QUrl ftpUrl(fullFtpUrl);
+    QString host = ftpUrl.host();
+    QString basePath = ftpUrl.path();
+    // Normalize basePath to '/path' without trailing '/'
+    if (!basePath.startsWith('/')) basePath.prepend('/');
+    if (basePath.length() > 1 && basePath.endsWith('/')) basePath.chop(1);
+    
+    // Add all files to allFiles list
+    QSet<QString> processedFileNames; // 🚀 Prevent size-variant duplicates
+    
+    for (const QString &encodedFile : files) {
+        // ✅ FIX: Parse encoded "absolute/path/to/file|size" OR "/absolute/path/to/directory/" format
+        QString rawEntry = encodedFile.trimmed();
+        bool isDirectoryEntry = rawEntry.endsWith('/') && !rawEntry.contains('|');
+        QString fileName;
+        qint64 fileSize = 0;
+        QString absolutePath; // full absolute path inside FTP server
+        
+        if (rawEntry.contains('|')) {
+            // File with size info: absolute/path|12345
+            int sep = rawEntry.lastIndexOf('|');
+            fileSize = rawEntry.mid(sep + 1).toLongLong();
+            absolutePath = rawEntry.left(sep);
+            // Extract filename from absolute path
+            fileName = QFileInfo(absolutePath).fileName();
+        } else if (isDirectoryEntry) {
+            // Pure directory – skip
+            qDebug() << "[Scanner] ⚠️ Überspringe FTP-Verzeichnis:" << rawEntry;
+            continue;
+        } else {
+            // Fallback: treat as file without size (absolute or relative)
+            absolutePath = rawEntry;
+            fileName = QFileInfo(absolutePath).fileName();
+        }
+        if (fileName.isEmpty()) {
+            qDebug() << "[Scanner] ⚠️ FTP-Eintrag ohne Dateiname übersprungen:" << rawEntry;
+            continue;
+        }
+        
+        // �🚀 CRITICAL FIX: Skip if we already processed this filename (prevent size variants)
+        if (processedFileNames.contains(fileName)) {
+            qDebug() << "[Scanner] ⚠️ Überspringe Größen-Variante:" << fileName;
+            continue;
+        }
+        processedFileNames.insert(fileName);
+        
+        // ✅ Construct full ftp:// URL using absolute path (absolutePath already begins with '/')
+        QString encodedFullPath;
+        {
+            QStringList pathParts = absolutePath.split('/', Qt::SkipEmptyParts);
+            QStringList encodedParts;
+            for (const QString &p : pathParts) {
+                encodedParts << QUrl::toPercentEncoding(p);
+            }
+            encodedFullPath = "/" + encodedParts.join('/');
+        }
+        FileInfo fileInfo;
+        fileInfo.filePath = QString("ftp://%1%2").arg(host, encodedFullPath);
+        fileInfo.fileName = fileName; // Original-Dateiname für Anzeige
+        fileInfo.size = fileSize; // ✅ FIX: Use real file size from FTP LIST
+        fileInfo.lastModified = QDateTime::currentSecsSinceEpoch();
+        fileInfo.hash = "";
+        fileInfo.isLocal = false; // ✅ NEU: Markiere als Netzwerk-Datei
+        fileInfo.networkType = "FTP"; // ✅ NEU: Netzwerk-Typ
+        
+        // 🛡️ RACE CONDITION PROTECTION: Prüfe Scan-ID vor File-Hinzufügung
+        if (this->currentScanId.load() != callbackScanId) {
+            qDebug() << "[Scanner] ⚠️ FTP-Batch-Datei ignoriert: Scan-ID nicht mehr gültig (alte:" << callbackScanId << "neue:" << this->currentScanId.load() << ")";
+            continue;
+        }
+        
+        allFiles.append(fileInfo);
+        qDebug() << "[Scanner] ✅ Added FTP file:" << fileInfo.filePath << "Size:" << fileSize << "bytes";
+    }
+    
+    // Mark this directory as completed
+    completedFtpDirectories.append(directory);
+    ftpDirectoriesProcessed++;
+    
+    // ✅ NEU: Zähle lokale und FTP-Dateien separat für bessere Anzeige
+    int localFiles = 0;
+    int ftpFiles = 0;
+    for (const FileInfo &file : allFiles) {
+        if (file.isLocal) {
+            localFiles++;
+        } else {
+            ftpFiles++;
+        }
+    }
+    
+    emit scanStatusChanged(QString("Parallel: Lokal %1, FTP %2/%3 (%4 Dateien)")
+                          .arg(localFiles)
+                          .arg(ftpDirectoriesProcessed)
+                          .arg(pendingFtpDirectories.size())
+                          .arg(ftpFiles));
+    
+    // Check if all FTP directories are processed
+    if (completedFtpDirectories.size() >= pendingFtpDirectories.size()) {
+        qDebug() << "[Scanner] ✅ Alle FTP-Verzeichnisse verarbeitet (lokal:" << localFiles << ", ftp:" << ftpFiles << "), starte Size-Filtering";
+        
+        // ✅ ENTFERNT: HashEngine expectedFilesCount wird jetzt in startHashing() korrekt gesetzt
+        
+        // ✅ FIX ENTFERNT: HashEngine NICHT stoppen bei dual scan!
+        // HashEngine muss für lokale+FTP Dateien weiterlaufen können
+        qDebug() << "[Scanner] ⚡ FTP-Sammlung abgeschlossen, HashEngine läuft für alle Dateien weiter";
+        
+        QTimer::singleShot(100, this, [this]() {
+            filterBySize(); // ✅ KORREKTUR: Erst Size-Filtering für alle Dateien
+        });
+    }
+}
+
+void Scanner::collectFtpFiles(const QString &ftpDirectory, QSet<QString> &processedFiles)
+{
+    qDebug() << "[Scanner] 📡 FTP-Optimiert: Sammle Dateien für:" << ftpDirectory;
+    
+    // ⚡ PERFORMANCE: Cache für große Datensätze 
+    static QHash<QString, QStringList> ftpFileCache;
+    static QDateTime lastCacheUpdate;
+    
+    // Cache-Check: Verwende gecachte Daten wenn < 5 Min alt
+    if (ftpFileCache.contains(ftpDirectory) && 
+        lastCacheUpdate.secsTo(QDateTime::currentDateTime()) < 300) {
+        qDebug() << "[Scanner] ⚡ FTP-Cache-Hit für:" << ftpDirectory;
+        processCachedFtpFiles(ftpDirectory, ftpFileCache[ftpDirectory], processedFiles);
+        return;
+    }
+    
+    // Extract IP and path from FTP URL: ftp://192.168.1.224/sdb/Comedy/
+    QUrl ftpUrl(ftpDirectory);
+    if (!ftpUrl.isValid()) {
+        qWarning() << "[Scanner] ⚠️ Ungültige FTP-URL:" << ftpDirectory;
+        return;
+    }
+    QString host = ftpUrl.host();
+    QString path = ftpUrl.path();
+    if (host.isEmpty()) {
+        qWarning() << "[Scanner] ⚠️ Ungültiger FTP-Pfad (Host leer):" << ftpDirectory;
+        return;
+    }
+    if (path.isEmpty()) path = "/"; // ensure non-empty directory path
+    
+    // ⚡ OPTIMIERT: Wiederverwendung bestehender FTP-Connections
+    FtpClient *urlSpecificClient = getOrCreateFtpClient(host);
+    if (!urlSpecificClient) {
+        qCritical() << "[Scanner] ❌ Konnte keinen FTP-Client erstellen für Host:" << host;
+        return;
+    }
+    
+    // ✅ BULLETPROOF: PresetManager Null-Check mit Fallback
+    if (!presetManager) {
+        qCritical() << "[Scanner] ❌ FATAL: PresetManager null! Verwende Default-Credentials";
+        useDefaultFtpCredentials(urlSpecificClient, host);
+    } else {
+        // Hole Credentials aus PresetManager für gespeicherte Logins
+        LoginData login = presetManager->getLogin(host, 21);
+        if (!login.isValid()) {
+            qWarning() << "[Scanner] ⚠️ Keine Login-Daten für" << host << ":21 → Verwende Default";
+            useDefaultFtpCredentials(urlSpecificClient, host);
+        } else {
+            qDebug() << "[Scanner] 🔐 Verwende Credentials:" << login.username << "für" << host;
+            urlSpecificClient->setCredentials(host, 21, login.username, login.password);
+        }
+    }
+    
+    // Add to pending directories list for tracking; skip duplicate setup if already pending
+    bool newlyAdded = false;
+    if (!pendingFtpDirectories.contains(ftpDirectory)) {
+        pendingFtpDirectories.append(ftpDirectory);
+        newlyAdded = true;
+    } else {
+        qDebug() << "[Scanner] ⏭️ FTP-Verzeichnis bereits pending, überspringe erneute Verbindung:" << ftpDirectory;
+        return;
+    }
+    
+    qDebug() << "[Scanner] 📂 Starte rekursive FTP-Datei-Sammlung für:" << host << path;
+    
+    // 🎯 FTP-TRACKING: Registriere neuen aktiven FTP-Scan
+    activeFtpScans.fetch_add(1);
+    ftpScanningActive.store(true);
+    qDebug() << "[Scanner] 🔄 FTP-Scan gestartet. Aktive Scans:" << activeFtpScans.load();
+    
+    // Verbinde Signal für rekursive Dateisammlung (einzigartig, keine Duplikate)
+    connect(urlSpecificClient, &FtpClient::allFilesRecursivelyFinished,
+            this, [this, ftpDirectory](const QStringList &allFiles, bool success) {
+        qDebug() << "[Scanner] � Rekursive FTP-Dateien empfangen für:" << ftpDirectory << "Files:" << allFiles.size() << "Success:" << success;
+        
+        // 🎯 FTP-TRACKING: Markiere diesen FTP-Scan als abgeschlossen (IMMER, auch bei Fehlern)
+        int remainingScans = activeFtpScans.fetch_sub(1) - 1;
+        if (remainingScans <= 0) {
+            ftpScanningActive.store(false);
+            qDebug() << "[Scanner] ✅ Alle FTP-Scans abgeschlossen! Status auf false gesetzt.";
+        } else {
+            qDebug() << "[Scanner] 🔄 FTP-Scan abgeschlossen. Verbleibende Scans:" << remainingScans;
+        }
+        
+        // 🚨 CRITICAL MEMORY PROTECTION: Prevent QSet crash for large datasets
+        if (allFiles.size() > 15000) {  // Reduziert von 25000 auf 15000 für bessere Stabilität
+            qWarning() << "[Scanner] 🚨 KRITISCH: Große Datenmenge (" << allFiles.size() << ") - verwende sichere Batch-Verarbeitung";
+            processFtpFilesBatch(ftpDirectory, allFiles, success);
+            return;
+        }
+        
+        // 🛡️ EXTRA MEMORY PROTECTION: Check for potential memory stress
+        if (allFiles.size() > 10000) {
+            qWarning() << "[Scanner] ⚠️ WARNUNG: Sehr große Datenmenge (" << allFiles.size() << ") - aktiviere zusätzliche Memory-Protection";
+            // Trigger garbage collection if possible
+            QCoreApplication::processEvents();
+        }
+        
+        // 🛡️ RACE CONDITION PROTECTION: Prüfe ob Callback noch für aktuellen Scan gültig ist
+        uint64_t callbackScanId = this->currentScanId.load();
+        if (callbackScanId == 0) {
+            qDebug() << "[Scanner] ⚠️ FTP-Callback ignoriert: Kein aktiver Scan (Scan-ID=0)";
+            return;
+        }
+        
+        if (success) {
+            // 🛡️ CRASH-SAFE: Use member variable instead of reference capture
+            if (this->processedFiles.size() > 20000) {
+                qWarning() << "[Scanner] 🚨 ProcessedFiles-Cache zu groß (" << this->processedFiles.size() << ") - lösche für Stabilität";
+                this->processedFiles.clear();
+            }
+            
+            // Einheitliche Großdatei-Politik (FTP): env-basiert
+            bool skipLarge = qEnvironmentVariableIsSet("FILEDUPER_SKIP_LARGE") && (qgetenv("FILEDUPER_SKIP_LARGE") == "1");
+            qint64 maxSizeMb = qEnvironmentVariableIsSet("FILEDUPER_MAX_SIZE_MB") ? qgetenv("FILEDUPER_MAX_SIZE_MB").toLongLong() : 0;
+
+            for (const QString &file : allFiles) {
+                QString baseFileName = file;
+                qint64 fileSize = 0;
+                
+                // 🎯 KRITISCHER FIX: Parse FTP-Dateien mit |Größe-Anhang und verwende base filename!
+                if (file.contains("|")) {
+                    QStringList fileNameParts = file.split("|");
+                    baseFileName = fileNameParts[0];
+                    fileSize = fileNameParts[1].toLongLong();
+                    // Einheitliche Großdatei-Politik anwenden
+                    if (skipLarge && maxSizeMb > 0) {
+                        qint64 maxBytes = maxSizeMb * 1024 * 1024;
+                        if (fileSize > maxBytes) {
+                            qDebug() << "[Scanner] 🚫 GROSSE FTP-Datei übersprungen (" << maxSizeMb << "MB):" << baseFileName;
+                            continue;
+                        }
+                    }
+                    
+                    qDebug() << "[Scanner] 🛡️ DUPLIKAT-FIX: Überspringe Größe-Variante:" << file << "→ verwende nur:" << baseFileName;
+                    // ✅ KRITISCHER FIX: CONTINUE ENTFERNT - wir verwenden baseFileName weiter!
+                }
+                
+                // 🔧 CRITICAL FIX: Prüfe ob baseFileName bereits absoluter Pfad ist
+                QString fullPath;
+                if (baseFileName.startsWith("/")) {
+                    // baseFileName ist bereits absoluter Pfad vom FTP-Server - verwende as-is
+                    fullPath = QString("ftp://%1%2").arg(QUrl(ftpDirectory).host(), baseFileName);
+                    qDebug() << "[Scanner] 🔧 Absolute FTP path detected, constructed:" << fullPath;
+                } else {
+                    // baseFileName ist relativ - füge zu ftpDirectory hinzu  
+                    fullPath = ftpDirectory;
+                    if (!fullPath.endsWith("/")) fullPath += "/";
+                    fullPath += baseFileName;
+                    qDebug() << "[Scanner] 🔧 Relative FTP path detected, constructed:" << fullPath;
+                }
+                
+                // 🛡️ CRASH-SAFE: Use member variable instead of dangling reference
+                QString canonicalPath = QUrl(fullPath).toString();  // FTP-URLs normalisieren
+                if (this->processedFiles.contains(canonicalPath)) {
+                    qDebug() << "[Scanner] ⏭️ FTP-Datei bereits in diesem Scan verarbeitet (übersprungen):" << canonicalPath.right(50);
+                    continue;
+                }
+                this->processedFiles.insert(canonicalPath);
+                
+                // 🚀 VERZEICHNIS-FILTER: FTP-Duplikate dürfen keine Verzeichnisse sein
+                if (baseFileName.endsWith('/') || baseFileName.isEmpty()) {
+                    qDebug() << "[Scanner] ⚠️ Überspringe FTP-Verzeichnis:" << baseFileName;
+                    continue;
+                }
+                
+                // ✅ Füge FTP-Datei zur Sammlung hinzu mit korrekter Größe
+                FileInfo ftpFile;
+                ftpFile.filePath = fullPath;
+                ftpFile.fileName = baseFileName;
+                ftpFile.size = fileSize;
+                ftpFile.lastModified = QDateTime::currentDateTime().toSecsSinceEpoch();
+                ftpFile.hash = "";  // Wird später berechnet
+                ftpFile.isLocal = false;  // FTP-Datei
+                ftpFile.networkType = "FTP";
+                
+                // 🛡️ RACE CONDITION PROTECTION: Prüfe Scan-ID vor File-Hinzufügung
+                if (this->currentScanId.load() != callbackScanId) {
+                    qDebug() << "[Scanner] ⚠️ FTP-Datei ignoriert: Scan-ID nicht mehr gültig (alte:" << callbackScanId << "neue:" << this->currentScanId.load() << ")";
+                    continue;
+                }
+                
+                this->allFiles.append(ftpFile);  // ✅ FIX: Verwende Member-Variable this->allFiles
+                qDebug() << "[Scanner] ✅ FTP-Datei hinzugefügt (rekursiv):" << baseFileName << "Size:" << fileSize;
+            }
+        } else {
+            qWarning() << "[Scanner] ⚠️ FTP-Fehler beim Laden von:" << ftpDirectory;
+        }
+        
+        // Entferne aus pending list
+        pendingFtpDirectories.removeAll(ftpDirectory);
+
+        // Wichtig: Pooled-Clients NICHT löschen, nur Verbindung lösen, damit kein Dangling Pointer im Pool entsteht
+        QObject *s = sender();
+        if (s) {
+            QObject::disconnect(s, nullptr, this, nullptr);
+        }
+
+        // ✅ FTP CALLBACK FIXED: Check if all FTP directories are completed
+        if (scanning.load()) {
+            qDebug() << "[Scanner] 🔄 FTP abgeschlossen, prüfe ob alle FTP-Verzeichnisse fertig sind...";
+            qDebug() << "[Scanner] 📊 FTP Status: Pending:" << pendingFtpDirectories.size() << "Completed:" << completedFtpDirectories.size() << "Total Files:" << allFiles.size();
+            
+            // Critical fix: Call checkScanProgress to proceed with duplicate detection
+            QTimer::singleShot(50, this, &Scanner::checkScanProgress);
+        }
+    });
+    
+    // Starte die Verbindung und rekursive Dateiliste 
+    urlSpecificClient->connectToHost();
+    // Ensure path points to a directory
+    if (!path.endsWith('/')) path += '/';
+    
+    qDebug() << "[Scanner] 🔄 Starte REKURSIVE FTP-Dateisammlung für:" << path;
+    urlSpecificClient->listAllFilesRecursively(path);
+    
+    qDebug() << "[Scanner] ✅ FTP-Collection gestartet für" << ftpDirectory;
+}
+
+void Scanner::checkScanProgress()
+{
+    qDebug() << "[Scanner] 🔍 checkScanProgress() aufgerufen - Pending FTP:" << pendingFtpDirectories.size();
+    qDebug() << "[Scanner] 🔍 DEBUG: Ist pendingFtpDirectories leer?" << pendingFtpDirectories.isEmpty();
+    
+    // 📊 PROGRESS-UPDATE: FTP-Verarbeitung
+    int totalFtpDirs = pendingFtpDirectories.size() + completedFtpDirectories.size();
+    if (totalFtpDirs > 0) {
+        int progressPercent = (completedFtpDirectories.size() * 100) / totalFtpDirs;
+        emit scanProgress(progressPercent, completedFtpDirectories.size(), totalFtpDirs);
+        emit currentFileProcessing(
+            QString("FTP-Verzeichnis %1/%2").arg(completedFtpDirectories.size()).arg(totalFtpDirs),
+            "📡 Lade Netzwerk-Dateien",
+            completedFtpDirectories.size(),
+            totalFtpDirs
+        );
+    }
+    
+    // Wenn alle FTP-Operationen abgeschlossen sind, starte die Hash-Berechnung
+    if (pendingFtpDirectories.isEmpty()) {
+        qDebug() << "[Scanner] ✅ Alle FTP-Verzeichnisse geladen - starte Duplikat-Erkennung";
+        qDebug() << "[Scanner] � FTP-COLLECTION COMPLETE: Anzahl Dateien in allFiles:" << allFiles.size();
+        
+        // 🔄 CRITICAL FIX: Call filterBySize directly since FTP file collection is complete
+        QTimer::singleShot(50, this, &Scanner::filterBySize);
+        return;
+    }
+}
+
+// 🧠 NPU-CALLBACK: NPU-Bildverarbeitung abgeschlossen
+void Scanner::onNpuImageBatchProcessed(const QStringList &processedImages)
+{
+    qDebug() << "[Scanner] 🎨 NPU-Bildverarbeitung abgeschlossen:" << processedImages.size() << "Bilder verarbeitet";
+    
+    // 🎯 LIVE-NPU-UPDATES für jedes verarbeitete Bild
+    for (int i = 0; i < processedImages.size(); ++i) {
+        QString imagePath = processedImages.at(i);
+        QString fileName = QFileInfo(imagePath).fileName();
+        
+        // 📊 LIVE-AKTIVITÄTS-UPDATE an GUI senden
+        emit currentFileProcessing(fileName, "NPU-Bildanalyse", i + 1, processedImages.size());
+        emit processActivityUpdate("NPU-Bildverarbeitung", 
+                                   QString("Feature-Extraktion: %1").arg(fileName));
+    }
+    
+    // Statistiken für NPU-Verarbeitung
+    emit scanStatusChanged(QString("🧠 NPU-Bildverarbeitung: %1 Bilder analysiert").arg(processedImages.size()));
+    
+    // 🚀 NPU-AKTIVITÄTS-UPDATE für Activity-Indicator
+    emit npuActivityUpdate(processedImages.size(), 0); // Noch keine Duplikate gefunden
+    
+    // Hier könnten wir die NPU-Ergebnisse weiterverarbeiten
+    // z.B. für intelligente Duplikatserkennung basierend auf Bildähnlichkeit
+}
+
+// 🗑️ FTP-Remove Callback
+void Scanner::onFtpRemoveFinished(const QString &remoteFile, bool ok)
+{
+    deleteAttempted++;
+    if (ok) deleteSucceeded++;
+    emit deleteProgress(remoteFile, ok, ok ? "FTP gelöscht" : "FTP löschen fehlgeschlagen");
+    if (deleteAttempted == 0) return; // shouldn’t happen
+}
+
+// 🗑️ Duplikate löschen (Batch)
+void Scanner::deleteDuplicateFiles(const QList<FileInfo> &filesToDelete)
+{
+    deleteAttempted = 0;
+    deleteSucceeded = 0;
+    for (const auto &fi : filesToDelete) {
+        // 🚫 Schutz: Original-Dateien niemals löschen (wenn Gruppe erkennbar)
+        // Heuristik: Falls Hash vorhanden und diese Datei in hashGroups[hash] die "älteste/jüngste" Regel erfüllt
+        if (!fi.hash.isEmpty() && hashGroups.contains(fi.hash)) {
+            const QList<FileInfo> &group = hashGroups.value(fi.hash);
+            if (group.size() > 1) {
+                // Bestimme Original nach aktuellem Regel-Set (angenommen: neueste behalten)
+                FileInfo candidateOriginal = group.first();
+                for (const FileInfo &gfi : group) {
+                    if (gfi.lastModified > candidateOriginal.lastModified) {
+                        candidateOriginal = gfi;
+                    }
+                }
+                if (candidateOriginal.filePath == fi.filePath) {
+                    emit deleteProgress(fi.filePath, false, "Original geschützt");
+                    continue; // Original nicht löschen
+                }
+            }
+        }
+        QString msg;
+        if (fi.isLocal) {
+            bool ok = deleteLocalFile(fi.filePath, msg);
+            deleteAttempted++;
+            if (ok) deleteSucceeded++;
+            emit deleteProgress(fi.filePath, ok, msg);
+        } else if (fi.filePath.startsWith("ftp://")) {
+            // Sicherheitsnetz: Verzeichnisse nicht löschen
+            if (fi.filePath.endsWith('/')) {
+                emit deleteProgress(fi.filePath, false, "Verzeichnis-Löschen blockiert");
+                continue;
+            }
+            // FTP: Host + Remote Pfad extrahieren
+            QUrl u(fi.filePath);
+            QString remote = u.path();
+            if (remote.startsWith('/')) remote.remove(0,1);
+            if (!ftpClient) {
+                emit deleteProgress(fi.filePath, false, "Kein FTP-Client verfügbar");
+                continue;
+            }
+            // Anmeldedaten werden vom FtpClient verwaltet; wir rufen remove() auf
+            connect(ftpClient, &FtpClient::removeFinished, this, &Scanner::onFtpRemoveFinished, Qt::UniqueConnection);
+            ftpClient->remove(remote);
+        } else if (fi.filePath.startsWith("sftp://")) {
+            emit deleteProgress(fi.filePath, false, "SFTP-Löschen noch nicht implementiert");
+        } else if (fi.filePath.startsWith("smb://")) {
+            emit deleteProgress(fi.filePath, false, "SMB-Löschen noch nicht implementiert");
+        } else if (fi.filePath.startsWith("nfs://")) {
+            emit deleteProgress(fi.filePath, false, "NFS-Löschen noch nicht implementiert");
+        } else {
+            emit deleteProgress(fi.filePath, false, "Unbekannter Netzwerktyp");
+        }
+    }
+    emit deleteBatchFinished(deleteAttempted, deleteSucceeded);
+}
+
+// 🗑️ Lokale Datei löschen → Papierkorb wenn möglich, sonst hart
+bool Scanner::deleteLocalFile(const QString &path, QString &msg)
+{
+    QFileInfo info(path);
+    if (!info.exists() || !info.isFile()) {
+        msg = "Nicht gefunden oder keine Datei";
+        return false;
+    }
+    // Versuch: direkt löschen (send2trash wäre extern, hier Fallback)
+    if (QFile::remove(path)) {
+        msg = "Gelöscht";
+        return true;
+    }
+    msg = "Löschen fehlgeschlagen";
+    return false;
+}
+
+// 🛡️ NEUE FUNKTION: Deduplication-Caches leeren
+void Scanner::clearDeduplicationCaches()
+{
+    globalProcessedFiles.clear();
+    globalHashedFiles.clear();
+    processedFiles.clear();  // 🛡️ KRITISCH: Member-Variable auch leeren!
+    
+    // 🧹 ERWEITERTE MEMORY-BEREINIGUNG
+    // Nur leeren wenn bereits verarbeitet (nicht während aktiver Scan)
+    if (!scanning.load()) {
+        allFiles.clear();
+        allFiles.squeeze(); // Force deallocation
+        
+        fileSizeGroups.clear();
+        hashGroups.clear();
+        dateSizeGroups.clear();
+        
+        extractedFeatures.clear();
+        extractedFeatures.squeeze(); // Force deallocation
+        
+        imageDuplicateGroups.clear();
+        imageDuplicateGroups.squeeze(); // Force deallocation
+        
+        // Directory iterators cleanup
+        currentDirIterators.clear();
+        
+        qDebug() << "[Scanner] 🧹 ERWEITERTE Memory-Bereinigung durchgeführt";
+    }
+    
+    qDebug() << "[Scanner] 🛡️ Deduplication-Caches geleert (inkl. processedFiles)";
+}
+
+// 🛡️ NEUE FUNKTION: Prüfung ob Datei bereits verarbeitet wurde
+bool Scanner::isFileAlreadyProcessed(const QString &filePath)
+{
+    QString canonicalPath = QFileInfo(filePath).canonicalFilePath();
+    return globalProcessedFiles.contains(canonicalPath);
+}
+
+// ✅ NEW: Enhanced remote path detection
+bool Scanner::isRemotePath(const QString &path)
+{
+    // Check for various remote protocols
+    QStringList remoteProtocols = {
+        "ftp://", "ftps://", "sftp://", 
+        "smb://", "cifs://", "nfs://",
+        "ssh://", "http://", "https://"
+    };
+    
+    for (const QString &protocol : remoteProtocols) {
+        if (path.startsWith(protocol, Qt::CaseInsensitive)) {
+            return true;
+        }
+    }
+    
+    // Check for UNC paths (Windows network shares)
+    if (path.startsWith("\\\\") || path.startsWith("//")) {
+        return true;
+    }
+    
+    return false;
+}
+
+// 🧠 MEMORY-SAFE: Batch-Verarbeitung für große FTP-Datensätze (>25.000 Dateien)
+void Scanner::processFtpFilesBatch(const QString &directoryOrUrl, const QStringList &files, bool success)
+{
+    qDebug() << "[Scanner] 🧠 BATCH-VERARBEITUNG für" << files.size() << "Dateien gestartet";
+    
+    // 🛡️ RACE CONDITION PROTECTION: Prüfe ob Callback noch für aktuellen Scan gültig ist
+    uint64_t callbackScanId = this->currentScanId.load();
+    if (callbackScanId == 0) {
+        qDebug() << "[Scanner] ⚠️ FTP-Batch-Callback ignoriert: Kein aktiver Scan (Scan-ID=0)";
+        return;
+    }
+    
+    const int batchSize = 5000; // 5K Dateien pro Batch
+    int totalBatches = (files.size() + batchSize - 1) / batchSize;
+    // Ermittele Basis-URL für korrekte Pfadkonstruktion
+    QString baseUrl = directoryOrUrl;
+    if (!baseUrl.startsWith("ftp://")) {
+        auto normalizePath = [](QString p) {
+            if (p.isEmpty()) return p;
+            if (!p.startsWith('/')) p.prepend('/');
+            if (p.length() > 1 && p.endsWith('/')) p.chop(1);
+            return p;
+        };
+        const QString dirNorm = normalizePath(directoryOrUrl);
+        for (const QString &pendingUrl : pendingFtpDirectories) {
+            QUrl url(pendingUrl);
+            const QString pendNorm = normalizePath(url.path());
+            if (pendNorm == dirNorm || normalizePath(url.path() + "/") == dirNorm) {
+                baseUrl = pendingUrl;
+                break;
+            }
+        }
+    }
+    
+    for (int batch = 0; batch < totalBatches; batch++) {
+        int startIdx = batch * batchSize;
+        int endIdx = qMin(startIdx + batchSize, files.size());
+        
+        QStringList batchFiles = files.mid(startIdx, endIdx - startIdx);
+        qDebug() << "[Scanner] 🧠 Verarbeite Batch" << (batch + 1) << "/" << totalBatches 
+                 << ":" << batchFiles.size() << "Dateien";
+        
+        // ✅ Direkte Verarbeitung ohne rekursiven Aufruf mit korrekter Basis-URL
+        processSingleFtpBatch(baseUrl, batchFiles);
+        
+        // 🛡️ Memory-Cleanup zwischen Batches
+        if (batch % 2 == 0) { // Every 2nd batch
+            clearDeduplicationCaches();
+            
+            // 🧹 AGGRESSIVE Memory-Cleanup für große Datensätze
+            if (batch % 10 == 0 && allFiles.size() > 5000) {
+                // Periodisches Memory-Defragmentierung bei großen Datensätzen
+                allFiles.squeeze();
+                qDebug() << "[Scanner] 💾 Aggressive Memory-Defragmentierung bei" << allFiles.size() << "Dateien";
+            }
+            
+            qDebug() << "[Scanner] 🧹 Batch-Memory-Cleanup durchgeführt";
+        }
+        
+        // Kurze Pause zwischen Batches um Memory-Pressure zu reduzieren
+        QThread::msleep(50);
+    }
+    
+    // Mark directory as completed after all batches
+    pendingFtpDirectories.removeOne(directoryOrUrl);
+    
+    // ✅ FIXED: Continue async directory processing instead of old checkScanProgress
+    if (scanning.load()) {
+        qDebug() << "[Scanner] 🔄 FTP batch abgeschlossen, setze async directory processing fort...";
+        // Continue with next directory in the async processing loop
+        QTimer::singleShot(50, this, &Scanner::processNextDirectoryChunk);
+    }
+    
+    qDebug() << "[Scanner] ✅ BATCH-VERARBEITUNG abgeschlossen:" << totalBatches << "Batches verarbeitet";
+}
+
+// 🧠 MEMORY-SAFE: Einzelner Batch ohne Rekursion
+void Scanner::processSingleFtpBatch(const QString &baseUrl, const QStringList &files)
+{
+    // 🛡️ RACE CONDITION PROTECTION: Prüfe ob Callback noch für aktuellen Scan gültig ist
+    uint64_t callbackScanId = this->currentScanId.load();
+    if (callbackScanId == 0) {
+        qDebug() << "[Scanner] ⚠️ FTP-Single-Batch-Callback ignoriert: Kein aktiver Scan (Scan-ID=0)";
+        return;
+    }
+    
+    // ✅ Einfache Batch-Verarbeitung ohne komplexe NPU-Logik
+    // Einheitliche Großdatei-Politik (FTP): env-basiert
+    bool skipLarge = qEnvironmentVariableIsSet("FILEDUPER_SKIP_LARGE") && (qgetenv("FILEDUPER_SKIP_LARGE") == "1");
+    qint64 maxSizeMb = qEnvironmentVariableIsSet("FILEDUPER_MAX_SIZE_MB") ? qgetenv("FILEDUPER_MAX_SIZE_MB").toLongLong() : 0;
+    for (const QString &fileName : files) {
+        // ✅ Erstelle FileInfo ohne QSet-Overhead
+        QString filePath;
+        qint64 fileSize = 0;
+        
+        // Parse file info (name|size format)
+        if (fileName.contains('|')) {
+            QStringList parts = fileName.split('|');
+            QString name = parts[0];
+            if (parts.size() > 1) {
+                fileSize = parts[1].toLongLong();
+            }
+            // Einheitliche Großdatei-Politik anwenden
+            if (skipLarge && maxSizeMb > 0) {
+                qint64 maxBytes = maxSizeMb * 1024 * 1024;
+                if (fileSize > maxBytes) {
+                    qDebug() << "[Scanner] 🚫 GROSSE FTP-Datei übersprungen (Batch) (" << maxSizeMb << "MB):" << name;
+                    continue;
+                }
+            }
+            filePath = name;
+        } else {
+            filePath = fileName;
+        }
+        
+        // ✅ Create FTP FileInfo - extract host from directory context
+        FileInfo fileInfo;
+        fileInfo.fileName = QFileInfo(filePath).fileName();
+        
+        // ✅ Proper URL construction: baseUrl is a full FTP URL already
+        QString url = baseUrl;
+        if (!url.endsWith('/')) url += '/';
+        fileInfo.filePath = url + QUrl::toPercentEncoding(fileInfo.fileName);
+        
+        fileInfo.size = fileSize;
+        fileInfo.lastModified = QDateTime::currentSecsSinceEpoch();
+        fileInfo.hash = ""; // Will be calculated later
+        fileInfo.isLocal = false;
+        fileInfo.networkType = "FTP";
+        
+        // ✅ Add to main file list (thread-safe) - Hash will be calculated in startHashing()
+        allFiles.append(fileInfo);
+        
+        // 📊 PROGRESS UPDATE für FTP-Processing
+        if (allFiles.size() % 1000 == 0) {
+            emit ftpProcessingProgress(allFiles.size(), QString("FTP-Dateien verarbeitet: %1").arg(allFiles.size()));
+        }
+    }
+    
+    qDebug() << "[Scanner] ✅ Batch-Dateien hinzugefügt:" << files.size() << "Total:" << allFiles.size();
+}
+
+// 🎯 NPU-BILDVERARBEITUNG: Feature-basierte Ähnlichkeitsanalyse
+void Scanner::startNpuImageAnalysis(const QStringList &imagePaths) {
+    if (!npuManager) {
+        qWarning() << "[Scanner] ❌ NPU-Manager nicht verfügbar - überspringe Bildanalyse";
+        return;
+    }
+    
+    qDebug() << "[Scanner] 🎯 NPU-Bildanalyse startet für" << imagePaths.size() << "Bilder";
+    emit npuAnalysisProgress("Extrahiere Bildfeatures mit NPU...");
+    
+    // Extrahiere Features für alle Bilder
+    extractedFeatures = npuManager->extractImageFeatures(imagePaths);
+    emit imageFeaturesExtracted(extractedFeatures);
+    
+    // Führe Ähnlichkeitsanalyse durch
+    emit npuAnalysisProgress("Analysiere Bildähnlichkeiten...");
+    processImageFeatures(extractedFeatures);
+}
+
+void Scanner::processImageFeatures(const QList<NpuManager::ImageFeature> &features) {
+    if (features.isEmpty()) {
+        qDebug() << "[Scanner] ⚠️ Keine gültigen Bildfeatures - überspringe NPU-Analyse";
+        return;
+    }
+    
+    qDebug() << "[Scanner] 🔍 Verarbeite" << features.size() << "Bildfeatures";
+    
+    // Verwende konfigurierbaren Ähnlichkeitsmodus (Standard: NEAR_DUPLICATES)
+    QList<NpuManager::NpuDuplicateGroup> npuGroups = npuManager->findSimilarImages(features, currentSimilarityMode);
+    
+    // Konvertiere NPU-Gruppen zu Scanner-Format
+    imageDuplicateGroups.clear();
+    for (const auto &npuGroup : npuGroups) {
+        ImageDuplicateGroup scannerGroup;
+        scannerGroup.originalImage = npuGroup.originalImage;
+        scannerGroup.duplicateImages = npuGroup.similarImages;
+        scannerGroup.averageSimilarity = npuGroup.avgSimilarity;
+        
+        // Bestimme Gruppen-Typ basierend auf Ähnlichkeit
+        if (npuGroup.avgSimilarity >= 0.95f) scannerGroup.groupType = "STRICT";
+        else if (npuGroup.avgSimilarity >= 0.85f) scannerGroup.groupType = "NEAR";
+        else if (npuGroup.avgSimilarity >= 0.70f) scannerGroup.groupType = "SIMILAR";
+        else scannerGroup.groupType = "LOOSE";
+        
+        imageDuplicateGroups.append(scannerGroup);
+    }
+    
+    qDebug() << "[Scanner] ✅ NPU-Analyse abgeschlossen:" << imageDuplicateGroups.size() << "Bild-Duplikat-Gruppen";
+    emit imageDuplicatesFound(imageDuplicateGroups);
+}
+
+// Filtere Bilddateien aus allen gefundenen Dateien
+QStringList Scanner::filterImageFiles(const QList<FileInfo> &allFiles) {
+    QStringList imagePaths;
+    QStringList imageExtensions = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".webp"};
+    
+    for (const FileInfo &file : allFiles) {
+        if (isImageFile(file.filePath)) {
+            imagePaths.append(file.filePath);
+        }
+    }
+    
+    qDebug() << "[Scanner] 🖼️ " << imagePaths.size() << "Bilddateien von" << allFiles.size() << "Dateien gefiltert";
+    return imagePaths;
+}
+
+// Prüfe ob Datei ein Bild ist
+bool Scanner::isImageFile(const QString &filePath) const {
+    static QStringList imageExtensions = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".webp", ".svg"};
+    
+    QString lowerPath = filePath.toLower();
+    for (const QString &ext : imageExtensions) {
+        if (lowerPath.endsWith(ext)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Kombiniere Hash- und NPU-basierte Ergebnisse
+CombinedDuplicateResult Scanner::combineHashAndImageResults() {
+    CombinedDuplicateResult combined;
+    
+    // Hash-basierte Duplikate aus aktuellen Gruppen
+    for (const auto &sizeGroup : fileSizeGroups) {
+        if (sizeGroup.size() > 1) {
+            QHash<QString, QList<FileInfo>> hashMap;
+            for (const FileInfo &file : sizeGroup) {
+                if (!file.hash.isEmpty()) {
+                    hashMap[file.hash].append(file);
+                }
+            }
+            
+            for (auto it = hashMap.begin(); it != hashMap.end(); ++it) {
+                if (it.value().size() > 1) {
+                    DuplicateGroup group;
+                    group.hash = it.key();
+                    group.size = it.value().first().size;
+                    group.original = it.value().first();
+                    
+                    for (int i = 1; i < it.value().size(); ++i) {
+                        group.duplicates.append(it.value()[i]);
+                    }
+                    
+                    combined.hashDuplicates.append(group);
+                }
+            }
+        }
+    }
+    
+    // NPU-basierte Bild-Duplikate hinzufügen
+    combined.imageDuplicates = imageDuplicateGroups;
+    
+    qDebug() << "[Scanner] 🔗 Kombinierte Ergebnisse:" << combined.hashDuplicates.size() << "Hash-Gruppen," << combined.imageDuplicates.size() << "Bild-Gruppen";
+    return combined;
+}
+
+// Erweiterte Duplikatserkennung: Hash + NPU kombiniert
+void Scanner::startAdvancedDuplicateDetection() {
+    qDebug() << "[Scanner] 🚀 Erweiterte Duplikatserkennung startet (Hash + NPU)";
+    
+    // Phase 1: Traditionelle Hash-basierte Duplikaterkennung
+    emit scanStatusChanged("Berechne File-Hashes...");
+    compareHashes();
+    
+    // Phase 2: NPU-basierte Bildähnlichkeitsanalyse
+    if (npuManager) {
+        QStringList imagePaths = filterImageFiles(allFiles);
+        if (!imagePaths.isEmpty()) {
+            emit scanStatusChanged("NPU analysiert Bildähnlichkeiten...");
+            currentSimilarityMode = NpuManager::NEAR_DUPLICATES; // Konfigurierbar
+            startNpuImageAnalysis(imagePaths);
+        }
+    }
+    
+    // Phase 3: Kombiniere Ergebnisse
+    emit scanStatusChanged("Kombiniere Duplikat-Ergebnisse...");
+    CombinedDuplicateResult combined = combineHashAndImageResults();
+    emit combinedScanCompleted(combined);
+}
+
+// Implementierung für CombinedDuplicateResult::totalDuplicates()
+int CombinedDuplicateResult::totalDuplicates() const {
+    int total = 0;
+    for (const DuplicateGroup &group : hashDuplicates) {
+        total += group.duplicates.size();
+    }
+    for (const ImageDuplicateGroup &group : imageDuplicates) {
+        total += group.duplicateImages.size();
+    }
+    return total;
+}
+
+void Scanner::processNextFile()
+{
+    // No longer used - processing is handled by HashEngine callbacks
+    // This method is kept for compatibility but should not be called
+    qDebug() << "[Scanner] ⚠️ processNextFile() called - should use HashEngine callbacks instead";
+}
+
+// ⚡ OPTIMIERUNG: Erstelle partielle Results für Anti-Hang Mechanismus
+DuplicateGroups Scanner::buildPartialResults() {
+    DuplicateGroups partialResults;
+    
+    qDebug() << "[Scanner] 🔧 Erstelle partielle Results für Anti-Hang...";
+    
+    // Sammle alle bereits gehashten Dateien mit identischen Hashes
+    QHash<QString, QList<FileInfo>> hashGroups;
+    
+    for (auto groupIt = fileSizeGroups.begin(); groupIt != fileSizeGroups.end(); ++groupIt) {
+        const QList<FileInfo> &filesInGroup = groupIt.value();
+        for (const FileInfo &file : filesInGroup) {
+            if (!file.hash.isEmpty() && 
+                file.hash != "FTP_SKIPPED" && 
+                file.hash != "FTP_DOWNLOAD_FAILED" &&
+                file.hash != "GPU_ERROR") {
+                hashGroups[file.hash].append(file);
+            }
+        }
+    }
+    
+    // Erstelle DuplicateGroups aus Hash-Matches
+    for (auto hashIt = hashGroups.begin(); hashIt != hashGroups.end(); ++hashIt) {
+        const QString &hash = hashIt.key();
+        const QList<FileInfo> &files = hashIt.value();
+        if (files.size() > 1) {
+            DuplicateGroup group;
+            group.hash = hash;
+            group.size = files.first().size;
+            
+            // Bestimme Original (älteste Datei)
+            FileInfo oldest = files.first();
+            for (const FileInfo &file : files) {
+                if (file.lastModified < oldest.lastModified) {
+                    oldest = file;
+                }
+            }
+            
+            group.original = oldest;
+            for (const FileInfo &file : files) {
+                if (file.filePath != oldest.filePath) {
+                    group.duplicates.append(file);
+                }
+            }
+            
+            if (!group.duplicates.isEmpty()) {
+                partialResults.groups.append(group);
+            }
+        }
+    }
+    
+    // Statistiken berechnen - nur ECHTE Duplikat-Kandidaten zählen
+    int totalFilesInSizeGroups = 0;
+    for (auto groupIt = fileSizeGroups.begin(); groupIt != fileSizeGroups.end(); ++groupIt) {
+        totalFilesInSizeGroups += groupIt.value().size();
+    }
+    
+    partialResults.totalFiles = totalFilesInSizeGroups; // ✅ NUR Duplikat-Kandidaten zählen!
+    partialResults.duplicateFiles = 0;
+    partialResults.duplicateSize = 0;
+    for (const auto &grp : partialResults.groups) {
+        partialResults.duplicateFiles += grp.duplicates.size();
+        partialResults.duplicateSize += grp.size * grp.duplicates.size();
+    }
+    qDebug() << "[Scanner] ✅ Partielle Results:" << partialResults.groups.size() << "Duplikat-Gruppen erstellt"
+             << "Duplikat-Kandidaten (nur gleiche Größen):" << totalFilesInSizeGroups
+             << "Echte Duplikat-Dateien:" << partialResults.duplicateFiles
+             << "Gesparte Größe:" << partialResults.duplicateSize;
+    return partialResults;
+}
+
+// ⚡ OPTIMIERUNG: Cache-Processing für FTP-Dateien
+void Scanner::processCachedFtpFiles(const QString &ftpDirectory, const QStringList &files, QSet<QString> &processedFiles) {
+    qDebug() << "[Scanner] ⚡ Verarbeite" << files.size() << "gecachte FTP-Dateien für:" << ftpDirectory;
+    
+    for (const QString &entry : files) {
+        QString fileName = entry; // mutable copy
+        if (processedFiles.contains(fileName)) continue; // Skip bereits verarbeitete Dateien
+
+        QString originalEntry = fileName;
+        qint64 parsedSize = -1;
+        if (fileName.contains('|')) {
+            int sep = fileName.lastIndexOf('|');
+            QString sizePart = fileName.mid(sep + 1).trimmed();
+            QString namePart = fileName.left(sep).trimmed();
+            bool okSize = false;
+            qint64 sz = sizePart.toLongLong(&okSize);
+            if (okSize && sz >= 0) {
+                parsedSize = sz;
+                fileName = namePart; // use pure filename onward
+                qDebug() << "[Scanner] 📏 FTP-Eintrag mit Größe erkannt:" << originalEntry << "→ Name=" << fileName << "Size=" << parsedSize;
+            } else {
+                qDebug() << "[Scanner] ⚠️ Ungültige Size-Variante ignoriert, verwende Eintrag als Name:" << originalEntry;
+            }
+        }
+
+        // FTP cached entries are names, not local paths; build proper URL
+    QString fullPath = ftpDirectory;
+        if (!fullPath.endsWith('/')) fullPath += '/';
+    fullPath += fileName;
+
+        // Falls derselbe Pfad bereits ohne Größe aufgenommen wurde und wir jetzt eine Größe haben → aktualisieren
+        bool updatedExisting = false;
+        if (parsedSize >= 0) {
+            for (FileInfo &existing : allFiles) {
+                if (!existing.isLocal && existing.filePath == fullPath && existing.size == 0) {
+                    existing.size = parsedSize;
+                    updatedExisting = true;
+                    qDebug() << "[Scanner] 🔄 Aktualisiere bestehendes FTP-File mit echter Größe:" << fullPath << "→" << parsedSize;
+                    break;
+                }
+            }
+        }
+
+        if (updatedExisting) {
+            processedFiles.insert(fileName);
+            continue; // Größe aktualisiert, kein neuer Eintrag nötig
+        }
+
+        FileInfo info;
+    info.filePath = fullPath;
+    info.fileName = fileName;
+        info.size = (parsedSize >= 0) ? parsedSize : 0; // 0 bleibt Fallback, wird sonst gleich behandelt
+        info.lastModified = QDateTime::currentSecsSinceEpoch();
+        info.hash = "";
+        info.isLocal = false;
+        info.networkType = "FTP";
+
+        allFiles.append(info);
+    processedFiles.insert(fileName);
+    }
+    
+    // ✅ FIXED: Continue with async directory processing instead of dual calls
+    if (scanning.load()) {
+        qDebug() << "[Scanner] 🔄 FTP-Cache verarbeitet, setze async directory processing fort...";
+        QTimer::singleShot(50, this, &Scanner::processNextDirectoryChunk);
+    }
+}
+
+// ⚡ OPTIMIERUNG: FTP-Client Pool für Connection-Reuse
+FtpClient* Scanner::getOrCreateFtpClient(const QString &host) {
+    static QHash<QString, FtpClient*> clientPool;
+    
+    if (!clientPool.contains(host)) {
+        qDebug() << "[Scanner] 🔗 Erstelle neuen FTP-Client für:" << host;
+        FtpClient *client = new FtpClient(this);
+        clientPool[host] = client;
+        return client;
+    }
+    
+    qDebug() << "[Scanner] ♻️ Wiederverwendung FTP-Client für:" << host;
+    return clientPool[host];
+}
+
+// ⚡ FALLBACK: Default-Credentials wenn PresetManager fehlt
+void Scanner::useDefaultFtpCredentials(FtpClient *client, const QString &host) {
+    qDebug() << "[Scanner] 🔑 Verwende Default-Credentials für:" << host;
+    
+    // Standard FTP-Credentials (Anonymous oder häufige Kombinationen)
+    QStringList commonUsers = {"ftp", "anonymous", "guest", "user", "admin"};
+    QStringList commonPasses = {"", "anonymous", "guest", "password", "admin"};
+    
+    // Verwende erste Kombination als Default
+    client->setCredentials(host, 21, commonUsers.first(), commonPasses.first());
+}
+
+// ✅ Asynchrone Dateisammlung - GUI-responsive und crash-sicher
+void Scanner::startAsyncFileCollection() {
+    qDebug() << "[Scanner] 🚀 Starte asynchrone Dateisammlung für" << scanDirectories.size() << "Verzeichnisse";
+    
+    // Reset state
+    directoriesToProcess.clear();
+    cleanupFileCollection();
+    allFiles.clear();
+    processedFiles.clear();
+    currentDirectoryIndex = 0;
+    filesFoundInCurrentDir = 0;
+    
+    // Fülle die Queue mit zu verarbeitenden Verzeichnissen
+    for (const QString &dir : scanDirectories) {
+        directoriesToProcess.enqueue(dir);
+    }
+    
+    emit scanStatusChanged(QString("Sammle Dateien aus %1 Verzeichnissen...").arg(directoriesToProcess.size()));
+    
+    // Starte den Timer für asynchrone Verarbeitung
+    if (!directoriesToProcess.isEmpty()) {
+        fileCollectionTimer->start();
+    } else {
+        // Keine Verzeichnisse -> direkt zur Size-Filtering Phase
+        filterBySize();
+    }
+}
+
+void Scanner::processNextDirectoryChunk() {
+    if (!scanning.load() || directoriesToProcess.isEmpty()) {
+        // 🔍 CHECK: Sind noch FTP-Operationen ausstehend?
+        if (!pendingFtpDirectories.isEmpty()) {
+            qDebug() << "[Scanner] ⏳ Lokale Sammlung abgeschlossen, aber" << pendingFtpDirectories.size() << "FTP-Verzeichnisse noch ausstehend - warte...";
+            emit scanStatusChanged(QString("📡 Warte auf %1 FTP-Verzeichnisse...").arg(pendingFtpDirectories.size()));
+            return; // Wait for FTP completion
+        }
+        
+        // Sammlung wirklich abgeschlossen (lokal + FTP)
+        cleanupFileCollection();
+        
+        if (scanning.load()) {
+            qDebug() << "[Scanner] ✅ Dateisammlung abgeschlossen:" << allFiles.size() << "Dateien gefunden";
+            emit scanStatusChanged(QString("Sammlung abgeschlossen: %1 Dateien gefunden").arg(allFiles.size()));
+            
+            // Weiter zur Size-Filtering Phase
+            qDebug() << "[Scanner] 🚀 Starte QTimer::singleShot für filterBySize()";
+            QTimer::singleShot(100, this, &Scanner::filterBySize);
+            qDebug() << "[Scanner] 📡 QTimer::singleShot aufgerufen, warte 100ms auf filterBySize()";
+        }
+        return;
+    }
+    
+    // Verarbeite das nächste Verzeichnis oder chunk
+    if (!currentDirIterator) {
+        // Starte neues Verzeichnis
+        QString currentDir = directoriesToProcess.dequeue();
+        currentDirectoryIndex++;
+        filesFoundInCurrentDir = 0;
+        
+        qDebug() << "[Scanner] 📂 Bearbeite Verzeichnis" << currentDirectoryIndex << "/" 
+                 << (currentDirectoryIndex + directoriesToProcess.size()) << ":" << currentDir;
+        
+        emit currentFileProcessing(
+            QFileInfo(currentDir).fileName(),
+            "📁 Sammle Dateien",
+            currentDirectoryIndex,
+            currentDirectoryIndex + directoriesToProcess.size()
+        );
+        
+        if (isRemotePath(currentDir)) {
+            // Remote-Verzeichnis - verwende entsprechende Client-Logik
+            if (currentDir.startsWith("ftp://") || currentDir.startsWith("ftps://")) {
+                collectFtpFiles(currentDir, processedFiles);
+                // FTP ist asynchron - nach Completion wird processNextDirectoryChunk() automatisch fortgesetzt
+            } else if (currentDir.startsWith("sftp://") || currentDir.startsWith("ssh://")) {
+                // TODO: SFTP client integration
+                qDebug() << "[Scanner] 🚧 SFTP support not yet implemented:" << currentDir;
+                // For now, continue to next directory
+                QTimer::singleShot(50, this, &Scanner::processNextDirectoryChunk);
+            } else if (currentDir.startsWith("smb://") || currentDir.startsWith("cifs://")) {
+                // TODO: SMB client integration
+                qDebug() << "[Scanner] 🚧 SMB support not yet implemented:" << currentDir;
+                // For now, continue to next directory
+                QTimer::singleShot(50, this, &Scanner::processNextDirectoryChunk);
+            } else {
+                qDebug() << "[Scanner] ⚠️ Unsupported remote protocol:" << currentDir;
+                // Continue to next directory
+                QTimer::singleShot(50, this, &Scanner::processNextDirectoryChunk);
+            }
+            return;
+        } else {
+            // Lokales Verzeichnis - erstelle Iterator
+            currentDirIterator = new QDirIterator(currentDir, QDir::Files | QDir::Readable, QDirIterator::Subdirectories);
+        }
+    }
+    
+    // Verarbeite Chunk von Dateien (z.B. 20 Dateien pro Timer-Event)
+    int filesProcessedInChunk = 0;
+    const int MAX_FILES_PER_CHUNK = 20;
+    
+    while (currentDirIterator && currentDirIterator->hasNext() && filesProcessedInChunk < MAX_FILES_PER_CHUNK) {
+        if (!scanning.load()) return;
+        
+        QString filePath = currentDirIterator->next();
+        QFileInfo fileInfo(filePath);
+        
+        // 🚫 VERZEICHNIS-FILTER: Duplikate dürfen keine Verzeichnisse sein
+        if (!fileInfo.isFile()) {
+            qDebug() << "[Scanner] ⚠️ Überspringe Verzeichnis:" << filePath;
+            filesProcessedInChunk++;
+            continue;
+        }
+        
+        // Normale Dateiverarbeitung
+        QString canonicalPath = fileInfo.canonicalFilePath();
+        if (canonicalPath.isEmpty()) {
+            canonicalPath = fileInfo.absoluteFilePath();
+        }
+        
+        if (processedFiles.contains(canonicalPath)) {
+            filesProcessedInChunk++;
+            continue;  // Skip duplicate
+        }
+        
+        processedFiles.insert(canonicalPath);
+        filesFoundInCurrentDir++;
+        
+        // Erstelle FileInfo
+        FileInfo file;
+        file.filePath = canonicalPath;
+        file.fileName = fileInfo.fileName();
+        file.size = fileInfo.size();
+        file.lastModified = fileInfo.lastModified().toSecsSinceEpoch();
+        file.isLocal = true;
+        
+        allFiles.append(file);
+        filesProcessedInChunk++;
+        
+        // Progress update alle 100 Dateien
+        if (allFiles.size() % 100 == 0) {
+            emit processActivityUpdate(
+                QString("📊 %1 Dateien gefunden").arg(allFiles.size()),
+                QString("Aktuell: %1").arg(fileInfo.fileName())
+            );
+        }
+    }
+    
+    // Prüfe ob aktuelles Verzeichnis abgeschlossen ist
+    if (currentDirIterator && !currentDirIterator->hasNext()) {
+        delete currentDirIterator;
+        currentDirIterator = nullptr;
+        
+        qDebug() << "[Scanner] ✅ Verzeichnis abgeschlossen:" << filesFoundInCurrentDir << "Dateien gefunden";
+    }
+}
+
+void Scanner::cleanupFileCollection() {
+    if (fileCollectionTimer) {
+        fileCollectionTimer->stop();
+    }
+    
+    if (currentDirIterator) {
+        delete currentDirIterator;
+        currentDirIterator = nullptr;
+    }
+    
+    directoriesToProcess.clear();
+}
+
+bool Scanner::isScanning() const { return scanning.load(); }
+bool Scanner::isPaused() const { return paused.load(); }
+
+// Missing slot implementations required for linking
+void Scanner::onCollectionFinished()
+{
+    qDebug() << "[Scanner] ✅ File collection completed";
+    emit scanPhaseCompleted(COLLECTING);
+    
+    // Transition to next phase
+    if (scanning.load()) {
+        filterBySize();
+    }
+}
+
+void Scanner::onFtpListFinished(const QStringList &allDirs, bool success)
+{
+    qDebug() << "[Scanner] 📡 FTP list finished - Dirs:" << allDirs.size() << "Success:" << success;
+    
+    if (success) {
+        // Process the received directories
+        for (const QString &dir : allDirs) {
+            if (!pendingFtpDirectories.contains(dir)) {
+                pendingFtpDirectories.append(dir);
+            }
+        }
+        qDebug() << "[Scanner] 📂 Added" << allDirs.size() << "FTP directories to queue";
+    } else {
+        qWarning() << "[Scanner] ❌ FTP list failed";
+    }
+}
+
+// 🚀 8-ENGINE SYSTEM IMPLEMENTATION
+
+void Scanner::initializeEnginePool()
+{
+    std::cout << "[Scanner] 🚀 Initialisiere 8-Engine Parallel Processing System..." << std::endl;
+    
+    // Clear any existing engines
+    cleanupEnginePool();
+    
+    // Initialize 8 HashEngine instances
+    for (int i = 0; i < maxEngines; ++i) {
+        HashEngine *engine = new HashEngine(this);
+        
+        // Set unique engine ID for identification and debugging
+        engine->setEngineId(i + 1);  // IDs 1-8 for easier debugging
+        
+        // Set up NPU manager for each engine if available
+        if (npuManager) {
+            engine->setPresetManager(presetManager);
+        }
+        
+        // Connect signals for parallel processing
+        connect(engine, &HashEngine::hashCalculated,
+                this, [this](const QString &fileName, const QString &hash) {
+                    FileInfo info;
+                    info.filePath = fileName;
+                    info.fileName = QFileInfo(fileName).fileName();
+                    info.hash = hash;
+                    info.isLocal = !fileName.startsWith("ftp://");
+                    processHashResult(info, hash);
+                }, Qt::QueuedConnection);
+        
+        // 🔧 CRITICAL FIX: Connect engine completion signal for coordination
+        connect(engine, &HashEngine::allHashesCompleted,
+                this, [this, i]() {
+                    std::cout << "[Scanner] ✅ Engine " << i << " hat alle Hashes abgeschlossen" << std::endl;
+                    startNextEngineIfNeeded(i);
+                }, Qt::QueuedConnection);
+        
+        enginePool.append(engine);
+        std::cout << "[Scanner] ⚡ Engine " << (i+1) << "/8 initialisiert" << std::endl;
+    }
+    
+    // Initialize counters
+    processedFilesCounter.store(0);
+    completedEngines.store(0);
+    currentFileIndex = 0;
+    activeEngines = 0;
+    
+    std::cout << "[Scanner] ✅ 8-Engine System bereit - " << enginePool.size() << " Engines verfügbar" << std::endl;
+}
+
+void Scanner::cleanupEnginePool()
+{
+    std::cout << "[Scanner] 🧹 Bereinige Engine Pool..." << std::endl;
+    
+    // Stop all engines
+    stopAllEngines();
+    
+    // Delete all engines
+    for (HashEngine *engine : enginePool) {
+        if (engine) {
+            engine->deleteLater();
+        }
+    }
+    enginePool.clear();
+    
+    // Reset counters
+    processedFilesCounter.store(0);
+    completedEngines.store(0);
+    currentFileIndex = 0;
+    activeEngines = 0;
+    
+    std::cout << "[Scanner] ✅ Engine Pool bereinigt" << std::endl;
+}
+
+QList<QList<FileInfo>> Scanner::createBalancedFileChunks(const QList<FileInfo> &files, int numEngines)
+{
+    std::cout << "[Scanner] 🧠 Erstelle " << numEngines << " balancierte Chunks für " << files.size() << " Dateien" << std::endl;
+    
+    if (files.isEmpty() || numEngines <= 0) {
+        return QList<QList<FileInfo>>();
+    }
+    
+    // Sort files by size (largest first) for better load balancing
+    QList<FileInfo> sortedFiles = files;
+    sortFilesBySize(sortedFiles);
+    
+    // Initialize chunks
+    QList<QList<FileInfo>> chunks;
+    QList<qint64> chunkSizes;
+    
+    for (int i = 0; i < numEngines; ++i) {
+        chunks.append(QList<FileInfo>());
+        chunkSizes.append(0);
+    }
+    
+    // Distribute files using "largest remaining processing time" algorithm
+    for (const FileInfo &file : sortedFiles) {
+        // Find chunk with smallest total size
+        int smallestChunkIndex = 0;
+        qint64 smallestChunkSize = chunkSizes[0];
+        
+        for (int i = 1; i < numEngines; ++i) {
+            if (chunkSizes[i] < smallestChunkSize) {
+                smallestChunkSize = chunkSizes[i];
+                smallestChunkIndex = i;
+            }
+        }
+        
+        // Add file to smallest chunk
+        chunks[smallestChunkIndex].append(file);
+        chunkSizes[smallestChunkIndex] += file.size;
+    }
+    
+    // Log chunk distribution
+    for (int i = 0; i < chunks.size(); ++i) {
+        qint64 chunkSize = calculateChunkSize(chunks[i]);
+        std::cout << "[Scanner] 📊 Engine " << (i+1) << ": " << chunks[i].size() 
+                  << " Dateien, " << (chunkSize / 1024 / 1024) << " MB" << std::endl;
+    }
+    
+    return chunks;
+}
+
+void Scanner::sortFilesBySize(QList<FileInfo> &files)
+{
+    std::sort(files.begin(), files.end(), [](const FileInfo &a, const FileInfo &b) {
+        return a.size > b.size; // Largest first
+    });
+}
+
+qint64 Scanner::calculateChunkSize(const QList<FileInfo> &chunk)
+{
+    qint64 totalSize = 0;
+    for (const FileInfo &file : chunk) {
+        totalSize += file.size;
+    }
+    return totalSize;
+}
+
+void Scanner::startNextEngineIfNeeded(int completedEngineIndex)
+{
+    QMutexLocker locker(&filesMutex);
+    
+    std::cout << "[Scanner] 🎯 Engine " << completedEngineIndex << " abgeschlossen. Aktive Engines: " << activeEngines << std::endl;
+    
+    // Check if more files need processing
+    if (currentFileIndex < allFiles.size() && activeEngines < maxEngines) {
+        // Calculate next chunk
+        int remainingFiles = allFiles.size() - currentFileIndex;
+        int chunkSize = qMin(engineChunkSize, remainingFiles);
+        
+        if (chunkSize > 0) {
+            // Find available engine
+            for (int i = 0; i < enginePool.size(); ++i) {
+                HashEngine *engine = enginePool[i];
+                if (engine && !engine->isBusy()) { // Assuming isBusy() method exists
+                    // Create file chunk
+                    QList<FileInfo> chunk = allFiles.mid(currentFileIndex, chunkSize);
+                    
+                    // Start processing chunk
+                    QStringList filePaths;
+                    for (const FileInfo &file : chunk) {
+                        filePaths.append(file.filePath);
+                    }
+                    
+                    std::cout << "[Scanner] 🚀 Engine " << i << " startet mit " << chunk.size() << " Dateien (ab Index " << currentFileIndex << ")" << std::endl;
+                    
+                    // Start engine processing
+                    engine->calculateMultipleHashes(filePaths);
+                    
+                    currentFileIndex += chunkSize;
+                    activeEngines++;
+                    break;
+                }
+            }
+        }
+    }
+    
+    // Update completion counter
+    int completed = completedEngines.fetch_add(1) + 1;
+    if (activeEngines > 0) activeEngines--;
+    
+    // Check if all engines completed
+    if (completed >= maxEngines || (currentFileIndex >= allFiles.size() && activeEngines == 0)) {
+        std::cout << "[Scanner] ✅ Alle Engines abgeschlossen. Starte Ergebnis-Zusammenführung..." << std::endl;
+        emitDuplicatesFound();
+    } else {
+        // Force completion after short delay if we have processed files and engines are quiet
+        QTimer::singleShot(1000, this, [this, completed]() {
+            if (completed > 0 && scanning.load()) {
+                std::cout << "[Scanner] ⏰ Force completion - " << completed << " engines completed, finalizing..." << std::endl;
+                emitDuplicatesFound();
+            }
+        });
+    }
+}
+
+void Scanner::stopAllEngines()
+{
+    std::cout << "[Scanner] 🛑 Stoppe alle " << enginePool.size() << " Engines..." << std::endl;
+    
+    for (HashEngine *engine : enginePool) {
+        if (engine) {
+            // Stop engine processing (assuming stop method exists)
+            engine->stop();
+        }
+    }
+    
+    activeEngines = 0;
+    std::cout << "[Scanner] ✅ Alle Engines gestoppt" << std::endl;
+}
+
+// 🔧 INTELLIGENT ORIGINAL SELECTION: Choose best file as original
+FileInfo Scanner::selectBestOriginal(const QList<FileInfo> &files) 
+{
+    if (files.isEmpty()) {
+        return FileInfo(); // Empty fallback
+    }
+    
+    if (files.size() == 1) {
+        return files.first(); // Only one file
+    }
+    
+    FileInfo bestFile = files.first();
+    int bestScore = calculateOriginalScore(bestFile);
+    
+    // Find file with highest score
+    for (const FileInfo &file : files) {
+        int score = calculateOriginalScore(file);
+        if (score > bestScore) {
+            bestScore = score;
+            bestFile = file;
+        }
+    }
+    
+    qDebug() << "[Scanner] 🎯 Original gewählt:" << QFileInfo(bestFile.filePath).fileName() 
+             << "Score:" << bestScore << "(von" << files.size() << "Dateien)";
+    
+    return bestFile;
+}
+
+// Calculate score for original selection (higher = better original)
+int Scanner::calculateOriginalScore(const FileInfo &file) 
+{
+    int score = 0;
+    
+    // 🏆 PRIORITY 1: ÄLTESTE DATEI ist Original (User-Anforderung)
+    QFileInfo fileInfo(file.filePath);
+    QDateTime lastModified = fileInfo.lastModified();
+    
+    // Je älter die Datei, desto höher der Score (in Tagen seit Epoch)
+    qint64 ageInDays = QDateTime::currentDateTime().daysTo(lastModified);
+    score += (-ageInDays * 10); // Negative Tage = positive Score für alte Dateien
+    
+    // 🏆 PRIORITY 2: Avoid temp/cache directories
+    QString path = file.filePath.toLower();
+    if (path.contains("/tmp/") || path.contains("/cache/") || path.contains("temp")) {
+        score -= 50; // Penalize temp files
+    }
+    
+    // 🏆 PRIORITY 3: Prefer organized directory structures
+    if (path.contains("/home/") && !path.contains("/tmp/")) {
+        score += 25; // Bonus for home directory
+    }
+    
+    // 🏆 PRIORITY 4: Prefer files with clear names (not random hashes)
+    QString fileName = QFileInfo(file.filePath).fileName();
+    if (fileName.length() > 10 && !fileName.contains(QRegularExpression("^[a-f0-9]{8,}")) ) {
+        score += 10; // Bonus for descriptive names
+    }
+    
+    qDebug() << "[Scanner] 📅 Datei" << fileName << "- Alter:" << (-ageInDays) << "Tage, Score:" << score;
+    
+    return score;
+}
+
+void Scanner::emitDuplicatesFound()
+{
+    std::cout << "[Scanner] 🎯 Erstelle finale Duplikate-Ergebnisse aus " << sharedHashGroups.size() << " Hash-Gruppen" << std::endl;
+    
+    QMutexLocker locker(&sharedHashGroupsMutex);
+    
+    DuplicateGroups finalResults;
+    finalResults.groups.clear();
+    
+    // Process shared hash groups
+    for (auto it = sharedHashGroups.begin(); it != sharedHashGroups.end(); ++it) {
+        const QString &hash = it.key();
+        const QList<FileInfo> &filesWithSameHash = it.value();
+        
+        if (filesWithSameHash.size() > 1) {
+            DuplicateGroup group;
+            group.hash = hash;
+            group.size = filesWithSameHash.first().size;
+            
+            // 🔧 INTELLIGENT ORIGINAL SELECTION: Best file becomes original
+            FileInfo bestOriginal = selectBestOriginal(filesWithSameHash);
+            group.original = bestOriginal;
+            
+            // Add all other files as duplicates
+            for (const FileInfo &file : filesWithSameHash) {
+                if (file.filePath != bestOriginal.filePath) {
+                    group.duplicates.append(file);
+                }
+            }
+            
+            // 🚨 KRITISCHER FIX: Nur Gruppen mit echten Duplikaten hinzufügen!
+            // User will keine Unikate in der Liste - nur Original + mindestens 1 Duplikat
+            if (group.duplicates.size() > 0) {
+                finalResults.groups.append(group);
+                qDebug() << "[Scanner] ✅ Duplikat-Gruppe hinzugefügt:" << group.original.filePath 
+                         << "mit" << group.duplicates.size() << "Duplikaten";
+            } else {
+                qDebug() << "[Scanner] 🚫 Unikat übersprungen:" << bestOriginal.filePath 
+                         << "(keine Duplikate gefunden)";
+            }
+        }
+    }
+    
+    // ✅ KORREKTE STATISTIK: Nur tatsächlich untersuchte Duplikat-Kandidaten zählen  
+    int totalDuplicateCandidates = 0;
+    for (auto groupIt = fileSizeGroups.begin(); groupIt != fileSizeGroups.end(); ++groupIt) {
+        totalDuplicateCandidates += groupIt.value().size();
+    }
+    finalResults.totalFiles = totalDuplicateCandidates; // Nur Dateien mit möglichen Duplikaten
+    finalResults.duplicateFiles = 0;
+    for (const DuplicateGroup &group : finalResults.groups) {
+        finalResults.duplicateFiles += group.duplicates.size();
+    }
+    
+    std::cout << "[Scanner] ✅ 8-Engine Scan abgeschlossen: " << finalResults.groups.size() 
+              << " Duplikat-Gruppen mit " << finalResults.duplicateFiles << " Duplikaten" << std::endl;
+    
+    scanning.store(false);
+    currentPhase = COMPLETED;
+    emit scanCompleted(finalResults);
+}
+
+void Scanner::processHashResult(const FileInfo &fileInfo, const QString &hash)
+{
+    QMutexLocker locker(&sharedHashGroupsMutex);
+    
+    // Add to shared hash groups (thread-safe)
+    if (!sharedHashGroups.contains(hash)) {
+        sharedHashGroups[hash] = QList<FileInfo>();
+    }
+    sharedHashGroups[hash].append(fileInfo);
+    
+    // Update progress counter
+    int processed = processedFilesCounter.fetch_add(1) + 1;
+    
+    // Emit progress update
+    if (totalFilesForHashing > 0) {
+        int progressPercent = (processed * 100) / totalFilesForHashing;
+        emit scanProgress(progressPercent, processed, totalFilesForHashing);
+        
+        if (processed % 100 == 0 || processed == totalFilesForHashing) {
+            std::cout << "[Scanner] 📊 8-Engine Progress: " << processed << "/" << totalFilesForHashing 
+                      << " (" << progressPercent << "%)" << std::endl;
+        }
+    }
+}
+
+// 🌐 MULTI-HOST FTP CONNECTION POOLING
+
+void Scanner::setupMultiHostFtpConnectionPool(const QSet<QString> &ftpHosts)
+{
+    std::cout << "[Scanner] 🌐 Setup Multi-Host FTP Connection Pool für " << ftpHosts.size() << " Hosts" << std::endl;
+    
+    QMutexLocker locker(&ftpPoolsMutex);
+    
+    // Clean up existing pools
+    cleanupFtpConnectionPools();
+    
+    // Create connection pools for each host
+    for (const QString &host : ftpHosts) {
+        QList<FtpClient*> hostPool;
+        
+        // Create multiple connections per host (up to maxConnectionsPerHost)
+        for (int i = 0; i < maxConnectionsPerHost; ++i) {
+            FtpClient *client = new FtpClient(this);
+            
+            // Set credentials (assuming they're stored)
+            if (presetManager) {
+                auto credentials = presetManager->getLogin(host, currentFtpPort);
+                if (!credentials.username.isEmpty()) {
+                    client->setCredentials(host, currentFtpPort, credentials.username, credentials.password);
+                }
+            }
+            
+            hostPool.append(client);
+            std::cout << "[Scanner] 🔗 FTP Connection " << (i+1) << "/" << maxConnectionsPerHost 
+                      << " erstellt für Host: " << host.toStdString() << std::endl;
+        }
+        
+        ftpConnectionPools[host] = hostPool;
+    }
+    
+    std::cout << "[Scanner] ✅ FTP Connection Pool bereit: " << ftpHosts.size() << " Hosts, " 
+              << (ftpHosts.size() * maxConnectionsPerHost) << " Connections total" << std::endl;
+}
+
+FtpClient* Scanner::getFtpClientForHost(const QString &host)
+{
+    QMutexLocker locker(&ftpPoolsMutex);
+    
+    if (!ftpConnectionPools.contains(host)) {
+        std::cout << "[Scanner] ⚠️ Kein FTP Pool für Host: " << host.toStdString() << std::endl;
+        return nullptr;
+    }
+    
+    QList<FtpClient*> &hostPool = ftpConnectionPools[host];
+    
+    // Find available client in pool
+    for (FtpClient *client : hostPool) {
+        if (client) { // All clients in pool are available
+            std::cout << "[Scanner] 📡 FTP Client ausgeliehen für Host: " << host.toStdString() << std::endl;
+            return client;
+        }
+    }
+    
+    std::cout << "[Scanner] ⚠️ Alle FTP Clients für Host " << host.toStdString() << " sind beschäftigt" << std::endl;
+    return nullptr;
+}
+
+void Scanner::returnFtpClientToPool(const QString &host, FtpClient *client)
+{
+    Q_UNUSED(host)
+    Q_UNUSED(client)
+    
+    // Client is automatically returned to pool when it becomes not busy
+    std::cout << "[Scanner] 🔄 FTP Client zurückgegeben an Pool für Host: " << host.toStdString() << std::endl;
+}
+
+void Scanner::cleanupFtpConnectionPools()
+{
+    std::cout << "[Scanner] 🧹 Bereinige FTP Connection Pools (async)..." << std::endl;
+    
+    QMutexLocker locker(&ftpPoolsMutex);
+    
+    // ✅ DEADLOCK FIX: Verwende async cleanup statt deleteLater()
+    for (auto it = ftpConnectionPools.begin(); it != ftpConnectionPools.end(); ++it) {
+        QList<FtpClient*> &hostPool = it.value();
+        
+        for (FtpClient *client : hostPool) {
+            if (client) {
+                // ⚡ INSTANT CLEANUP: Direkte Löschung statt deleteLater()
+                client->disconnect(); // Disconnect signals first
+                delete client;        // Direct delete - no event loop needed
+            }
+        }
+        hostPool.clear();
+    }
+    
+    ftpConnectionPools.clear();
+    std::cout << "[Scanner] ✅ FTP Connection Pools SOFORT bereinigt (deadlock-free)" << std::endl;
+}

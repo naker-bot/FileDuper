@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1200</width>
+    <height>800</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>FileDuper</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QWidget" name="leftPanel">
+       <layout class="QVBoxLayout" name="leftLayout">
+        <item>
+         <widget class="QGroupBox" name="dirGroupBox">
+          <property name="title">
+           <string>Directories</string>
+          </property>
+          <layout class="QVBoxLayout" name="dirLayout">
+           <item>
+            <widget class="QTreeWidget" name="directoryTree">
+             <column>
+              <property name="text">
+               <string>Selected Directories</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="networkGroupBox">
+          <property name="title">
+           <string>Network Services</string>
+          </property>
+          <layout class="QVBoxLayout" name="networkLayout">
+           <item>
+            <widget class="QTreeWidget" name="networkTree">
+             <column>
+              <property name="text">
+               <string>Address:Port</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Service</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="settingsGroupBox">
+          <property name="title">
+           <string>Settings</string>
+          </property>
+          <layout class="QVBoxLayout" name="settingsLayout">
+           <item>
+            <layout class="QHBoxLayout" name="hashLayout">
+             <item>
+              <widget class="QLabel" name="hashLabel">
+               <property name="text">
+                <string>Hash Algorithm:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="hashComboBox"/>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="hardwareLayout">
+             <item>
+              <widget class="QLabel" name="hardwareLabel">
+               <property name="text">
+                <string>Hardware:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="hardwareComboBox"/>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="themeLayout">
+             <item>
+              <widget class="QLabel" name="themeLabel">
+               <property name="text">
+                <string>Theme:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="themeComboBox"/>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="rightPanel">
+       <layout class="QVBoxLayout" name="rightLayout">
+        <item>
+         <widget class="QGroupBox" name="scanGroupBox">
+          <property name="title">
+           <string>Scan Progress</string>
+          </property>
+          <layout class="QVBoxLayout" name="scanLayout">
+           <item>
+            <widget class="QProgressBar" name="progressBar"/>
+           </item>
+           <item>
+            <widget class="QLabel" name="statusLabel">
+             <property name="text">
+              <string>Ready</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="resultsGroupBox">
+          <property name="title">
+           <string>Duplicate Files</string>
+          </property>
+          <layout class="QVBoxLayout" name="resultsLayout">
+           <item>
+            <widget class="QTableWidget" name="resultsTable">
+             <column>
+              <property name="text">
+               <string>Status</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Filename</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Path</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Size</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Hash</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1200</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

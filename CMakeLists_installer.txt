@@ -1,0 +1,158 @@
+# FileDuper Universal CMakeLists.txt
+# Supports: CPU-only, GPU (OpenCL), Intel NPU
+# Cross-platform: Ubuntu, Debian, Fedora, openSUSE, Arch
+
+cmake_minimum_required(VERSION 3.16)
+project(FileDuper VERSION 1.0.0 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Build options
+option(ENABLE_OPENCL "Enable OpenCL GPU acceleration" ON)
+option(ENABLE_NPU "Enable Intel NPU support" ON)
+option(BUILD_TESTS "Build test executables" OFF)
+
+# Find Qt6
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Network)
+
+# Find libcurl
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(CURL REQUIRED libcurl)
+
+# Find OpenCL (optional)
+set(OPENCL_FOUND FALSE)
+if(ENABLE_OPENCL)
+    find_package(OpenCL QUIET)
+    if(OpenCL_FOUND)
+        set(OPENCL_FOUND TRUE)
+        message(STATUS "OpenCL found - GPU acceleration enabled")
+    else()
+        message(WARNING "OpenCL not found - GPU acceleration disabled")
+    endif()
+endif()
+
+# NPU support (Intel only)
+set(NPU_FOUND FALSE)
+if(ENABLE_NPU)
+    # Check for Intel NPU headers/libraries
+    find_path(NPU_INCLUDE_DIR level_zero/ze_api.h PATHS /usr/include /usr/local/include)
+    if(NPU_INCLUDE_DIR)
+        set(NPU_FOUND TRUE)
+        message(STATUS "Intel NPU headers found - NPU support enabled")
+    else()
+        message(STATUS "Intel NPU headers not found - NPU support disabled")
+    endif()
+endif()
+
+# Source files
+set(SOURCES
+    src/main.cpp
+    src/mainwindow.cpp
+    src/scanner.cpp
+    src/hashengine.cpp
+    src/presetmanager.cpp
+    src/networkscanner.cpp
+    src/logindialog.cpp
+    src/activityindicator.cpp
+    src/duplicateresultswidget.cpp
+    src/ftpclient.cpp
+    directorytreewidget.cpp
+)
+
+# Header files
+set(HEADERS
+    include/mainwindow.h
+    include/scanner.h
+    include/hashengine.h
+    include/presetmanager.h
+    include/networkscanner.h
+    include/logindialog.h
+    include/activityindicator.h
+    include/duplicateresultswidget.h
+    include/ftpclient.h
+    directorytreewidget.h
+)
+
+# Create executable
+add_executable(FileDuper ${SOURCES} ${HEADERS})
+
+# Include directories
+target_include_directories(FileDuper PRIVATE
+    include
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+# Qt6 linking
+target_link_libraries(FileDuper
+    Qt6::Core
+    Qt6::Widgets
+    Qt6::Network
+    ${CURL_LIBRARIES}
+)
+
+# Compile definitions
+target_compile_definitions(FileDuper PRIVATE
+    QT_NO_DEBUG_OUTPUT
+    FILEDUPER_VERSION="${PROJECT_VERSION}"
+)
+
+# OpenCL support
+if(OPENCL_FOUND)
+    target_link_libraries(FileDuper OpenCL::OpenCL)
+    target_compile_definitions(FileDuper PRIVATE ENABLE_OPENCL)
+    message(STATUS "Configured with OpenCL support")
+endif()
+
+# NPU support
+if(NPU_FOUND)
+    target_include_directories(FileDuper PRIVATE ${NPU_INCLUDE_DIR})
+    target_compile_definitions(FileDuper PRIVATE ENABLE_NPU)
+    message(STATUS "Configured with Intel NPU support")
+endif()
+
+# Compiler flags
+target_compile_options(FileDuper PRIVATE
+    $<$<CXX_COMPILER_ID:GNU>:-Wall -Wextra -O3>
+    $<$<CXX_COMPILER_ID:Clang>:-Wall -Wextra -O3>
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /O2>
+)
+
+# Install rules
+install(TARGETS FileDuper
+    RUNTIME DESTINATION bin
+)
+
+# Package resources
+if(EXISTS "${CMAKE_SOURCE_DIR}/assets")
+    install(DIRECTORY assets DESTINATION share/fileduper)
+endif()
+
+if(EXISTS "${CMAKE_SOURCE_DIR}/translations")
+    install(DIRECTORY translations DESTINATION share/fileduper)
+endif()
+
+if(EXISTS "${CMAKE_SOURCE_DIR}/style")
+    install(DIRECTORY style DESTINATION share/fileduper)
+endif()
+
+# Generate build info
+configure_file(
+    "${CMAKE_SOURCE_DIR}/build_info.h.in"
+    "${CMAKE_BINARY_DIR}/build_info.h"
+    @ONLY
+)
+
+target_include_directories(FileDuper PRIVATE ${CMAKE_BINARY_DIR})
+
+# Print configuration summary
+message(STATUS "")
+message(STATUS "FileDuper Configuration Summary:")
+message(STATUS "  Version: ${PROJECT_VERSION}")
+message(STATUS "  Build Type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "  Install Prefix: ${CMAKE_INSTALL_PREFIX}")
+message(STATUS "  Qt6 Version: ${Qt6_VERSION}")
+message(STATUS "  OpenCL Support: ${OPENCL_FOUND}")
+message(STATUS "  Intel NPU Support: ${NPU_FOUND}")
+message(STATUS "  C++ Standard: ${CMAKE_CXX_STANDARD}")
+message(STATUS "")

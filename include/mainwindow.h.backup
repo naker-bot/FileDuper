@@ -1,0 +1,153 @@
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
+
+#include <QMainWindow>
+#include <QTreeWidget>
+#include <QTableWidget>
+#include <QProgressBar>
+#include <QLabel>
+#include <QComboBox>
+#include <QPushButton>
+#include <QSplitter>
+#include <QGroupBox>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QDateTime>
+#include <QAction>
+#include <memory>
+
+// Include headers with the actual struct definitions
+#include "scanner.h"
+#include "networkscanner.h"
+
+QT_BEGIN_NAMESPACE
+class QTreeWidgetItem;
+class QCloseEvent;
+namespace Ui
+{
+    class MainWindow;
+}
+QT_END_NAMESPACE
+
+// Forward declarations for our custom classes
+class PresetManager;
+class HashEngine;
+class ActivityIndicator;
+class DuplicateResultsWidget;
+
+class MainWindow : public QMainWindow
+{
+    Q_OBJECT
+
+public:
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
+
+private slots:
+    // Directory management
+    void addDirectory();
+    void removeDirectory();
+    void removeSelectedDirectories();
+    void refreshNetwork();
+    void updateDirectoryTree();
+
+    // Duplicate scanning
+    void startDuplicateScan();
+    void stopDuplicateScan();
+
+    // Directory tree interactions
+    void onDirectoryDoubleClicked(QTreeWidgetItem *item, int column);
+    void showDirectoryContextMenu(const QPoint &pos);
+
+    // Network tree interactions
+    void onNetworkServiceDoubleClicked(QTreeWidgetItem *item, int column);
+
+    // Network scanning
+    void startNetworkDiscovery();
+    void onNetworkServiceFound(const QString &ip, int port, const QString &service);
+    void addNetworkService(const NetworkService &service);
+    void showLoginDialog(const QString &ip, int port, const QString &service);
+
+    // Scan results handling
+    void handleScanResults(const DuplicateGroups &results);
+    void handleScanError(const QString &error);
+    void addResultRow(const FileInfo &file, bool isOriginal, int row = -1);
+
+    // Settings and preferences
+    void applyTheme(int index);
+    void showSettingsDialog();
+    void showPresetManager();
+    void showAboutDialog();
+    void startDemoScan(); // Demo-Scan für test_duplicates Verzeichnis
+
+    // Settings persistence
+    void loadSettings();
+    void saveSettings();
+
+private:
+    // UI setup methods
+    void setupUi();
+    void setupUI();
+    void setupConnections();
+    void setupMenusAndToolbars();
+    void setupMenuBar();
+    void setupToolBar();
+    void createActions();
+    void initializeComponents();
+    void initializeBackgroundServices();
+    void loadDirectoryTree();
+
+    // UI helper methods
+    QGroupBox *createDirectoryGroup();
+    QGroupBox *createScanControlGroup();
+    QGroupBox *createResultsGroup();
+
+protected:
+    void closeEvent(QCloseEvent *event) override;
+
+private:
+    // PImpl pattern for better encapsulation
+    struct Impl;
+    std::unique_ptr<Impl> d;
+
+    // UI components - basic Qt UI elements
+    Ui::MainWindow *ui;
+
+    // Core components
+    Scanner *m_scanner;
+    NetworkScanner *m_networkScanner;
+    PresetManager *m_presetManager;
+    ActivityIndicator *m_activityIndicator;
+    HashEngine *m_hashEngine;
+
+    // Additional UI components for extended functionality
+    QTreeWidget *directoryTree;
+    QTreeWidget *networkTree;
+    QTableWidget *duplicateTable;
+    QLabel *currentFileLabel;
+    QLabel *fileCountLabel;
+    QLabel *statusLabel;
+    QProgressBar *scanProgress;
+    QComboBox *hashAlgoCombo;
+    QPushButton *startScanBtn;
+    QPushButton *stopScanBtn;
+    QComboBox *themeCombo;
+
+    // State management
+    QStringList m_selectedDirectories;
+    bool m_isScanning;
+
+    // Actions for menu and toolbar
+    QAction *m_addDirectoryAction;
+    QAction *m_removeDirectoryAction;
+    QAction *m_startScanAction;
+    QAction *m_stopScanAction;
+    QAction *m_networkScanAction;
+    QAction *m_settingsAction;
+    QAction *m_presetManagerAction;
+    QAction *m_aboutAction;
+    QAction *m_documentationAction;
+    QAction *m_exitAction;
+};
+
+#endif // MAINWINDOW_H

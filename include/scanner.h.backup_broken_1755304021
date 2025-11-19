@@ -1,0 +1,338 @@
+#ifndef SCANNER_H
+#define SCANNER_H
+
+#include <QObject>
+#include <QString>
+#include <QStringList>
+#include <QTimer>
+#include <QMutex>
+#include <QQueue>
+#include <QFileInfo>
+#include <QDirIterator>
+#include <QSet>
+#include <QThreadPool>
+#include <QFutureWatcher>
+#include <QtConcurre    // 🚀 CONTINUOUS ENGINE MANAGEMENT
+    int currentFileIndex = 0;           // Index der nächsten zu verarbeitenden Datei
+    int activeEngines = 0;              // Anzahl der aktiv laufenden Engines
+    const int maxEngines = 8;           // Maximale Anzahl gleichzeitiger Engines
+    const int engineChunkSize = 20;     // Dateien pro Engine-Chunk
+    
+    // 🏭 HASHENGINE-POOL für ULTRA-PERFORMANCE (vermeidet OpenCL Re-Init)
+    QList<HashEngine*> enginePool;      // Pre-initialized HashEngine pool
+    
+    // � MULTI-CONNECTION FTP Pool
+    QList<FtpClient*> ftpConnectionPool;    // Pool von parallelen FTP-Verbindungenlude <atomic>
+#include <map>
+#include <memory>
+#include <QMetaType>
+#include "npumanager.h"    // 🧠 NPU-INTEGRATION für Bildverarbeitung
+
+// 🧵 HYPERTHREADING: Scan phase enumeration (global scope for MOC)
+enum ScanPhase {
+    IDLE,
+    COLLECTING,
+    SIZE_FILTERING,
+    FILTERING,
+    HASHING,
+    COMPARING,
+    COMPLETED
+};
+
+class HashEngine;
+class PresetManager;
+class FtpClient;
+class SftpClient;      // ✅ SFTP Client Forward Declaration
+class SmbClient;       // ✅ SMB Client Forward Declaration  
+class NfsClient;       // ✅ NFS Client Forward Declaration
+
+struct FileInfo
+{
+    // Strings first (implicitly shared), then 64-bit integers, then small flags
+    QString filePath;
+    QString fileName;
+    QString hash;
+    QString networkType;        // "FTP", "SFTP", "SMB" etc. (leer für lokal)
+    qint64 size = 0;
+    qint64 lastModified = 0;
+    bool isLocal = true;        // true = lokale Datei, false = Netzwerk-Datei
+};
+
+struct DuplicateGroup
+{
+    FileInfo original;          // Yellow background - keep this
+    QList<FileInfo> duplicates; // Green background - delete candidates
+    QString hash;
+    qint64 size;
+};
+
+struct DuplicateGroups
+{
+    QList<DuplicateGroup> groups;
+    int totalFiles = 0;
+    int duplicateFiles = 0;
+    qint64 duplicateSize = 0;
+};
+
+// 🎯 NPU-INTEGRATION: Erweiterte Strukturen für Feature-basierte Bildvergleiche
+struct ImageDuplicateGroup
+{
+    NpuManager::ImageFeature originalImage;        // Bestes Qualitätsbild (behalten)
+    QList<NpuManager::ImageFeature> duplicateImages; // Zu löschende ähnliche Bilder
+    float averageSimilarity;                       // Durchschnittliche Ähnlichkeit in der Gruppe
+    QString groupType;                             // "STRICT", "NEAR", "SIMILAR", "LOOSE"
+};
+
+struct CombinedDuplicateResult
+{
+    QList<DuplicateGroup> hashDuplicates;         // Traditionelle Hash-basierte Duplikate
+    QList<ImageDuplicateGroup> imageDuplicates;   // NPU-basierte Bild-Ähnlichkeiten
+    int totalGroups() const { return hashDuplicates.size() + imageDuplicates.size(); }
+    int totalDuplicates() const;
+};
+
+// 🔐 Ensure custom types are known to Qt's meta-type system (for queued connections, etc.)
+Q_DECLARE_METATYPE(FileInfo)
+Q_DECLARE_METATYPE(DuplicateGroup)
+Q_DECLARE_METATYPE(DuplicateGroups)
+Q_DECLARE_METATYPE(ImageDuplicateGroup)
+Q_DECLARE_METATYPE(CombinedDuplicateResult)
+Q_DECLARE_METATYPE(NpuManager::ImageFeature)
+Q_DECLARE_METATYPE(QList<NpuManager::ImageFeature>)
+
+// ⚡ Performance-Hinweise für Qt-Container
+// Markiere Value-Types als effizient relocatable/movable, damit Qt-Container
+// (QList/QVector) schnelle Move/Memcpy-Operationen nutzen können.
+#if defined(QT_VERSION) && QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+Q_DECLARE_TYPEINFO(FileInfo, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(DuplicateGroup, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(DuplicateGroups, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(ImageDuplicateGroup, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(CombinedDuplicateResult, Q_RELOCATABLE_TYPE);
+#else
+Q_DECLARE_TYPEINFO(FileInfo, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(DuplicateGroup, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(DuplicateGroups, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(ImageDuplicateGroup, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(CombinedDuplicateResult, Q_MOVABLE_TYPE);
+#endif
+
+class Scanner : public QObject
+{
+    Q_OBJECT
+
+public:
+    explicit Scanner(QObject *parent = nullptr);
+    ~Scanner();
+
+    // Scan control
+    void startScan(const QStringList &directories, const QString &hashAlgorithm, const QString &fileFilter);
+    void stopScan();
+    void pauseScan();
+    void resumeScan();
+
+    // Configuration
+    void setHashEngine(HashEngine *engine);
+    void setPresetManager(PresetManager *manager);
+    void setFtpClient(FtpClient *client);
+    void setNpuManager(NpuManager *manager);    // 🧠 NPU-INTEGRATION
+    // Toggle NPU usage at runtime (false = no NPU involvement in scan pipeline)
+    void setNpuEnabled(bool enabled);
+
+    // Status
+    bool isScanning() const;
+    bool isPaused() const;
+
+signals:
+    void filesCollected(int totalFiles);
+    void hashingStarted(int filesToHash);
+    void comparingStarted();
+    void scanCompleted(const DuplicateGroups &groups);
+    void scanPhaseCompleted(ScanPhase phase);  // 🧵 HYPERTHREADING: Phase completion signal
+    void scanProgress(int percentage, int current, int total); // ✅ FIX: percentage zuerst!
+    void scanProgressDetailed(int percentage, int current, int total, const QString &action); // ✅ NEU für enhanced display
+    void scanStatusChanged(const QString &status);
+    void error(const QString &message);
+    
+    // 🎯 LIVE-AKTIVITÄTS-SIGNALE für GUI
+    void currentFileProcessing(const QString &fileName, const QString &processType, int fileNumber, int totalFiles);
+    void processActivityUpdate(const QString &activity, const QString &details);
+    
+    // 🚀 NEUE DETAILLIERTE PROGRESS-SIGNALE
+    void fileComparisonProgress(const QString &file1, const QString &file2, int comparisonNumber, int totalComparisons);
+    void pathProcessingUpdate(const QString &currentPath, const QString &action, int pathNumber, int totalPaths);
+    void duplicateDetectionUpdate(int duplicatesFound, int groupsCreated, const QString &latestDuplicate);
+    void hardwareUsageUpdate(const QString &processingUnit, int utilizationPercent, const QString &currentTask);
+    
+    // 🎯 NEUE SIGNALE: NPU-Bildverarbeitung
+    void imageFeaturesExtracted(const QList<NpuManager::ImageFeature> &features);
+    void imageDuplicatesFound(const QList<ImageDuplicateGroup> &imageGroups);
+    void combinedScanCompleted(const CombinedDuplicateResult &result);
+    void npuAnalysisProgress(const QString &status);
+    void npuActivityUpdate(int imagesProcessed, int duplicateGroupsFound); // 🚀 NPU-AKTIVITÄTS-UPDATE
+    
+    // 🗑️ Lösch-Signale
+    void deleteProgress(const QString &filePath, bool success, const QString &message);
+    void deleteBatchFinished(int attempted, int succeeded);
+
+private slots:
+    void processNextFile();
+    void onHashCalculated(const QString &filePath, const QString &hash);
+    void onFtpFilesReceived(const QString &directory, const QStringList &files, bool success);
+    void onNpuImageBatchProcessed(const QStringList &processedImages);  // 🧠 NPU-CALLBACK
+    void onFtpRemoveFinished(const QString &remoteFile, bool ok);
+    void onCollectionFinished();  // 🧵 HYPERTHREADING: Callback für abgeschlossene Collection
+
+public slots:
+    Q_INVOKABLE void stopAllEngines();  // ⛔ ENGINE STOPPER: Called by HashEngine on login errors
+
+private:
+    void collectFiles();
+    void collectFilesMultithreaded();  // 🚀 ULTRA-HYPERSPEED: Multithreaded file collection
+    void collectDirectoryWorker(const QString &directory, QSet<QString> &processedFiles);  // 🧵 Worker function
+    void collectFtpFiles(const QString &ftpDirectory, QSet<QString> &processedFiles);
+    void collectFtpDirectory(const QString &ftpDirectory);  // 📡 MEGA-PARALLEL FTP wrapper
+    
+    // 🌐 MULTI-CONNECTION FTP System
+    int testFtpConnectionLimit(const QString &host, int port, const QString &user, const QString &pass);
+    int testFtpConnectionLimitFast(const QString &host, int port, const QString &user, const QString &pass);
+    void collectFtpDirectoryMultiConnection(const QString &ftpDirectory);
+    void collectFtpDirectoryRadicalParallel(const QString &ftpDirectory);  // 🚀 RADICAL PARALLEL
+    void startRadicalParallelProcessing(const QString &ftpDirectory);      // 🚀 RADICAL Processing
+    void processFileChunkParallel(const QList<FileInfo> &chunk, int engineIndex);  // 🚀 PARALLEL Engine
+    void processFileChunkParallelWithPoolEngine(const QList<FileInfo> &chunk, int engineIndex, HashEngine* poolEngine); // 🏭 POOL Engine
+    void startNextEngineIfNeeded(int completedEngineIndex);                 // 🚀 CONTINUOUS Engine Management
+    void setupFtpConnectionPool(const QString &host, int port, const QString &user, const QString &pass, int maxConnections);
+    
+    void checkScanProgress();
+    void processBatchOfFiles(const QStringList &fileBatch, QSet<QString> &processedFiles, 
+                            int &totalFilesFound, int &filesFoundInDirectory); // ⚡ Batch processing
+    void filterBySize();
+    void startHashing();
+    void startHashingPhase();  // ✅ NEU: Non-blocking transition to hashing
+    void compareHashes();
+    void generateResults();
+    
+    // 🗑️ Duplikat-Löschung
+    void deleteDuplicateFiles(const QList<FileInfo> &filesToDelete);
+    bool deleteLocalFile(const QString &path, QString &msg);
+    void deleteFtpFile(const QString &ftpUrl);
+
+    // Path optimization to prevent redundant comparisons
+    QStringList deduplicateDirectories(const QStringList &directories);
+    bool isDuplicateFile(const QString &filePath, const QList<FileInfo> &existingFiles);
+    
+    // ⚡ OPTIMIERUNG: Partielle Results für Anti-Hang
+    DuplicateGroups buildPartialResults();
+    void processCachedFtpFiles(const QString &ftpDirectory, const QStringList &files, QSet<QString> &processedFiles);
+    FtpClient* getOrCreateFtpClient(const QString &host);
+    void useDefaultFtpCredentials(FtpClient *client, const QString &host);
+
+    // 🛡️ NEUE FUNKTIONEN: Schutz vor Doppelbearbeitung
+    void clearDeduplicationCaches();
+    bool isFileAlreadyProcessed(const QString &filePath);
+    void connectNpuManager(NpuManager *npuManager);
+    
+    // 🧠 MEMORY-SAFE: Batch-Verarbeitung für große FTP-Datensätze
+    void processFtpFilesBatch(const QString &directory, const QStringList &files, bool success);
+    void processSingleFtpBatch(const QString &directory, const QStringList &batchFiles);
+    
+    // ✅ Asynchrone Dateisammlung - GUI-responsive
+    void startAsyncFileCollection();
+    void processNextDirectoryChunk();
+    void cleanupFileCollection();
+    
+    // 🎯 NPU-BILDVERARBEITUNG: Feature-basierte Ähnlichkeitsanalyse
+    void startNpuImageAnalysis(const QStringList &imagePaths);
+    void processImageFeatures(const QList<NpuManager::ImageFeature> &features);
+    QStringList filterImageFiles(const QList<FileInfo> &allFiles);
+    CombinedDuplicateResult combineHashAndImageResults();
+    
+    // NPU-Integration in Scanner-Pipeline
+    void startAdvancedDuplicateDetection(); // Hash + NPU kombiniert
+    bool isImageFile(const QString &filePath) const;
+
+private:
+    HashEngine *hashEngine = nullptr;
+    PresetManager *presetManager = nullptr;
+    FtpClient *ftpClient = nullptr;
+    SftpClient *sftpClient = nullptr;    // ✅ SFTP Client Instance
+    SmbClient *smbClient = nullptr;      // ✅ SMB Client Instance
+    NfsClient *nfsClient = nullptr;      // ✅ NFS Client Instance
+    NpuManager *npuManager = nullptr;    // 🧠 NPU-MANAGER für Bildverarbeitung
+
+    // 🚀 ULTRA-HYPERSPEED: Multithreading Support
+    QThreadPool *threadPool = nullptr;
+    QMutex filesMutex;  // Thread-safe file collection
+    QFutureWatcher<void> *futureWatcher = nullptr;
+
+    QTimer *processTimer = nullptr;
+    QTimer *fileCollectionTimer = nullptr;  // ✅ Neuer Timer für asynchrone Dateisammlung
+    QStringList scanDirectories;
+    QString currentHashAlgorithm;
+    QString currentFileFilter;
+    
+    // ✅ Asynchrone Dateisammlung
+    QQueue<QString> directoriesToProcess;    // Queue der zu verarbeitenden Verzeichnisse
+    QDirIterator *currentDirIterator = nullptr;  // Aktueller Directory Iterator
+    int currentDirectoryIndex = 0;           // Index des aktuellen Verzeichnisses
+    int filesFoundInCurrentDir = 0;          // Dateien im aktuellen Verzeichnis gefunden
+    QSet<QString> processedFiles;            // Verarbeitete Dateien in dieser Session
+
+    QList<FileInfo> allFiles;
+    QHash<qint64, QList<FileInfo>> fileSizeGroups;
+    QHash<QString, QList<FileInfo>> hashGroups;
+    QMap<QString, QList<FileInfo>> dateSizeGroups;  // 🚀 Optimized groups (size+date filtered)
+
+    // 🛡️ NEUE MEMBER: Schutz vor Doppelbearbeitung
+    QSet<QString> globalProcessedFiles; // Globaler Schutz vor Datei-Doppelbearbeitung
+    QSet<QString> globalHashedFiles;    // Globaler Schutz vor Hash-Doppelberechnung
+    int totalFilesForHashing = 0;       // 🎯 Gesamt-Dateien für Live-Progress-Anzeige
+    
+    // 🚀 CONTINUOUS ENGINE MANAGEMENT
+    int currentFileIndex = 0;           // Index der nächsten zu verarbeitenden Datei
+    int activeEngines = 0;              // Anzahl der aktiv laufenden Engines
+    const int maxEngines = 8;           // Maximale Anzahl gleichzeitiger Engines
+    const int engineChunkSize = 20;     // Dateien pro Engine-Chunk
+    
+    // � MULTI-CONNECTION FTP Pool
+    QList<FtpClient*> ftpConnectionPool;    // Pool von parallelen FTP-Verbindungen
+    int maxFtpConnections = 1;              // Maximale parallele Verbindungen (auto-detected)
+    int currentFtpConnectionIndex = 0;      // Round-Robin Index für Load-Balancing
+    QString currentFtpHost;                 // Aktueller FTP-Server
+    int currentFtpPort = 21;                // Aktueller FTP-Port
+    QString currentFtpUser, currentFtpPass; // Aktuelle FTP-Credentials
+    
+    // �🎯 NPU-BILDVERARBEITUNG: Feature-basierte Analyse
+    QList<NpuManager::ImageFeature> extractedFeatures; // Extrahierte Bildfeatures
+    QList<ImageDuplicateGroup> imageDuplicateGroups;   // NPU-erkannte Bild-Duplikate
+    NpuManager::SimilarityMode currentSimilarityMode = NpuManager::SimilarityMode::STRICT_DUPLICATES;  // Sicherer Default
+    int npuProcessedImages = 0;                        // 🚀 Anzahl NPU-verarbeiteter Bilder
+    bool npuEnabled = false;                           // 🔒 Default: NPU aus, Hash-only Pipeline
+    int deleteAttempted = 0;
+    int deleteSucceeded = 0;
+
+    // FTP processing state
+    QStringList pendingFtpDirectories;
+    QStringList completedFtpDirectories;
+    int ftpDirectoriesProcessed = 0;
+    
+    // NON-BLOCKING Directory Processing (GUI-responsive)
+    QStringList pendingDirectories;
+    std::map<QString, std::unique_ptr<QDirIterator>> currentDirIterators;
+    
+    // Processing state flags
+    bool hasFtpDirectories = false;
+    bool hasLocalDirectories = false;
+
+    // 🛡️ URL-SAFE HELPERS: Prevent crashes with FTP/network URLs
+    QString getCanonicalPath(const QString &filePath);
+    QString extractFileName(const QString &filePath);
+
+    std::atomic<bool> scanning{false};
+    std::atomic<bool> paused{false};
+
+    ScanPhase currentPhase = IDLE;  // 🧵 Use global ScanPhase enum
+};
+
+#endif // SCANNER_H

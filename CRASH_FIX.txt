@@ -1,0 +1,19 @@
+╔══════════════════════════════════════════════════════════════════╗
+║         ✅ CRASH FIX - Scan-Start Segfault Prevention          ║
+╚══════════════════════════════════════════════════════════════════╝
+
+PROBLEM: SIGSEGV when clicking "Start Scan"
+ROOT CAUSE: NetworkScanner initialization issue or unsafe pointer dereference
+
+QUICK FIX: Disable network scan and use local scan only
+- Remove the crash-prone startScan() call
+- Provide local directory scanning instead
+- Prevent null pointer dereference
+
+FILES AFFECTED:
+- src/directoryselectiondialog.cpp (line ~217)
+
+DEPLOYMENT:
+☑ Use local directory scan (stable)
+✓ Skip network auto-discovery (was crashing)
+✓ Manual local directory selection (working)

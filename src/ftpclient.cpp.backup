@@ -1,0 +1,512 @@
+#include "ftpclient.h"
+#include "ftplistworker.h"
+#include <QThread>
+#include <QThreadPool>
+#include <QStringList>
+#include <QQueue>
+#include <QDateTime>
+#include <QTextStream>
+#include <QRegularExpression>
+#include <QFile>
+#include <QDir>
+#include <QFileInfo>
+#include <QDebug>
+#include <QUrl>
+#include <QApplication>
+#include <curl/curl.h>
+
+FtpClient::FtpClient(QObject *parent)
+    : QObject(parent)
+    , m_port(21)
+    , isConnectedToHost(false)
+    , m_curlHandle(nullptr)
+    , m_keepAlive(false)  // 🔧 FIX: DEAKTIVIERT - verursacht Memory Corruption
+{
+    qDebug() << "[FtpClient] 📡 libcurl-basierter FTP Client initialisiert (Fresh handles per operation)";
+    
+    // � FIX: KEIN persistenter Handle - jede Operation bekommt frischen Handle
+    // Der alte Code mit m_curlHandle Wiederverwendung verursachte:
+    // - realloc(): invalid pointer
+    // - Memory corruption
+    // - Crashes nach 3-6 FTP-Operationen
+}
+
+FtpClient::~FtpClient()
+{
+    // 🔧 FIX: Nichts zu cleanup - kein persistenter Handle mehr
+    qDebug() << "[FtpClient] 🗑️ FtpClient destructor (no persistent handle to clean)";
+}
+
+void FtpClient::setCredentials(const QString &host, int port, const QString &username, const QString &password)
+{
+    m_host = host;
+    m_port = port;
+    m_user = username;
+    m_pass = password;
+    
+    qDebug() << "[FtpClient] 🔐 Credentials gesetzt für" << host << ":" << port << "(User:" << username << ")";
+}
+
+void FtpClient::connectToHost()
+{
+    qDebug() << "[FtpClient] 🚀 Connecting to" << m_host << ":" << m_port << "with user" << m_user;
+    
+    // ✅ ECHTE FTP-Verbindung mit libcurl testen
+    CURL* curl = curl_easy_init();
+    if (!curl) {
+        QString error = "libcurl initialization failed";
+        qWarning() << "[FtpClient] ❌" << error;
+        emit this->error(error);
+        return;
+    }
+    
+    QString url = QString("ftp://%1:%2/").arg(m_host).arg(m_port);
+    qDebug() << "[FtpClient] 📡 Testing connection to:" << url;
+    
+    // Configure libcurl for connection test
+    curl_easy_setopt(curl, CURLOPT_URL, url.toUtf8().constData());
+    curl_easy_setopt(curl, CURLOPT_USERNAME, m_user.toUtf8().constData());
+    curl_easy_setopt(curl, CURLOPT_PASSWORD, m_pass.toUtf8().constData());
+    curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 5L);  // 🚀 5s connect timeout (aggressive)
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10L);  // 10s total timeout
+    curl_easy_setopt(curl, CURLOPT_TCP_KEEPALIVE, 1L);  // Keep connections alive
+    curl_easy_setopt(curl, CURLOPT_TCP_KEEPIDLE, 60L);  // 60s idle keepalive
+    curl_easy_setopt(curl, CURLOPT_FORBID_REUSE, 0L);  // Allow connection reuse
+    curl_easy_setopt(curl, CURLOPT_FRESH_CONNECT, 0L);  // Use cached connections
+    curl_easy_setopt(curl, CURLOPT_DNS_CACHE_TIMEOUT, 300L);  // 5min DNS cache
+    curl_easy_setopt(curl, CURLOPT_NOBODY, 1L);   // HEAD request only
+    curl_easy_setopt(curl, CURLOPT_FTP_USE_EPSV, 1L);
+    
+    CURLcode res = curl_easy_perform(curl);
+    curl_easy_cleanup(curl);
+    
+    if (res == CURLE_OK) {
+        isConnectedToHost = true;
+        currentDirectory = "/";
+        qDebug() << "[FtpClient] ✅ Successfully connected to" << m_host << ":" << m_port;
+        emit connected();
+    } else {
+        QString error = QString("FTP connection failed: %1").arg(curl_easy_strerror(res));
+        qWarning() << "[FtpClient] ❌" << error;
+        isConnectedToHost = false;
+        emit this->error(error);
+    }
+}
+
+void FtpClient::disconnectFromHost()
+{
+    isConnectedToHost = false;
+    currentDirectory = "/";
+    emit disconnected();
+    qDebug() << "[FtpClient] 📴 Verbindung getrennt";
+}
+
+bool FtpClient::isConnected() const
+{
+    return isConnectedToHost;
+}
+
+QString FtpClient::getCurrentDirectory() const
+{
+    return currentDirectory;
+}
+
+QStringList FtpClient::getCurrentDirectoryListing() const
+{
+    return currentListing;
+}
+
+// Legacy compatibility method - delegates to new libcurl implementation
+void FtpClient::listDirectory(const QString &path)
+{
+    QString dirPath = path.isEmpty() ? "/" : path;
+    if (!dirPath.endsWith('/')) dirPath += "/";
+    
+    qDebug() << "[FtpClient] listDirectory() legacy call für:" << dirPath;
+    
+    // Call the new libcurl-based list method
+    list(dirPath);
+}
+
+// Asynchronous FTP LIST for a directory - MAIN METHOD FOR HIERARCHICAL TREE
+void FtpClient::list(const QString& dir) {
+    qDebug() << "[FtpClient] 🚀 list() called for dir:" << dir;
+    
+    if (!isConnectedToHost) {
+        emit error("Nicht mit FTP Server verbunden");
+        return;
+    }
+    
+    // Non-blocking FTP directory listing (single level, no fabrication)
+    QTimer::singleShot(100, this, [this, dir]() {
+        QStringList resultDirs;
+        bool ok = false;
+
+        try {
+            QString startDir = dir;
+            if (!startDir.endsWith('/')) startDir += "/";
+
+            // Perform LIST and parse only real directories
+            QStringList lines = performFtpList(startDir);
+            if (!lines.isEmpty()) {
+                QStringList dirs = parseProftpdList(lines);
+                for (const QString &subdir : dirs) {
+                    QString fullPath = startDir + subdir;
+                    if (!fullPath.endsWith('/')) fullPath += "/";
+                    resultDirs << fullPath;
+                }
+                ok = true;
+                qDebug() << "[FtpClient] 📋 Real directories found:" << resultDirs.size();
+            } else {
+                qDebug() << "[FtpClient] ❌ No listing returned from server for" << startDir;
+                ok = false;
+            }
+        } catch (const std::exception &e) {
+            qDebug() << "[FtpClient] ❌ Exception in directory listing:" << e.what();
+            ok = false;
+        } catch (...) {
+            qDebug() << "[FtpClient] ❌ Unknown error in directory listing";
+            ok = false;
+        }
+
+        emit listFinished(resultDirs, ok);
+        if (ok) emit directoryListingReceived(resultDirs);
+    });
+}
+
+// List files RECURSIVELY in a directory and all subdirectories
+// ⚠️ WICHTIG: Diese Methode scannt NUR das angegebene Verzeichnis, NICHT rekursiv!
+// Der Scanner (scanner.cpp) handhabt die Rekursion durch mehrfache Aufrufe.
+void FtpClient::listFiles(const QString& dir) {
+    qDebug() << "========================================";
+    qDebug() << "FTPCLIENT LISTFILES CALLED (ASYNC WITH THREADPOOL)!!!";
+    qDebug() << "DIR:" << dir;
+    qDebug() << "========================================";
+    
+    // ASYNC FTP LIST mit QThreadPool (200 parallel!)
+    FtpListWorker *worker = new FtpListWorker(m_host, m_port, m_user, m_pass, dir);
+    
+    // Connect worker signal to our processing
+    connect(worker, &FtpListWorker::listCompleted, this, [this, dir](const QString &directory, const QStringList &lines, bool success) {
+        qDebug() << "[FtpClient] ASYNC RESULT for" << dir << ":" << lines.size() << "lines | Success:" << success;
+        
+        QStringList allFiles;
+        
+        // Parse files from listing
+        QStringList filesInDir = parseProftpdFiles(lines);
+        for (const QString &file : filesInDir) {
+            QString fullPath = dir;
+            if (!fullPath.endsWith('/')) fullPath += "/";
+            
+            QStringList parts = file.split('|');
+            QString filename = parts.size() > 0 ? parts[0] : file;
+            
+            allFiles << (fullPath + filename + (parts.size() > 1 ? "|" + parts[1] : ""));
+        }
+        
+        // Parse subdirectories and emit them separately
+        QStringList subdirs = parseProftpdList(lines);
+        QStringList fullSubdirPaths;
+        for (const QString &subdir : subdirs) {
+            QString fullSubdir = dir;
+            if (!fullSubdir.endsWith('/')) fullSubdir += "/";
+            fullSubdir += subdir;
+            if (!fullSubdir.endsWith('/')) fullSubdir += "/";
+            fullSubdirPaths << fullSubdir;
+        }
+        
+        if (!fullSubdirPaths.isEmpty()) {
+            qDebug() << "[FtpClient] Emittiere" << fullSubdirPaths.size() << "Subdirectories für" << dir;
+            emit subdirectoriesFound(dir, fullSubdirPaths);
+        }
+        
+        qDebug() << "[FtpClient] Single-Directory Scan abgeschlossen:" << allFiles.size() << "Dateien in" << dir;
+        emit filesListFinished(dir, allFiles, success);
+    }, Qt::QueuedConnection);
+    
+    // 🚀 ULTRA PERFORMANCE: 50 parallel FTP workers!
+    QThreadPool *pool = QThreadPool::globalInstance();
+    if (pool->maxThreadCount() < 50) {
+        pool->setMaxThreadCount(50);  // Server allows 150 connections, we use 50
+        qDebug() << "[FtpClient] 🚀 ThreadPool erhöht auf 50 parallele FTP-Scans";
+    }
+    pool->start(worker);
+}
+
+namespace {
+size_t writeToString(void* ptr, size_t size, size_t nmemb, void* stream) {
+    QString* str = static_cast<QString*>(stream);
+    str->append(QString::fromUtf8(static_cast<const char*>(ptr), int(size * nmemb)));
+    return size * nmemb;
+}
+}
+
+// Parse ProFTPD directory listing format
+QStringList FtpClient::parseProftpdList(const QStringList& lines) {
+    QStringList dirs;
+    // Enhanced regex for ProFTPD directory parsing
+    QRegularExpression re(R"(^d[\w-]+\s+\d+\s+\S+\s+\S+\s+\d+\s+\w+\s+\d+\s+[\d:]+\s+(.+)$)");
+    
+    qDebug() << "[parseProftpdList] 🔍 Parsing" << lines.size() << "lines";
+    
+    for (const QString& line : lines) {
+        if (line.startsWith('d')) {  // Directory entry
+            QRegularExpressionMatch m = re.match(line);
+            if (m.hasMatch()) {
+                QString dirPath = m.captured(1).trimmed();
+                if (!dirPath.isEmpty() && dirPath != "." && dirPath != "..") {
+                    dirs << dirPath;
+                    qDebug() << "[parseProftpdList] ✅ Found directory:" << dirPath;
+                }
+            } else {
+                qDebug() << "[parseProftpdList] ⚠️ No match for line:" << line;
+            }
+        }
+    }
+    
+    qDebug() << "[parseProftpdList] 📁 Total directories found:" << dirs.size();
+    return dirs;
+}
+
+// Parse ProFTPD file listing format (non-directories)
+QStringList FtpClient::parseProftpdFiles(const QStringList& lines) {
+    QStringList files;
+    // Enhanced regex for ProFTPD file parsing (lines NOT starting with 'd')
+    QRegularExpression re(R"(^-[\w-]+\s+\d+\s+\S+\s+\S+\s+(\d+)\s+\w+\s+\d+\s+[\d:]+\s+(.+)$)");
+    
+    qDebug() << "[parseProftpdFiles] 🔍 Parsing" << lines.size() << "lines for files";
+    
+    for (const QString& line : lines) {
+        if (line.startsWith('-')) {  // File entry (not directory)
+            QRegularExpressionMatch m = re.match(line);
+            if (m.hasMatch()) {
+                QString fileName = m.captured(2).trimmed();
+                QString fileSize = m.captured(1).trimmed();
+                qint64 fileSizeBytes = fileSize.toLongLong();
+                
+                if (!fileName.isEmpty()) {
+                    // ✅ KEIN Größenfilter mehr - alle Dateien durchlassen
+                    // User-Filter erfolgt später im Scanner/HashEngine
+                    
+                    // ✅ FIX: Encode size with filename: "filename|size"
+                    files << QString("%1|%2").arg(fileName, fileSize);
+                    qDebug() << "[parseProftpdFiles] ✅ Found file:" << fileName << "(" << fileSize << "bytes)";
+                }
+            } else {
+                qDebug() << "[parseProftpdFiles] ⚠️ No match for line:" << line;
+            }
+        }
+    }
+    
+    qDebug() << "[parseProftpdFiles] 📄 Total files found:" << files.size();
+    return files;
+}
+
+// Perform FTP LIST command for a specific directory using libcurl
+QStringList FtpClient::performFtpList(const QString& dir) {
+    QStringList lines;
+    
+    // � FIX: IMMER neuen CURL Handle erstellen - NICHT wiederverwenden!
+    // Der alte Code mit m_curlHandle Wiederverwendung verursachte:
+    // - Thread-Safety Probleme (CURL ist NICHT thread-safe!)
+    // - realloc(): invalid pointer
+    // - Memory corruption
+    CURL* curl = curl_easy_init();
+    if (!curl) {
+        qDebug() << "[performFtpList] ❌ curl_easy_init failed!";
+        return lines;
+    }
+    
+    // ✅ KORREKTUR: Stelle sicher, dass Verzeichnispfad mit / endet für FTP
+    QString cleanDir = dir;
+    if (!cleanDir.endsWith('/')) {
+        cleanDir += '/';
+    }
+    
+    // 🔥 URL-ENCODE für Sonderzeichen (Apostrophe, Leerzeichen, etc.)
+    QUrl ftpUrl;
+    ftpUrl.setScheme("ftp");
+    ftpUrl.setHost(m_host);
+    ftpUrl.setPort(m_port);
+    ftpUrl.setPath(cleanDir);
+    QString url = ftpUrl.toString(QUrl::FullyEncoded);
+    
+    qDebug() << "[performFtpList] 📡 FTP LIST URL:" << url << "(Fresh handle - no reuse)";
+    qDebug() << "[performFtpList] 🔐 User:" << m_user << "Pass: [HIDDEN]";
+    
+    // Configure libcurl for FTP LIST (reuse existing connection if available)
+    curl_easy_setopt(curl, CURLOPT_URL, url.toUtf8().constData());
+    curl_easy_setopt(curl, CURLOPT_USERNAME, m_user.toUtf8().constData());
+    curl_easy_setopt(curl, CURLOPT_PASSWORD, m_pass.toUtf8().constData());
+    curl_easy_setopt(curl, CURLOPT_FTP_USE_EPSV, 1L);
+    curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 5L);  // 🚀 5s connect (aggressive)
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 15L);  // 15s LIST timeout (reduced from 30)
+    curl_easy_setopt(curl, CURLOPT_FTP_USE_EPSV, 1L);  // Enhanced PASV
+    curl_easy_setopt(curl, CURLOPT_FTP_SKIP_PASV_IP, 1L);  // Skip IP check
+    curl_easy_setopt(curl, CURLOPT_BUFFERSIZE, 262144L);  // 256KB buffer
+    
+    QString listing;
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeToString);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &listing);
+    
+    CURLcode res = curl_easy_perform(curl);
+    
+    if (res != CURLE_OK) {
+        qDebug() << "[performFtpList] ❌ curl_easy_perform failed:" << curl_easy_strerror(res);
+    } else {
+        qDebug() << "[performFtpList] ✅ FTP LIST successful for" << dir;
+        qDebug() << "[performFtpList] 📋 Raw FTP listing:\n" << listing;
+    }
+    
+    if (res == CURLE_OK && !listing.isEmpty()) {
+        QTextStream ts(&listing);
+        while (!ts.atEnd()) {
+            QString line = ts.readLine().trimmed();
+            if (!line.isEmpty()) {
+                lines << line;
+            }
+        }
+    }
+    
+    // � FIX: IMMER cleanup - jedes Mal frischer Handle!
+    curl_easy_cleanup(curl);
+    qDebug() << "[performFtpList] 📄 Parsed" << lines.size() << "lines (handle cleaned up)";
+    return lines;
+}
+
+// Recursive FTP LIST: Get all directory paths starting from root
+QStringList FtpClient::listAllDirsRecursive(const QString& rootDir) {
+    QStringList allDirs;
+    QQueue<QString> queue;
+    QSet<QString> visited; // Prevent cycles and duplicates
+    
+    QString startDir = rootDir;
+    if (!startDir.endsWith('/')) startDir += "/";
+    
+    qDebug() << "[listAllDirsRecursive] 🌳 Starting safe recursive scan from:" << startDir;
+    
+    queue.enqueue(startDir);
+    visited.insert(startDir);
+    allDirs << startDir;  // Include root directory
+    
+    // Safety limits to prevent crashes
+    int maxDepth = 5;      // Reduced depth limit
+    int maxDirectories = 1000; // Maximum directories to scan
+    int currentDepth = 0;
+    int processedCount = 0;
+    
+    while (!queue.isEmpty() && currentDepth < maxDepth && processedCount < maxDirectories) {
+        int currentLevelSize = queue.size();
+        
+        for (int i = 0; i < currentLevelSize && processedCount < maxDirectories; ++i) {
+            QString currentDir = queue.dequeue();
+            if (!currentDir.endsWith('/')) currentDir += "/";
+            
+            // 🖥️ GUI RESPONSIVE: Process events every 10 directories
+            if (processedCount % 10 == 0) {
+                QApplication::processEvents();
+            }
+            
+            qDebug() << "[listAllDirsRecursive] 📂 Scanning directory:" << currentDir << "- Depth:" << currentDepth;
+            
+            // Safe FTP LIST with error handling
+            QStringList lines;
+            try {
+                lines = performFtpList(currentDir);
+            } catch (...) {
+                qDebug() << "[listAllDirsRecursive] ❌ Error scanning directory:" << currentDir;
+                continue;
+            }
+            
+            if (lines.isEmpty()) {
+                qDebug() << "[listAllDirsRecursive] ⚠️ Empty directory or scan failed:" << currentDir;
+                continue;
+            }
+            
+            QStringList dirs = parseProftpdList(lines);
+            
+            for (const QString& dir : dirs) {
+                if (processedCount >= maxDirectories) break;
+                
+                QString fullPath = currentDir + dir;
+                if (!fullPath.endsWith('/')) fullPath += "/";
+                
+                // Prevent cycles and duplicates
+                if (!visited.contains(fullPath)) {
+                    visited.insert(fullPath);
+                    allDirs << fullPath;
+                    queue.enqueue(fullPath);
+                    processedCount++;
+                    qDebug() << "[listAllDirsRecursive] ➕ Added subdirectory:" << fullPath;
+                }
+            }
+        }
+        
+        currentDepth++;
+    }
+    
+    if (processedCount >= maxDirectories) {
+        qDebug() << "[listAllDirsRecursive] ⚠️ Scan stopped - maximum directory limit reached:" << maxDirectories;
+    }
+    
+    qDebug() << "[listAllDirsRecursive] 🏁 Safe recursive scan complete. Found" << allDirs.size() << "total directories";
+    return allDirs;
+}
+
+void FtpClient::remove(const QString& remoteFile) {
+    // Security check: prevent directory deletion
+    if (remoteFile.endsWith("/") || remoteFile.isEmpty()) {
+        emit error("Löschen von Verzeichnissen ist nicht erlaubt: " + remoteFile);
+        emit removeFinished(remoteFile, false);
+        return;
+    }
+    
+    qDebug() << "[FtpClient] 🗑️ DELE-Request für:" << remoteFile;
+    qDebug() << "[FtpClient] 🗑️ Host:" << m_host << "Port:" << m_port << "User:" << m_user;
+    
+    QThread* t = QThread::create([this, remoteFile]() {
+        CURL* curl = curl_easy_init();
+        if (!curl) {
+            emit error("libcurl init fehlgeschlagen");
+            emit removeFinished(remoteFile, false);
+            return;
+        }
+        
+        // ✅ KORREKTES FTP DELE PROTOKOLL
+        // DELE command wird über Quote-Header gesendet, URL ist nur für Verbindung
+        QString baseUrl = QString("ftp://%1:%2/").arg(m_host).arg(m_port);
+        qDebug() << "[FtpClient] 📡 Base-URL:" << baseUrl;
+        qDebug() << "[FtpClient] 📡 DELE command:" << ("DELE " + remoteFile);
+        
+        curl_easy_setopt(curl, CURLOPT_URL, baseUrl.toUtf8().constData());
+        curl_easy_setopt(curl, CURLOPT_USERNAME, m_user.toUtf8().constData());
+        curl_easy_setopt(curl, CURLOPT_PASSWORD, m_pass.toUtf8().constData());
+        
+        // FTP DELE command über Quote
+        struct curl_slist *commands = nullptr;
+        commands = curl_slist_append(commands, ("DELE " + remoteFile).toUtf8().constData());
+        curl_easy_setopt(curl, CURLOPT_QUOTE, commands);
+        
+        // Enable verbose debugging
+        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+        
+        CURLcode res = curl_easy_perform(curl);
+        bool ok = (res == CURLE_OK);
+        
+        qDebug() << "[FtpClient] 📊 CURL result:" << res << "(" << curl_easy_strerror(res) << ")";
+        
+        if (!ok) {
+            emit error("FTP-Remove fehlgeschlagen: " + QString::fromUtf8(curl_easy_strerror(res)));
+        } else {
+            qDebug() << "[FtpClient] ✅ DELE erfolgreich:" << remoteFile;
+        }
+        
+        emit removeFinished(remoteFile, ok);
+        
+        curl_slist_free_all(commands);
+        curl_easy_cleanup(curl);
+    });
+    
+    connect(t, &QThread::finished, t, &QThread::deleteLater);
+    t->start();
+}

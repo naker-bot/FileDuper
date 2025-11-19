@@ -1,0 +1,1581 @@
+#include "mainwindow.h"
+#include "scanner.h"
+#include "networkscanner.h"
+#include "presetmanager.h"
+#include "activityindicator.h"
+#include "ftpclient.h"
+#include "hashengine.h"
+#include "npumanager.h"
+
+#include <QApplication>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QSplitter>
+#include <QGroupBox>
+#include <QTreeWidget>
+#include <QTableWidget>
+#include <QProgressBar>
+#include <QLabel>
+#include <QComboBox>
+#include <QPushButton>
+#include <QMenuBar>
+#include <QStatusBar>
+#include <QHeaderView>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QTimer>
+#include <QCloseEvent>
+#include <QDebug>
+
+// PIMPL Implementation
+struct MainWindow::Impl {
+    // Add any private implementation details here
+    QTimer *updateTimer;
+    
+    Impl() : updateTimer(new QTimer()) {}
+    ~Impl() { delete updateTimer; }
+};
+
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , d(std::make_unique<Impl>())
+    , m_scanner(nullptr)
+    , m_networkScanner(nullptr)
+    , m_presetManager(nullptr)
+    , m_activityIndicator(nullptr)
+    , m_hashEngine(nullptr)
+    , m_ftpClient(nullptr)
+    , m_npuManager(nullptr)
+    , directoryTree(nullptr)
+    , networkTree(nullptr)
+    , resultsTable(nullptr)
+    , progressBar(nullptr)
+    , hashComboBox(nullptr)
+    , hardwareComboBox(nullptr)
+    , themeComboBox(nullptr)
+    , networkProgressLabel(nullptr)
+    , directorySummaryLabel(nullptr)
+    , resultsInfo(nullptr)
+    , selectDirBtn(nullptr)
+    , scanSelectedBtn(nullptr)
+    , rescanAllBtn(nullptr)
+    , actionLabel(nullptr)
+    , currentFileLabel(nullptr)
+    , fileComparisonLabel(nullptr)
+    , duplicateCountLabel(nullptr)
+    , hardwareStatusLabel(nullptr)
+    , pathProcessingLabel(nullptr)
+    , fileCountLabel(nullptr)
+    , networkRangeBtn(nullptr)
+    , m_isScanning(false)
+    , m_isNetworkScanRunning(false)
+    , m_guiUpdateTimer(nullptr)
+    , m_hardwareIndicatorVisible(false)
+{
+    qDebug() << "🚀 MainWindow constructor starting...";
+    
+    setWindowTitle("FileDuper - Complete GUI");
+    setMinimumSize(1200, 800);
+    
+    initializeComponents();
+    setupMinimalGUI();
+    setupConnections();
+    loadSettings();
+}
+
+MainWindow::~MainWindow() {
+    qDebug() << "🚀 MainWindow destructor called";
+    saveSettings();
+}
+
+void MainWindow::initializeComponents() {
+    qDebug() << "🔧 Initializing components...";
+    
+    // Initialize core components
+    m_presetManager = new PresetManager(this);
+    m_activityIndicator = new ActivityIndicator(this);
+    m_hashEngine = new HashEngine(this);
+    m_scanner = new Scanner(this);
+    m_networkScanner = new NetworkScanner(this);
+    m_ftpClient = new FtpClient(this);
+    m_npuManager = new NpuManager(this);
+    
+    // Initialize GUI update timer
+    m_guiUpdateTimer = new QTimer(this);
+    m_guiUpdateTimer->setInterval(500);
+    connect(m_guiUpdateTimer, &QTimer::timeout, this, &MainWindow::updateHardwareLoadIndicator);
+    m_guiUpdateTimer->start();
+}
+
+void MainWindow::setupMinimalGUI() {
+    qDebug() << "🎨 Setting up PROFESSIONAL FileDuper GUI...";
+    
+    // Central widget with splitter
+    QWidget *centralWidget = new QWidget(this);
+    setCentralWidget(centralWidget);
+    
+    QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
+    
+    // Top controls
+    QHBoxLayout *topLayout = new QHBoxLayout();
+    
+    selectDirBtn = new QPushButton("📁 Verzeichnisse auswählen", this);
+    connect(selectDirBtn, &QPushButton::clicked, this, &MainWindow::addDirectory);
+    topLayout->addWidget(selectDirBtn);
+    
+    scanSelectedBtn = new QPushButton("🔍 Duplikate suchen", this);
+    connect(scanSelectedBtn, &QPushButton::clicked, this, &MainWindow::startDuplicateScan);
+    topLayout->addWidget(scanSelectedBtn);
+    
+    QPushButton *networkBtn = new QPushButton("📡 Netzwerk scannen", this);
+    connect(networkBtn, &QPushButton::clicked, this, &MainWindow::startNetworkDiscovery);
+    topLayout->addWidget(networkBtn);
+    
+    // Hardware selector
+    hardwareComboBox = new QComboBox(this);
+    hardwareComboBox->addItems({"Auto", "CPU", "GPU", "NPU"});
+    topLayout->addWidget(new QLabel("Hardware:", this));
+    topLayout->addWidget(hardwareComboBox);
+    
+    // Hash algorithm selector
+    hashComboBox = new QComboBox(this);
+    hashComboBox->addItems({"MD5", "SHA1", "SHA256", "SHA512"});
+    topLayout->addWidget(new QLabel("Hash:", this));
+    topLayout->addWidget(hashComboBox);
+    
+    mainLayout->addLayout(topLayout);
+    
+    // Main splitter with trees and results
+    QSplitter *mainSplitter = new QSplitter(Qt::Horizontal, this);
+    
+    // Left panel - Directory tree
+    QGroupBox *dirGroup = new QGroupBox("Lokale Verzeichnisse", this);
+    QVBoxLayout *dirLayout = new QVBoxLayout(dirGroup);
+    
+    directoryTree = new QTreeWidget(this);
+    directoryTree->setHeaderLabels({"Verzeichnis", "Größe", "Dateien"});
+    directoryTree->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    connect(directoryTree, &QTreeWidget::itemDoubleClicked, this, &MainWindow::onDirectoryDoubleClicked);
+    dirLayout->addWidget(directoryTree);
+    
+    directorySummaryLabel = new QLabel("Keine Verzeichnisse ausgewählt", this);
+    dirLayout->addWidget(directorySummaryLabel);
+    
+    mainSplitter->addWidget(dirGroup);
+    
+    // Center panel - Network tree
+    QGroupBox *networkGroup = new QGroupBox("Netzwerk-Services", this);
+    QVBoxLayout *networkLayout = new QVBoxLayout(networkGroup);
+    
+    networkTree = new QTreeWidget(this);
+    networkTree->setHeaderLabels({"Service", "IP", "Port", "Status"});
+    connect(networkTree, &QTreeWidget::itemDoubleClicked, this, &MainWindow::onNetworkServiceDoubleClicked);
+    networkLayout->addWidget(networkTree);
+    
+    networkProgressLabel = new QLabel("Bereit für Netzwerk-Scan", this);
+    networkLayout->addWidget(networkProgressLabel);
+    
+    mainSplitter->addWidget(networkGroup);
+    
+    // Right panel - Results
+    QGroupBox *resultsGroup = new QGroupBox("Duplikat-Ergebnisse", this);
+    QVBoxLayout *resultsLayout = new QVBoxLayout(resultsGroup);
+    
+    resultsTable = new QTableWidget(this);
+    resultsTable->setColumnCount(4);
+    resultsTable->setHorizontalHeaderLabels({"Datei", "Pfad", "Größe", "Hash"});
+    resultsTable->horizontalHeader()->setStretchLastSection(true);
+    resultsLayout->addWidget(resultsTable);
+    
+    resultsInfo = new QLabel("Keine Duplikate gefunden", this);
+    resultsLayout->addWidget(resultsInfo);
+    
+    mainSplitter->addWidget(resultsGroup);
+    
+    mainLayout->addWidget(mainSplitter);
+    
+    // Progress bar
+    progressBar = new QProgressBar(this);
+    progressBar->setVisible(false);
+    mainLayout->addWidget(progressBar);
+    
+    // Status labels
+    QHBoxLayout *statusLayout = new QHBoxLayout();
+    
+    actionLabel = new QLabel("Bereit", this);
+    currentFileLabel = new QLabel("", this);
+    fileCountLabel = new QLabel("", this);
+    
+    statusLayout->addWidget(actionLabel);
+    statusLayout->addWidget(currentFileLabel);
+    statusLayout->addWidget(fileCountLabel);
+    statusLayout->addStretch();
+    
+    // Activity indicator
+    statusLayout->addWidget(m_activityIndicator);
+    
+    mainLayout->addLayout(statusLayout);
+    
+    setupMenuBar();
+    
+    // ✅ Apply PROFESSIONAL styling immediately
+    applyProfessionalStyling();
+}
+
+void MainWindow::applyProfessionalStyling() {
+    qDebug() << "🎨 Applying PROFESSIONAL FileDuper styling...";
+    
+    // Professional window setup
+    setWindowTitle("FileDuper Pro - Intel NPU Hardware Accelerated Duplicate Scanner v2.5");
+    setMinimumSize(1400, 900);
+    resize(1600, 1000);
+    
+    // Apply comprehensive professional stylesheet
+    setStyleSheet(R"(
+        QMainWindow {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        QGroupBox {
+            font-weight: bold;
+            font-size: 14px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            margin: 5px;
+            padding-top: 15px;
+            background-color: #ffffff;
+        }
+        
+        QGroupBox::title {
+            subcontrol-origin: margin;
+            left: 15px;
+            padding: 0 8px 0 8px;
+            color: #2c3e50;
+            background-color: #ffffff;
+        }
+        
+        QPushButton {
+            background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                        stop: 0 #007bff, stop: 1 #0056b3);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            padding: 10px 20px;
+            font-size: 13px;
+            min-height: 25px;
+        }
+        
+        QPushButton:hover {
+            background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                        stop: 0 #0056b3, stop: 1 #004085);
+            transform: translateY(-1px);
+        }
+        
+        QPushButton:pressed {
+            background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                        stop: 0 #004085, stop: 1 #002752);
+        }
+        
+        QTreeWidget {
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            background-color: #ffffff;
+            alternate-background-color: #f8f9fa;
+            selection-background-color: #007bff;
+            font-size: 12px;
+            gridline-color: #e9ecef;
+        }
+        
+        QTreeWidget::item {
+            padding: 5px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        QTreeWidget::item:selected {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        QTreeWidget::item:hover {
+            background-color: #e7f3ff;
+        }
+        
+        QTableWidget {
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            background-color: #ffffff;
+            alternate-background-color: #f8f9fa;
+            selection-background-color: #007bff;
+            gridline-color: #e9ecef;
+        }
+        
+        QTableWidget::item:selected {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        QProgressBar {
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            text-align: center;
+            background-color: #e9ecef;
+            font-weight: bold;
+        }
+        
+        QProgressBar::chunk {
+            background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                        stop: 0 #28a745, stop: 1 #1e7e34);
+            border-radius: 6px;
+        }
+        
+        QComboBox {
+            border: 2px solid #ced4da;
+            border-radius: 6px;
+            padding: 6px 12px;
+            background-color: #ffffff;
+            min-width: 120px;
+            font-size: 12px;
+        }
+        
+        QComboBox:hover {
+            border-color: #007bff;
+        }
+        
+        QComboBox::drop-down {
+            border: none;
+            width: 20px;
+        }
+        
+        QComboBox::down-arrow {
+            image: none;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #495057;
+        }
+        
+        QLabel {
+            color: #495057;
+            font-size: 12px;
+        }
+        
+        QSplitter::handle {
+            background-color: #dee2e6;
+            width: 3px;
+            height: 3px;
+        }
+        
+        QSplitter::handle:hover {
+            background-color: #007bff;
+        }
+    )");
+    
+    qDebug() << "✅ Professional styling applied successfully!";
+}
+
+void MainWindow::setupProfessionalGUI() {
+    qDebug() << "🎨 Setting up COMPLETE Professional FileDuper GUI...";
+    
+    // ===== PROFESSIONAL WINDOW SETUP =====
+    setWindowTitle("FileDuper Pro - Intel NPU Hardware Accelerated Duplicate Scanner v2.5");
+    setMinimumSize(1400, 900);
+    resize(1600, 1000);
+    
+    // ===== CENTRAL WIDGET SETUP =====
+    QWidget *centralWidget = new QWidget(this);
+    setCentralWidget(centralWidget);
+    centralWidget->setObjectName("MainCentralWidget");
+    
+    QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
+    mainLayout->setSpacing(8);
+    mainLayout->setContentsMargins(12, 12, 12, 12);
+    
+    // ===== PROFESSIONAL TOOLBAR =====
+    QFrame *toolbarFrame = new QFrame(this);
+    toolbarFrame->setFrameStyle(QFrame::StyledPanel | QFrame::Raised);
+    toolbarFrame->setObjectName("ToolbarFrame");
+    QHBoxLayout *toolbarLayout = new QHBoxLayout(toolbarFrame);
+    toolbarLayout->setSpacing(12);
+    
+    // Directory controls
+    selectDirBtn = new QPushButton("📁 Verzeichnisse auswählen", this);
+    selectDirBtn->setMinimumSize(180, 35);
+    selectDirBtn->setObjectName("PrimaryButton");
+    connect(selectDirBtn, &QPushButton::clicked, this, &MainWindow::addDirectory);
+    toolbarLayout->addWidget(selectDirBtn);
+    
+    scanSelectedBtn = new QPushButton("🔍 Duplikate suchen", this);
+    scanSelectedBtn->setMinimumSize(150, 35);
+    scanSelectedBtn->setObjectName("ActionButton");
+    connect(scanSelectedBtn, &QPushButton::clicked, this, &MainWindow::startDuplicateScan);
+    toolbarLayout->addWidget(scanSelectedBtn);
+    
+    QPushButton *networkBtn = new QPushButton("📡 Netzwerk scannen", this);
+    networkBtn->setMinimumSize(150, 35);
+    networkBtn->setObjectName("NetworkButton");
+    connect(networkBtn, &QPushButton::clicked, this, &MainWindow::startNetworkDiscovery);
+    toolbarLayout->addWidget(networkBtn);
+    
+    toolbarLayout->addSpacing(20);
+    
+    // Hardware configuration
+    QLabel *hwLabel = new QLabel("🖥️ Hardware:", this);
+    hwLabel->setObjectName("ConfigLabel");
+    toolbarLayout->addWidget(hwLabel);
+    
+    hardwareComboBox = new QComboBox(this);
+    hardwareComboBox->addItems({"🤖 Auto (NPU)", "🧠 Intel NPU", "🎯 Intel GPU", "🖥️ CPU"});
+    hardwareComboBox->setMinimumWidth(120);
+    hardwareComboBox->setObjectName("ConfigCombo");
+    toolbarLayout->addWidget(hardwareComboBox);
+    
+    QLabel *hashLabel = new QLabel("🔐 Hash:", this);
+    hashLabel->setObjectName("ConfigLabel");
+    toolbarLayout->addWidget(hashLabel);
+    
+    hashComboBox = new QComboBox(this);
+    hashComboBox->addItems({"MD5 (Fast)", "SHA1", "SHA256 (Secure)", "SHA512", "xxHash (Ultra-Fast)"});
+    hashComboBox->setMinimumWidth(120);
+    hashComboBox->setObjectName("ConfigCombo");
+    toolbarLayout->addWidget(hashComboBox);
+    
+    toolbarLayout->addStretch();
+    
+    // Activity indicator
+    toolbarLayout->addWidget(m_activityIndicator);
+    
+    mainLayout->addWidget(toolbarFrame);
+    
+    // ===== MAIN CONTENT SPLITTER =====
+    QSplitter *mainSplitter = new QSplitter(Qt::Horizontal, this);
+    mainSplitter->setChildrenCollapsible(false);
+    mainSplitter->setObjectName("MainSplitter");
+    
+    // ===== LEFT PANEL: LOCAL DIRECTORIES =====
+    QFrame *leftFrame = new QFrame(this);
+    leftFrame->setFrameStyle(QFrame::StyledPanel);
+    leftFrame->setObjectName("LeftPanel");
+    QVBoxLayout *leftLayout = new QVBoxLayout(leftFrame);
+    leftLayout->setContentsMargins(8, 8, 8, 8);
+    
+    QLabel *dirTitle = new QLabel("📁 Lokale Verzeichnisse", this);
+    dirTitle->setObjectName("PanelTitle");
+    dirTitle->setStyleSheet("font-weight: bold; font-size: 14px; color: #2c3e50; padding: 5px;");
+    leftLayout->addWidget(dirTitle);
+    
+    directoryTree = new QTreeWidget(this);
+    directoryTree->setHeaderLabels({"Verzeichnis", "Größe", "Dateien", "Typ"});
+    directoryTree->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    directoryTree->setAlternatingRowColors(true);
+    directoryTree->setRootIsDecorated(true);
+    directoryTree->setItemsExpandable(true);
+    directoryTree->setObjectName("DirectoryTree");
+    connect(directoryTree, &QTreeWidget::itemDoubleClicked, this, &MainWindow::onDirectoryDoubleClicked);
+    leftLayout->addWidget(directoryTree);
+    
+    directorySummaryLabel = new QLabel("📊 Keine Verzeichnisse ausgewählt", this);
+    directorySummaryLabel->setObjectName("SummaryLabel");
+    leftLayout->addWidget(directorySummaryLabel);
+    
+    mainSplitter->addWidget(leftFrame);
+    
+    // ===== CENTER PANEL: NETWORK SERVICES =====
+    QFrame *centerFrame = new QFrame(this);
+    centerFrame->setFrameStyle(QFrame::StyledPanel);
+    centerFrame->setObjectName("CenterPanel");
+    QVBoxLayout *centerLayout = new QVBoxLayout(centerFrame);
+    centerLayout->setContentsMargins(8, 8, 8, 8);
+    
+    QLabel *networkTitle = new QLabel("📡 Netzwerk-Services", this);
+    networkTitle->setObjectName("PanelTitle");
+    networkTitle->setStyleSheet("font-weight: bold; font-size: 14px; color: #2c3e50; padding: 5px;");
+    centerLayout->addWidget(networkTitle);
+    
+    networkTree = new QTreeWidget(this);
+    networkTree->setHeaderLabels({"Service", "IP:Port", "Status", "Details"});
+    networkTree->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    networkTree->setAlternatingRowColors(true);
+    networkTree->setRootIsDecorated(true);
+    networkTree->setObjectName("NetworkTree");
+    connect(networkTree, &QTreeWidget::itemDoubleClicked, this, &MainWindow::onNetworkServiceDoubleClicked);
+    centerLayout->addWidget(networkTree);
+    
+    networkProgressLabel = new QLabel("🔍 Bereit für Netzwerk-Scan", this);
+    networkProgressLabel->setObjectName("SummaryLabel");
+    centerLayout->addWidget(networkProgressLabel);
+    
+    mainSplitter->addWidget(centerFrame);
+    
+    // ===== RIGHT PANEL: RESULTS & PROGRESS =====
+    QFrame *rightFrame = new QFrame(this);
+    rightFrame->setFrameStyle(QFrame::StyledPanel);
+    rightFrame->setObjectName("RightPanel");
+    QVBoxLayout *rightLayout = new QVBoxLayout(rightFrame);
+    rightLayout->setContentsMargins(8, 8, 8, 8);
+    
+    QLabel *resultsTitle = new QLabel("🎯 Duplikat-Ergebnisse & Fortschritt", this);
+    resultsTitle->setObjectName("PanelTitle");
+    resultsTitle->setStyleSheet("font-weight: bold; font-size: 14px; color: #2c3e50; padding: 5px;");
+    rightLayout->addWidget(resultsTitle);
+    
+    // Results table
+    resultsTable = new QTableWidget(this);
+    resultsTable->setColumnCount(5);
+    resultsTable->setHorizontalHeaderLabels({"Status", "Datei", "Pfad", "Größe", "Hash"});
+    resultsTable->horizontalHeader()->setStretchLastSection(true);
+    resultsTable->setAlternatingRowColors(true);
+    resultsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    resultsTable->setObjectName("ResultsTable");
+    rightLayout->addWidget(resultsTable);
+    
+    // Progress section
+    QFrame *progressFrame = new QFrame(this);
+    progressFrame->setFrameStyle(QFrame::Box);
+    progressFrame->setObjectName("ProgressFrame");
+    QVBoxLayout *progressLayout = new QVBoxLayout(progressFrame);
+    
+    progressBar = new QProgressBar(this);
+    progressBar->setVisible(false);
+    progressBar->setObjectName("MainProgressBar");
+    progressLayout->addWidget(progressBar);
+    
+    QHBoxLayout *progressInfoLayout = new QHBoxLayout();
+    
+    actionLabel = new QLabel("⏸️ Bereit", this);
+    actionLabel->setObjectName("ActionLabel");
+    progressInfoLayout->addWidget(actionLabel);
+    
+    currentFileLabel = new QLabel("", this);
+    currentFileLabel->setObjectName("FileLabel");
+    progressInfoLayout->addWidget(currentFileLabel);
+    
+    progressInfoLayout->addStretch();
+    
+    fileCountLabel = new QLabel("", this);
+    fileCountLabel->setObjectName("CountLabel");
+    progressInfoLayout->addWidget(fileCountLabel);
+    
+    progressLayout->addLayout(progressInfoLayout);
+    rightLayout->addWidget(progressFrame);
+    
+    resultsInfo = new QLabel("📈 Keine Duplikate gefunden", this);
+    resultsInfo->setObjectName("SummaryLabel");
+    rightLayout->addWidget(resultsInfo);
+    
+    mainSplitter->addWidget(rightFrame);
+    
+    // Set professional splitter proportions
+    mainSplitter->setSizes({350, 400, 650});
+    mainLayout->addWidget(mainSplitter);
+    
+    // ===== BOTTOM STATUS BAR =====
+    QFrame *statusFrame = new QFrame(this);
+    statusFrame->setFrameStyle(QFrame::StyledPanel);
+    statusFrame->setObjectName("StatusFrame");
+    QHBoxLayout *statusLayout = new QHBoxLayout(statusFrame);
+    statusLayout->setContentsMargins(12, 6, 12, 6);
+    
+    QLabel *statusIcon = new QLabel("🚀", this);
+    statusLayout->addWidget(statusIcon);
+    
+    QLabel *versionLabel = new QLabel("FileDuper Pro v2.5 - Intel NPU Accelerated", this);
+    versionLabel->setObjectName("VersionLabel");
+    statusLayout->addWidget(versionLabel);
+    
+    statusLayout->addStretch();
+    
+    // Hardware status indicators
+    QLabel *hardwareStatus = new QLabel("🖥️ Hardware: Intel NPU ✅ Intel GPU ✅", this);
+    hardwareStatus->setObjectName("HardwareStatus");
+    statusLayout->addWidget(hardwareStatus);
+    
+    mainLayout->addWidget(statusFrame);
+    
+    // Apply professional styling
+    setStyleSheet(R"(
+        QMainWindow {
+            background-color: #f8f9fa;
+        }
+        #ToolbarFrame {
+            background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                        stop: 0 #ffffff, stop: 1 #e9ecef);
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 8px;
+        }
+        #PrimaryButton {
+            background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                        stop: 0 #007bff, stop: 1 #0056b3);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            padding: 8px 16px;
+        }
+        #PrimaryButton:hover {
+            background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                        stop: 0 #0056b3, stop: 1 #004085);
+        }
+        #ActionButton {
+            background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                        stop: 0 #28a745, stop: 1 #1e7e34);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            padding: 8px 16px;
+        }
+        #ActionButton:hover {
+            background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                        stop: 0 #1e7e34, stop: 1 #155724);
+        }
+        #NetworkButton {
+            background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                        stop: 0 #17a2b8, stop: 1 #117a8b);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            padding: 8px 16px;
+        }
+        #NetworkButton:hover {
+            background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                        stop: 0 #117a8b, stop: 1 #0c5460);
+        }
+        #LeftPanel, #CenterPanel, #RightPanel {
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }
+        #DirectoryTree, #NetworkTree, #ResultsTable {
+            border: 1px solid #dee2e6;
+            background-color: #ffffff;
+            alternate-background-color: #f8f9fa;
+        }
+        #StatusFrame {
+            background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                        stop: 0 #e9ecef, stop: 1 #dee2e6);
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+        }
+        #SummaryLabel {
+            color: #6c757d;
+            font-style: italic;
+            padding: 5px;
+        }
+        #ConfigCombo {
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            padding: 4px 8px;
+            background-color: #ffffff;
+        }
+        #ConfigLabel {
+            font-weight: bold;
+            color: #495057;
+        }
+    )");
+    
+    setupMenuBar();
+    
+    qDebug() << "✅ COMPLETE Professional FileDuper GUI initialized with all components!";
+}
+    
+    // Central widget with splitter
+    QWidget *centralWidget = new QWidget(this);
+    setCentralWidget(centralWidget);
+    
+    QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
+    
+    // Top controls
+    QHBoxLayout *topLayout = new QHBoxLayout();
+    
+    selectDirBtn = new QPushButton("📁 Verzeichnisse auswählen", this);
+    connect(selectDirBtn, &QPushButton::clicked, this, &MainWindow::addDirectory);
+    topLayout->addWidget(selectDirBtn);
+    
+    scanSelectedBtn = new QPushButton("🔍 Duplikate suchen", this);
+    connect(scanSelectedBtn, &QPushButton::clicked, this, &MainWindow::startDuplicateScan);
+    topLayout->addWidget(scanSelectedBtn);
+    
+    QPushButton *networkBtn = new QPushButton("�� Netzwerk scannen", this);
+    connect(networkBtn, &QPushButton::clicked, this, &MainWindow::startNetworkDiscovery);
+    topLayout->addWidget(networkBtn);
+    
+    // Hardware selector
+    hardwareComboBox = new QComboBox(this);
+    hardwareComboBox->addItems({"Auto", "CPU", "GPU", "NPU"});
+    topLayout->addWidget(new QLabel("Hardware:", this));
+    topLayout->addWidget(hardwareComboBox);
+    
+    // Hash algorithm selector
+    hashComboBox = new QComboBox(this);
+    hashComboBox->addItems({"MD5", "SHA1", "SHA256", "SHA512"});
+    topLayout->addWidget(new QLabel("Hash:", this));
+    topLayout->addWidget(hashComboBox);
+    
+    mainLayout->addLayout(topLayout);
+    
+    // Main splitter with trees and results
+    QSplitter *mainSplitter = new QSplitter(Qt::Horizontal, this);
+    
+    // Left panel - Directory tree
+    QGroupBox *dirGroup = new QGroupBox("Lokale Verzeichnisse", this);
+    QVBoxLayout *dirLayout = new QVBoxLayout(dirGroup);
+    
+    directoryTree = new QTreeWidget(this);
+    directoryTree->setHeaderLabels({"Verzeichnis", "Größe", "Dateien"});
+    directoryTree->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    connect(directoryTree, &QTreeWidget::itemDoubleClicked, this, &MainWindow::onDirectoryDoubleClicked);
+    dirLayout->addWidget(directoryTree);
+    
+    directorySummaryLabel = new QLabel("Keine Verzeichnisse ausgewählt", this);
+    dirLayout->addWidget(directorySummaryLabel);
+    
+    mainSplitter->addWidget(dirGroup);
+    
+    // Center panel - Network tree
+    QGroupBox *networkGroup = new QGroupBox("Netzwerk-Services", this);
+    QVBoxLayout *networkLayout = new QVBoxLayout(networkGroup);
+    
+    networkTree = new QTreeWidget(this);
+    networkTree->setHeaderLabels({"Service", "IP", "Port", "Status"});
+    connect(networkTree, &QTreeWidget::itemDoubleClicked, this, &MainWindow::onNetworkServiceDoubleClicked);
+    networkLayout->addWidget(networkTree);
+    
+    networkProgressLabel = new QLabel("Bereit für Netzwerk-Scan", this);
+    networkLayout->addWidget(networkProgressLabel);
+    
+    mainSplitter->addWidget(networkGroup);
+    
+    // Right panel - Results
+    QGroupBox *resultsGroup = new QGroupBox("Duplikat-Ergebnisse", this);
+    QVBoxLayout *resultsLayout = new QVBoxLayout(resultsGroup);
+    
+    resultsTable = new QTableWidget(this);
+    resultsTable->setColumnCount(4);
+    resultsTable->setHorizontalHeaderLabels({"Datei", "Pfad", "Größe", "Hash"});
+    resultsTable->horizontalHeader()->setStretchLastSection(true);
+    resultsLayout->addWidget(resultsTable);
+    
+    resultsInfo = new QLabel("Keine Duplikate gefunden", this);
+    resultsLayout->addWidget(resultsInfo);
+    
+    mainSplitter->addWidget(resultsGroup);
+    
+    mainLayout->addWidget(mainSplitter);
+    
+    // Progress bar
+    progressBar = new QProgressBar(this);
+    progressBar->setVisible(false);
+    mainLayout->addWidget(progressBar);
+    
+    // Status labels
+    QHBoxLayout *statusLayout = new QHBoxLayout();
+    
+    actionLabel = new QLabel("Bereit", this);
+    currentFileLabel = new QLabel("", this);
+    fileCountLabel = new QLabel("", this);
+    
+    statusLayout->addWidget(actionLabel);
+    statusLayout->addWidget(currentFileLabel);
+    statusLayout->addWidget(fileCountLabel);
+    statusLayout->addStretch();
+    
+    // Activity indicator
+    statusLayout->addWidget(m_activityIndicator);
+    
+    mainLayout->addLayout(statusLayout);
+    
+    setupMenuBar();
+}
+
+void MainWindow::setupMenuBar() {
+    // File menu
+    QMenu *fileMenu = menuBar()->addMenu("&Datei");
+    
+    m_addDirectoryAction = new QAction("&Verzeichnis hinzufügen", this);
+    m_addDirectoryAction->setShortcut(QKeySequence::Open);
+    connect(m_addDirectoryAction, &QAction::triggered, this, &MainWindow::addDirectory);
+    fileMenu->addAction(m_addDirectoryAction);
+    
+    fileMenu->addSeparator();
+    
+    m_exitAction = new QAction("&Beenden", this);
+    m_exitAction->setShortcut(QKeySequence::Quit);
+    connect(m_exitAction, &QAction::triggered, this, &QWidget::close);
+    fileMenu->addAction(m_exitAction);
+    
+    // Scan menu
+    QMenu *scanMenu = menuBar()->addMenu("&Scan");
+    
+    m_startScanAction = new QAction("&Duplikate suchen", this);
+    connect(m_startScanAction, &QAction::triggered, this, &MainWindow::startDuplicateScan);
+    scanMenu->addAction(m_startScanAction);
+    
+    m_networkScanAction = new QAction("&Netzwerk scannen", this);
+    connect(m_networkScanAction, &QAction::triggered, this, &MainWindow::startNetworkDiscovery);
+    scanMenu->addAction(m_networkScanAction);
+    
+    // Help menu
+    QMenu *helpMenu = menuBar()->addMenu("&Hilfe");
+    
+    m_aboutAction = new QAction("&Über FileDuper", this);
+    connect(m_aboutAction, &QAction::triggered, this, &MainWindow::showAboutDialog);
+    helpMenu->addAction(m_aboutAction);
+    
+    statusBar()->showMessage("FileDuper bereit");
+}
+
+void MainWindow::setupConnections() {
+    // Scanner connections
+    if (m_scanner) {
+        connect(m_scanner, &Scanner::scanProgress, this, &MainWindow::onScanProgress);
+        connect(m_scanner, &Scanner::scanCompleted, this, &MainWindow::onScanCompleted);
+    }
+    
+    // Network scanner connections
+    if (m_networkScanner) {
+        connect(m_networkScanner, &NetworkScanner::serviceFound, this, 
+                [this](const NetworkService &service) {
+                    onNetworkServiceFound(service.ip, service.port, service.service);
+                });
+    }
+    
+    // FTP client connections
+    if (m_ftpClient) {
+        connect(m_ftpClient, &FtpClient::directoriesOnlyFinished, 
+                this, &MainWindow::onFastFtpDirectoriesReceived);
+    }
+}
+
+// SLOT IMPLEMENTATIONS
+void MainWindow::addDirectory() {
+    QString dir = QFileDialog::getExistingDirectory(this, "Verzeichnis auswählen");
+    if (!dir.isEmpty() && !m_selectedDirectories.contains(dir)) {
+        m_selectedDirectories.append(dir);
+        updateDirectoryTree();
+        updateDirectorySummary();
+    }
+}
+
+void MainWindow::removeSelectedDirectories() {
+    // Implementation for removing selected directories
+}
+
+void MainWindow::updateDirectoryTree() {
+    directoryTree->clear();
+    for (const QString &dir : m_selectedDirectories) {
+        QTreeWidgetItem *item = new QTreeWidgetItem(directoryTree);
+        item->setText(0, dir);
+        item->setText(1, "Berechne...");
+        item->setText(2, "Berechne...");
+    }
+}
+
+void MainWindow::updateDirectorySummary() {
+    directorySummaryLabel->setText(QString("%1 Verzeichnisse ausgewählt").arg(m_selectedDirectories.size()));
+}
+
+void MainWindow::updateSelectedDirectoriesDisplay() {
+    updateDirectoryTree();
+    updateDirectorySummary();
+}
+
+void MainWindow::updateItemSelectionState(QTreeWidgetItem *item) {
+    // Visual feedback for selection
+}
+
+void MainWindow::startDuplicateScan() {
+    if (m_selectedDirectories.isEmpty()) {
+        QMessageBox::information(this, "Info", "Bitte wählen Sie zuerst Verzeichnisse aus.");
+        return;
+    }
+    
+    m_isScanning = true;
+    progressBar->setVisible(true);
+    progressBar->setValue(0);
+    actionLabel->setText("Suche Duplikate...");
+    
+    if (m_activityIndicator) {
+        m_activityIndicator->setActive(true);
+    }
+    
+    // Start actual scanning
+    if (m_scanner) {
+        QString hashAlg = hashComboBox->currentText();
+        m_scanner->startScan(m_selectedDirectories, hashAlg, "all");
+    }
+}
+
+void MainWindow::stopDuplicateScan() {
+    m_isScanning = false;
+    progressBar->setVisible(false);
+    actionLabel->setText("Bereit");
+    
+    if (m_activityIndicator) {
+        m_activityIndicator->setActive(false);
+    }
+}
+
+void MainWindow::rescanAll() {
+    // Full rescan implementation
+}
+
+void MainWindow::showFastFtpBrowser() {
+    // FAST FTP browser implementation
+}
+
+void MainWindow::onFastFtpDirectoriesReceived(const QStringList &directories, bool success) {
+    qDebug() << "📂 Received" << directories.size() << "directories, success:" << success;
+}
+
+void MainWindow::startScan() {
+    startDuplicateScan();
+}
+
+void MainWindow::stopScan() {
+    stopDuplicateScan();
+}
+
+void MainWindow::onNetworkScanCompleted(const QList<NetworkService> &services) {
+    m_isNetworkScanRunning = false;
+    networkProgressLabel->setText(QString("%1 Services gefunden").arg(services.size()));
+}
+
+void MainWindow::onHashEngineStatusUpdate(const QString &operation, const QString &details) {
+    actionLabel->setText(operation + ": " + details);
+}
+
+void MainWindow::onDirectoryDoubleClicked(QTreeWidgetItem *item, int column) {
+    Q_UNUSED(column)
+    if (item) {
+        QString path = item->text(0);
+        qDebug() << "Directory double-clicked:" << path;
+    }
+}
+
+void MainWindow::onDirectoryItemExpanded(QTreeWidgetItem *item) {
+    if (item) {
+        QString path = item->text(0);
+        qDebug() << "🌳 Directory expanded (Professional GUI):" << path;
+        // Future: Auto-load subdirectories for hierarchical browsing
+    }
+}
+
+void MainWindow::showDirectoryContextMenu(const QPoint &pos) {
+    Q_UNUSED(pos)
+    // Context menu implementation
+}
+
+void MainWindow::showDirectorySummaryContextMenu(const QPoint &pos) {
+    Q_UNUSED(pos)
+    // Summary context menu implementation
+}
+
+void MainWindow::onNetworkServiceDoubleClicked(QTreeWidgetItem *item, int column) {
+    Q_UNUSED(column)
+    if (item) {
+        QString ip = item->text(1);
+        QString service = item->text(0);
+        int port = item->text(2).toInt();
+        
+        qDebug() << "Network service double-clicked:" << service << "at" << ip << ":" << port;
+        
+        // Show login dialog for FTP services
+        if (service.contains("FTP", Qt::CaseInsensitive)) {
+            showLoginDialog(ip, port, service);
+        } else if (service.contains("SSH", Qt::CaseInsensitive) || service.contains("SFTP", Qt::CaseInsensitive)) {
+            showLoginDialog(ip, port, "SFTP");
+        } else {
+            QMessageBox::information(this, "Service Info", 
+                QString("Service: %1\nIP: %2\nPort: %3").arg(service, ip).arg(port));
+        }
+    }
+}
+
+void MainWindow::showResultsContextMenu(const QPoint &pos) {
+    Q_UNUSED(pos)
+    // Results context menu implementation
+}
+
+void MainWindow::deleteAllDuplicates() {
+    // Delete all duplicates implementation
+}
+
+void MainWindow::deleteSelectedDuplicates() {
+    // Delete selected duplicates implementation
+}
+
+void MainWindow::deleteDuplicateFiles(const QStringList &filesToDelete) {
+    Q_UNUSED(filesToDelete)
+    // File deletion implementation
+}
+
+bool MainWindow::deleteFtpFileSync(const QString &ftpPath) {
+    Q_UNUSED(ftpPath)
+    return false;
+}
+
+void MainWindow::selectAllDuplicatesInTable() {
+    resultsTable->selectAll();
+}
+
+void MainWindow::onDeletionCompleted(const DeletionResult &result) {
+    Q_UNUSED(result)
+    // Deletion completion handling
+}
+
+void MainWindow::updateDuplicateResults(int duplicateGroups, int duplicateFiles) {
+    resultsInfo->setText(QString("%1 Gruppen, %2 Duplikate").arg(duplicateGroups).arg(duplicateFiles));
+}
+
+void MainWindow::showNetworkContextMenu(const QPoint &pos) {
+    Q_UNUSED(pos)
+    // Network context menu implementation
+}
+
+void MainWindow::addFtpDirectoryToScanner(QTreeWidgetItem *ftpDirItem) {
+    Q_UNUSED(ftpDirItem)
+    // FTP directory addition implementation
+}
+
+void MainWindow::startFtpNpuTest() {
+    // FTP NPU test implementation
+}
+
+void MainWindow::startNetworkDiscovery() {
+    if (m_isNetworkScanRunning) {
+        return;
+    }
+    
+    m_isNetworkScanRunning = true;
+    networkProgressLabel->setText("Scanne Netzwerk...");
+    
+    if (m_networkScanner) {
+        m_networkScanner->startScan();
+    }
+}
+
+void MainWindow::startMultiRangeScan() {
+    // Multi-range scan implementation
+}
+
+void MainWindow::checkAndStartMultiRangeScan() {
+    // Check and start multi-range scan
+}
+
+void MainWindow::onNetworkServiceFound(const QString &ip, int port, const QString &service) {
+    QTreeWidgetItem *item = new QTreeWidgetItem(networkTree);
+    item->setText(0, service);
+    item->setText(1, ip);
+    item->setText(2, QString::number(port));
+    item->setText(3, "Verfügbar");
+}
+
+void MainWindow::showLoginDialog(const QString &ip, int port, const QString &service) {
+    // Check for saved credentials first
+    if (m_presetManager) {
+        LoginData savedLogin = m_presetManager->getLogin(ip, port);
+        if (savedLogin.isValid() && savedLogin.autoLogin) {
+            qDebug() << "🔐 Auto-Login verwendet für" << ip << ":" << port;
+            connectAndShowDirectoryTree(ip, port, service, savedLogin.username, savedLogin.password);
+            return;
+        }
+    }
+    
+    // Create login dialog
+    QDialog loginDialog(this);
+    loginDialog.setWindowTitle(QString("Login zu %1:%2").arg(ip).arg(port));
+    loginDialog.setMinimumSize(400, 200);
+    
+    QVBoxLayout *layout = new QVBoxLayout(&loginDialog);
+    
+    // Service info
+    QLabel *serviceLabel = new QLabel(QString("Service: %1 auf %2:%3").arg(service, ip).arg(port), &loginDialog);
+    serviceLabel->setStyleSheet("font-weight: bold; color: blue;");
+    layout->addWidget(serviceLabel);
+    
+    // Username
+    layout->addWidget(new QLabel("Benutzername:", &loginDialog));
+    QLineEdit *usernameEdit = new QLineEdit(&loginDialog);
+    if (m_presetManager) {
+        LoginData existingLogin = m_presetManager->getLogin(ip, port);
+        if (existingLogin.isValid()) {
+            usernameEdit->setText(existingLogin.username);
+        }
+    }
+    layout->addWidget(usernameEdit);
+    
+    // Password
+    layout->addWidget(new QLabel("Passwort:", &loginDialog));
+    QLineEdit *passwordEdit = new QLineEdit(&loginDialog);
+    passwordEdit->setEchoMode(QLineEdit::Password);
+    layout->addWidget(passwordEdit);
+    
+    // Options
+    QCheckBox *saveLoginBox = new QCheckBox("Login speichern", &loginDialog);
+    QCheckBox *autoLoginBox = new QCheckBox("Auto-Login aktivieren", &loginDialog);
+    layout->addWidget(saveLoginBox);
+    layout->addWidget(autoLoginBox);
+    
+    // Buttons
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
+    QPushButton *connectBtn = new QPushButton("🔌 Verbinden", &loginDialog);
+    QPushButton *cancelBtn = new QPushButton("❌ Abbrechen", &loginDialog);
+    
+    connectBtn->setStyleSheet("QPushButton { background-color: #4CAF50; color: white; font-weight: bold; padding: 8px; }");
+    cancelBtn->setStyleSheet("QPushButton { background-color: #f44336; color: white; font-weight: bold; padding: 8px; }");
+    
+    buttonLayout->addWidget(connectBtn);
+    buttonLayout->addWidget(cancelBtn);
+    layout->addLayout(buttonLayout);
+    
+    // Connections
+    connect(connectBtn, &QPushButton::clicked, &loginDialog, &QDialog::accept);
+    connect(cancelBtn, &QPushButton::clicked, &loginDialog, &QDialog::reject);
+    
+    usernameEdit->setFocus();
+    
+    if (loginDialog.exec() == QDialog::Accepted) {
+        QString username = usernameEdit->text();
+        QString password = passwordEdit->text();
+        
+        if (username.isEmpty()) {
+            QMessageBox::warning(this, "Fehler", "Bitte geben Sie einen Benutzernamen ein.");
+            return;
+        }
+        
+        // Save credentials if requested
+        if (saveLoginBox->isChecked() && m_presetManager) {
+            LoginData loginData;
+            loginData.username = username;
+            loginData.password = password;
+            loginData.autoLogin = autoLoginBox->isChecked();
+            loginData.lastUsed = QDateTime::currentDateTime();
+            
+            m_presetManager->saveLogin(ip, port, loginData);
+            qDebug() << "🔐 Login gespeichert für" << ip << ":" << port;
+        }
+        
+        // Attempt connection
+        connectAndShowDirectoryTree(ip, port, service, username, password);
+    }
+}
+
+void MainWindow::showNetworkRangeSettings() {
+    // Network range settings implementation
+}
+
+void MainWindow::onCustomNetworkRangeAdded(const QString &range, const QString &description) {
+    Q_UNUSED(range)
+    Q_UNUSED(description)
+    // Custom network range handling
+}
+
+void MainWindow::onNetworkRangeSelected(const QString &range) {
+    Q_UNUSED(range)
+    // Network range selection handling
+}
+
+void MainWindow::onNetworkRangesLoaded(int customRangeCount) {
+    Q_UNUSED(customRangeCount)
+    // Network ranges loaded handling
+}
+
+void MainWindow::updateNetworkRangeDisplay() {
+    // Network range display update
+}
+
+void MainWindow::onScanProgress(int percentage, int current, int total) {
+    progressBar->setValue(percentage);
+    fileCountLabel->setText(QString("Datei %1 von %2").arg(current).arg(total));
+}
+
+void MainWindow::onScanCompleted(const DuplicateGroups &results) {
+    m_isScanning = false;
+    progressBar->setVisible(false);
+    actionLabel->setText("Scan abgeschlossen");
+    
+    if (m_activityIndicator) {
+        m_activityIndicator->setActive(false);
+    }
+    
+    displayResults(results);
+}
+
+void MainWindow::onCurrentFileProcessing(const QString &fileName, const QString &processType, int fileNumber, int totalFiles) {
+    currentFileLabel->setText(QString("%1: %2").arg(processType, fileName));
+    fileCountLabel->setText(QString("Datei %1 von %2").arg(fileNumber).arg(totalFiles));
+}
+
+void MainWindow::onProcessActivityUpdate(const QString &activity, const QString &details) {
+    actionLabel->setText(activity + ": " + details);
+}
+
+void MainWindow::onFileComparisonProgress(const QString &file1, const QString &file2, int comparisonNumber, int totalComparisons) {
+    Q_UNUSED(file1)
+    Q_UNUSED(file2)
+    Q_UNUSED(comparisonNumber)
+    Q_UNUSED(totalComparisons)
+    // File comparison progress handling
+}
+
+void MainWindow::onPathProcessingUpdate(const QString &currentPath, const QString &action, int pathNumber, int totalPaths) {
+    Q_UNUSED(currentPath)
+    Q_UNUSED(action)
+    Q_UNUSED(pathNumber)
+    Q_UNUSED(totalPaths)
+    // Path processing update handling
+}
+
+void MainWindow::onDuplicateDetectionUpdate(int duplicatesFound, int groupsCreated, const QString &latestDuplicate) {
+    Q_UNUSED(latestDuplicate)
+    updateDuplicateResults(groupsCreated, duplicatesFound);
+}
+
+void MainWindow::onHardwareUsageUpdate(const QString &processingUnit, int utilizationPercent, const QString &currentTask) {
+    Q_UNUSED(processingUnit)
+    Q_UNUSED(utilizationPercent)
+    Q_UNUSED(currentTask)
+    // Hardware usage update handling
+}
+
+void MainWindow::displayResults(const DuplicateGroups &results) {
+    resultsTable->setRowCount(0);
+    
+    int row = 0;
+    for (const auto &group : results.groups) {
+        // Add original file
+        addResultRow(group.original, true, row++);
+        
+        // Add duplicates
+        for (const auto &duplicate : group.duplicates) {
+            addResultRow(duplicate, false, row++);
+        }
+    }
+    
+    updateDuplicateResults(results.groups.size(), row);
+}
+
+void MainWindow::addResultRow(const FileInfo &fileInfo, bool isOriginal, int row) {
+    if (row == -1) {
+        row = resultsTable->rowCount();
+        resultsTable->insertRow(row);
+    }
+    
+    resultsTable->setItem(row, 0, new QTableWidgetItem(fileInfo.fileName));
+    resultsTable->setItem(row, 1, new QTableWidgetItem(fileInfo.filePath));
+    resultsTable->setItem(row, 2, new QTableWidgetItem(formatFileSize(fileInfo.size)));
+    resultsTable->setItem(row, 3, new QTableWidgetItem(fileInfo.hash));
+    
+    // Color coding
+    if (isOriginal) {
+        for (int col = 0; col < 4; ++col) {
+            resultsTable->item(row, col)->setBackground(QColor(255, 255, 0, 100)); // Yellow
+        }
+    } else {
+        for (int col = 0; col < 4; ++col) {
+            resultsTable->item(row, col)->setBackground(QColor(0, 255, 0, 100)); // Green
+        }
+    }
+}
+
+void MainWindow::addResultRow(const QString &filePath, bool isOriginal, int row) {
+    FileInfo info;
+    info.filePath = filePath;
+    info.fileName = QFileInfo(filePath).fileName();
+    addResultRow(info, isOriginal, row);
+}
+
+void MainWindow::setHashForRow(int row, const QString &hash) {
+    if (row < resultsTable->rowCount()) {
+        resultsTable->setItem(row, 3, new QTableWidgetItem(hash));
+    }
+}
+
+void MainWindow::handleScanError(const QString &error) {
+    QMessageBox::critical(this, "Scan-Fehler", error);
+    stopDuplicateScan();
+}
+
+void MainWindow::applyTheme(int index) {
+    Q_UNUSED(index)
+    // Theme application implementation
+}
+
+void MainWindow::showSettingsDialog() {
+    // Settings dialog implementation
+}
+
+void MainWindow::showPresetManager() {
+    // Preset manager implementation
+}
+
+void MainWindow::showAboutDialog() {
+    QMessageBox::about(this, "Über FileDuper",
+        "FileDuper v1.0\n\n"
+        "Intelligenter Duplikat-Scanner mit Hardware-Beschleunigung\n"
+        "- FTP/SFTP/SMB/NFS Unterstützung\n"
+        "- NPU/GPU Beschleunigung\n"
+        "- Netzwerk-Discovery\n"
+        "- FAST Directory Browser");
+}
+
+void MainWindow::startProductionScan() {
+    startDuplicateScan();
+}
+
+void MainWindow::createProductionWorkspace() {
+    // Production workspace creation
+}
+
+void MainWindow::showCriticalErrorDialog(const QString &title, const QString &message) {
+    QMessageBox::critical(this, title, message);
+}
+
+void MainWindow::showFtpCredentialDialog(const QString &host, int port, const QString &service) {
+    Q_UNUSED(host)
+    Q_UNUSED(port)
+    Q_UNUSED(service)
+    // FTP credential dialog implementation
+}
+
+void MainWindow::updateDownloadProgress(int completedDownloads, int totalDownloads, bool success) {
+    Q_UNUSED(completedDownloads)
+    Q_UNUSED(totalDownloads)
+    Q_UNUSED(success)
+    // Download progress update
+}
+
+// Helper functions
+QString MainWindow::formatFileSize(qint64 size) const {
+    if (size < 1024) return QString("%1 B").arg(size);
+    if (size < 1024 * 1024) return QString("%1 KB").arg(size / 1024);
+    if (size < 1024 * 1024 * 1024) return QString("%1 MB").arg(size / (1024 * 1024));
+    return QString("%1 GB").arg(size / (1024 * 1024 * 1024));
+}
+
+qint64 MainWindow::getDirSize(const QString &path) {
+    Q_UNUSED(path)
+    return 0; // Implementation needed
+}
+
+bool MainWindow::hasSubdirectories(const QString &path) {
+    Q_UNUSED(path)
+    return false; // Implementation needed
+}
+
+void MainWindow::updateHardwareLoadIndicator() {
+    if (m_activityIndicator) {
+        m_activityIndicator->updateHardwareDisplay();
+    }
+}
+
+QString MainWindow::getLoadColorStyle(int load) {
+    if (load > 80) return "color: red; font-weight: bold;";
+    if (load > 50) return "color: orange; font-weight: bold;";
+    return "color: green;";
+}
+
+void MainWindow::closeEvent(QCloseEvent *event) {
+    saveSettings();
+    event->accept();
+}
+
+bool MainWindow::eventFilter(QObject *watched, QEvent *event) {
+    Q_UNUSED(watched)
+    Q_UNUSED(event)
+    return false;
+}
+
+void MainWindow::loadSettings() {
+    // Load settings implementation
+}
+
+void MainWindow::saveSettings() {
+    // Save settings implementation
+}
+
+// Stub implementations for missing functions
+void MainWindow::setupProgrammaticGUI() { setupMinimalGUI(); }
+void MainWindow::setupToolBar() { /* Implementation needed */ }
+void MainWindow::createActions() { /* Implementation needed */ }
+void MainWindow::initializeBackgroundServices() { /* Implementation needed */ }
+void MainWindow::setupBottomHardwareMonitor() { /* Implementation needed */ }
+void MainWindow::loadLocalDirectoryTreeWithCheckboxes() { /* Implementation needed */ }
+void MainWindow::loadSubDirectories(QTreeWidgetItem *parentItem, const QString &path) { Q_UNUSED(parentItem) Q_UNUSED(path) }
+void MainWindow::addNetworkService(const QString &ip, int port, const QString &service) { Q_UNUSED(ip) Q_UNUSED(port) Q_UNUSED(service) }
+void MainWindow::initializeResponsiveGUI() { /* Implementation needed */ }
+void MainWindow::initializeMemoryMonitoring() { /* Implementation needed */ }
+void MainWindow::onMemoryStatisticsChanged(const MemoryStatistics &stats) { Q_UNUSED(stats) }
+void MainWindow::onMemoryWarning(const QString &pressureLevel, const MemoryStatistics &stats) { Q_UNUSED(pressureLevel) Q_UNUSED(stats) }
+void MainWindow::onMemoryLeakDetected(double growthRateKBPerMin) { Q_UNUSED(growthRateKBPerMin) }
+void MainWindow::onLowMemoryWarning(qint64 freeMemoryKB, double usagePercent) { Q_UNUSED(freeMemoryKB) Q_UNUSED(usagePercent) }
+QString MainWindow::getMemoryColorStyle(double memoryPercent) { Q_UNUSED(memoryPercent) return ""; }
+void MainWindow::updateProgressBarSafely(int value, int maximum) { Q_UNUSED(value) Q_UNUSED(maximum) }
+void MainWindow::updateStatusBarSafely(const QString &message, int timeout) { Q_UNUSED(message) Q_UNUSED(timeout) }
+void MainWindow::updateCurrentFileSafely(const QString &fileName, int currentFile, int totalFiles) { Q_UNUSED(fileName) Q_UNUSED(currentFile) Q_UNUSED(totalFiles) }
+bool MainWindow::shouldUpdateGUI(int currentItem, int updateInterval) { Q_UNUSED(currentItem) Q_UNUSED(updateInterval) return true; }
+
+// More stub implementations
+void MainWindow::showNetworkDirectoryDialogImmediate(const QString &ip, int port, const QString &service, const LoginData &loginData) { Q_UNUSED(ip) Q_UNUSED(port) Q_UNUSED(service) Q_UNUSED(loginData) }
+void MainWindow::startBackgroundFtpLoading(QDialog *dialog, QTreeWidget *tree, QLabel *statusLabel, QPushButton *selectBtn, const QString &ip, int port, const QString &service, const LoginData &loginData) { Q_UNUSED(dialog) Q_UNUSED(tree) Q_UNUSED(statusLabel) Q_UNUSED(selectBtn) Q_UNUSED(ip) Q_UNUSED(port) Q_UNUSED(service) Q_UNUSED(loginData) }
+QString MainWindow::categorizeIntelligentService(const QString &service, int port) { Q_UNUSED(service) Q_UNUSED(port) return ""; }
+QString MainWindow::calculateServicePriority(const QString &service, int port, const QString &ip) { Q_UNUSED(service) Q_UNUSED(port) Q_UNUSED(ip) return ""; }
+int MainWindow::getPriorityScore(const QString &service, int port) { Q_UNUSED(service) Q_UNUSED(port) return 0; }
+QString MainWindow::getServiceIcon(const QString &service, int port) { Q_UNUSED(service) Q_UNUSED(port) return ""; }
+QString MainWindow::getAuthenticationStatus(const QString &ip, int port) { Q_UNUSED(ip) Q_UNUSED(port) return ""; }
+QTreeWidgetItem* MainWindow::findOrCreateCategory(const QString &category) { Q_UNUSED(category) return nullptr; }
+QTreeWidgetItem* MainWindow::findOrCreateServer(QTreeWidgetItem *categoryItem, const QString &ip) { Q_UNUSED(categoryItem) Q_UNUSED(ip) return nullptr; }
+void MainWindow::applyIntelligentServiceStyling(QTreeWidgetItem *serviceItem, const QString &service, int port) { Q_UNUSED(serviceItem) Q_UNUSED(service) Q_UNUSED(port) }
+void MainWindow::updateNetworkStatistics() { /* Implementation needed */ }
+void MainWindow::connectAndShowDirectoryTree(const QString &ip, int port, const QString &service, const QString &username, const QString &password) {
+    qDebug() << "[MainWindow] 🔌 connectAndShowDirectoryTree:" << service << "at" << ip << "port" << port;
+    
+    // Create FTP Directory Browser Dialog
+    QDialog *ftpDialog = new QDialog(this);
+    ftpDialog->setWindowTitle(QString("FTP Directory Browser - %1:%2").arg(ip).arg(port));
+    ftpDialog->setModal(true);
+    ftpDialog->resize(800, 600);
+    
+    // Layout
+    QVBoxLayout *layout = new QVBoxLayout(ftpDialog);
+    
+    // Status label
+    QLabel *statusLabel = new QLabel(QString("Connecting to %1@%2:%3...").arg(username).arg(ip).arg(port));
+    layout->addWidget(statusLabel);
+    
+    // Directory tree
+    QTreeWidget *directoryTree = new QTreeWidget();
+    directoryTree->setHeaderLabel("FTP Directories");
+    directoryTree->setSelectionMode(QAbstractItemView::MultiSelection);
+    layout->addWidget(directoryTree);
+    
+    // Progress bar
+    QProgressBar *progressBar = new QProgressBar();
+    progressBar->setVisible(false);
+    layout->addWidget(progressBar);
+    
+    // Button layout
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
+    QPushButton *addToScannerBtn = new QPushButton("📂 Add Selected to Scanner");
+    QPushButton *refreshBtn = new QPushButton("🔄 Refresh");
+    QPushButton *closeBtn = new QPushButton("❌ Close");
+    
+    addToScannerBtn->setEnabled(false);
+    buttonLayout->addWidget(addToScannerBtn);
+    buttonLayout->addWidget(refreshBtn);
+    buttonLayout->addStretch();
+    buttonLayout->addWidget(closeBtn);
+    layout->addLayout(buttonLayout);
+    
+    // Create FTP client
+    if (!m_ftpClient) {
+        m_ftpClient = new FtpClient(this);
+    }
+    
+    // Configure FTP client
+    m_ftpClient->setCredentials(ip, port, username, password);
+    
+    // FTP connection handling
+    connect(m_ftpClient, &FtpClient::connected, [statusLabel, directoryTree, progressBar, addToScannerBtn]() {
+        statusLabel->setText("✅ Connected! Loading directories...");
+        progressBar->setVisible(true);
+        progressBar->setRange(0, 0); // Indeterminate
+        addToScannerBtn->setEnabled(true);
+    });
+    
+    connect(m_ftpClient, &FtpClient::error, [statusLabel, ftpDialog](const QString &error) {
+        statusLabel->setText("❌ Connection failed: " + error);
+        QTimer::singleShot(3000, ftpDialog, [ftpDialog]() {
+            ftpDialog->reject();
+        });
+    });
+    
+    connect(m_ftpClient, &FtpClient::listFinished, [directoryTree, progressBar, statusLabel](const QStringList &directories, bool success) {
+        progressBar->setVisible(false);
+        if (success) {
+            statusLabel->setText(QString("📁 Found %1 directories").arg(directories.size()));
+            directoryTree->clear();
+            
+            // Add directories to tree
+            QTreeWidgetItem *rootItem = new QTreeWidgetItem(directoryTree);
+            rootItem->setText(0, "/ (Root)");
+            rootItem->setIcon(0, QIcon("📁"));
+            rootItem->setData(0, Qt::UserRole, "/");
+            
+            for (const QString &dir : directories) {
+                QTreeWidgetItem *item = new QTreeWidgetItem(rootItem);
+                item->setText(0, dir);
+                item->setIcon(0, QIcon("📂"));
+                item->setData(0, Qt::UserRole, dir);
+            }
+            
+            directoryTree->expandAll();
+        } else {
+            statusLabel->setText("❌ Failed to list directories");
+        }
+    });
+    
+    // Button connections
+    connect(closeBtn, &QPushButton::clicked, ftpDialog, &QDialog::reject);
+    
+    connect(refreshBtn, &QPushButton::clicked, [this, statusLabel]() {
+        statusLabel->setText("🔄 Refreshing directories...");
+        m_ftpClient->list("/");
+    });
+    
+    connect(addToScannerBtn, &QPushButton::clicked, [this, directoryTree, ftpDialog, ip, port]() {
+        QList<QTreeWidgetItem*> selected = directoryTree->selectedItems();
+        if (selected.isEmpty()) {
+            QMessageBox::information(ftpDialog, "No Selection", "Please select directories to add to scanner.");
+            return;
+        }
+        
+        QStringList selectedPaths;
+        for (QTreeWidgetItem *item : selected) {
+            QString path = item->data(0, Qt::UserRole).toString();
+            selectedPaths << QString("ftp://%1:%2%3").arg(ip).arg(port).arg(path);
+        }
+        
+        // Add to directory list in main window
+        for (const QString &path : selectedPaths) {
+            QTreeWidgetItem *item = new QTreeWidgetItem(directoryTree);
+            item->setText(0, path);
+            item->setIcon(0, QIcon("📡"));
+            directoryTree->addTopLevelItem(item);
+        }
+        
+        statusBar()->showMessage(QString("Added %1 FTP directories to scanner").arg(selectedPaths.size()));
+        ftpDialog->accept();
+    });
+    
+    // Start connection
+    statusLabel->setText("🔌 Connecting...");
+    m_ftpClient->connectToHost();
+    
+    // Auto-load root directory after connection
+    QTimer::singleShot(1000, [this]() {
+        if (m_ftpClient && m_ftpClient->isConnected()) {
+            m_ftpClient->list("/");
+        }
+    });
+    
+    // Show dialog
+    ftpDialog->exec();
+}
+void MainWindow::handleFtpDirectoriesReady(const QString &ip, const QStringList &directories) { Q_UNUSED(ip) Q_UNUSED(directories) }
+void MainWindow::buildHierarchicalFtpTree(const QString &ip, const QStringList &directories) { Q_UNUSED(ip) Q_UNUSED(directories) }
+void MainWindow::requestFtpSubdirectories(const QString &ip, const QString &path) { Q_UNUSED(ip) Q_UNUSED(path) }
+void MainWindow::requestFtpSubdirectoriesForDialog(const QString &ip, const QString &path, NetworkDirectoryDialog *dialog) { Q_UNUSED(ip) Q_UNUSED(path) Q_UNUSED(dialog) }
+void MainWindow::requestFtpSubdirectoriesForDialog(const QString &ip, const QString &path, SimpleTreeDialog *dialog) { Q_UNUSED(ip) Q_UNUSED(path) Q_UNUSED(dialog) }
+void MainWindow::enableCopyPasteForAllWidgets() { /* Implementation needed */ }
+void MainWindow::setupCopyPasteActions() { /* Implementation needed */ }
+void MainWindow::copySelectedText() { /* Implementation needed */ }
+void MainWindow::pasteText() { /* Implementation needed */ }
+void MainWindow::selectAllText() { /* Implementation needed */ }
+void MainWindow::enableCopyPasteForWidget(QWidget *widget) { Q_UNUSED(widget) }
+void MainWindow::installCopyPasteEventFilter(QWidget *widget) { Q_UNUSED(widget) }
+
+#include "mainwindow.moc"

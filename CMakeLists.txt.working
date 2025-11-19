@@ -1,0 +1,96 @@
+cmake_minimum_required(VERSION 3.18)
+project(FileDuper VERSION 5.0.0 LANGUAGES CXX)
+
+# Set C++ standard
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Build type
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+
+# Qt6 setup
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Network)
+qt6_standard_project_setup()
+
+# OpenCL (optional)
+find_package(OpenCL)
+if(OpenCL_FOUND)
+    add_definitions(-DOPENCL_AVAILABLE)
+    message(STATUS "OpenCL found - Hardware acceleration enabled")
+else()
+    message(STATUS "OpenCL not found - Using CPU-only mode")
+endif()
+
+# libcurl for FTP (optional)
+find_package(PkgConfig QUIET)
+if(PkgConfig_FOUND)
+    pkg_check_modules(CURL QUIET libcurl)
+endif()
+
+# Source files - CORE SYSTEM ONLY
+set(SOURCES
+    src/main.cpp
+    src/mainwindow.cpp
+    src/scanner.cpp
+    src/networkscanner.cpp
+    src/presetmanager.cpp
+    src/hashengine.cpp
+    src/npumanager.cpp
+    src/activityindicator.cpp
+    src/duplicateresultswidget.cpp
+    src/directoryselectiondialog.cpp
+    src/logindialog.cpp
+    src/ftpclient.cpp
+    # src/remotedirectorybrowser.cpp  # Temporär deaktiviert
+)
+
+set(HEADERS
+    include/mainwindow.h
+    include/scanner.h
+    include/networkscanner.h
+    include/presetmanager.h
+    include/hashengine.h
+    include/npumanager.h
+    include/activityindicator.h
+    include/duplicateresultswidget.h
+    include/directoryselectiondialog.h
+    include/logindialog.h
+    include/ftpclient.h
+    # include/remotedirectorybrowser.h  # Temporär deaktiviert
+)
+
+# Create executable
+qt6_add_executable(FileDuper ${SOURCES} ${HEADERS})
+
+# Include directories
+target_include_directories(FileDuper PRIVATE include)
+
+# Link libraries - ALL WITH PRIVATE
+target_link_libraries(FileDuper PRIVATE
+    Qt6::Core
+    Qt6::Widgets
+    Qt6::Network
+)
+
+# Optional libraries
+if(OpenCL_FOUND)
+    target_link_libraries(FileDuper PRIVATE OpenCL::OpenCL)
+endif()
+
+if(CURL_FOUND)
+    target_link_libraries(FileDuper PRIVATE ${CURL_LIBRARIES})
+    target_include_directories(FileDuper PRIVATE ${CURL_INCLUDE_DIRS})
+endif()
+
+# Platform-specific settings
+if(WIN32)
+    set_target_properties(FileDuper PROPERTIES WIN32_EXECUTABLE TRUE)
+endif()
+
+# Install targets
+install(TARGETS FileDuper
+    BUNDLE DESTINATION .
+    RUNTIME DESTINATION bin
+)

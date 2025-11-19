@@ -1,0 +1,2 @@
+// Check if directory is already mounted
+bool isMountpoint(const std::string& mountPoint) {
