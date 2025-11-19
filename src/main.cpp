@@ -6456,43 +6456,83 @@ void renderNetworkScanner() {
                         // Lightning Speed: Asynchroner Multi-Thread-Scan
                         startLightningScan(std::string(subnet));
                     } else {
-                        // Legacy: Auch asynchron, nicht blockierend
+                        // ARP-basierter Service-Scanner: Findet nur Live-Hosts mit Services
                         std::thread([subnet]() {
                             appState.discoveredHosts.clear();
-                            std::cout << "[Network] Scanning " << subnet << std::endl;
+                            appState.scanStatus = "Scanne Netzwerk mit ARP...";
+                            std::cout << "[Network] Scanning " << subnet << " with ARP service detection..." << std::endl;
                             
-                            std::string cmd = "timeout 10 nmap -sn " + std::string(subnet) + 
-                                             " 2>/dev/null | grep 'Nmap scan report' | awk '{print $5}' > /tmp/fileduper_scan.txt";
+                            // Step 1: Get live hosts from ARP
+                            std::vector<std::string> liveHosts;
+                            system("arp -a 2>/dev/null | grep -oE '([0-9]{1,3}\\.){3}[0-9]{1,3}' | sort -u > /tmp/fileduper_arp.txt");
                             
-                            system(cmd.c_str());
-                            
-                            std::ifstream scanFile("/tmp/fileduper_scan.txt");
-                            if (scanFile.is_open()) {
+                            std::ifstream arpFile("/tmp/fileduper_arp.txt");
+                            if (arpFile.is_open()) {
                                 std::string line;
-                                while (std::getline(scanFile, line)) {
-                                    if (!line.empty() && line != "()" && line.find('.') != std::string::npos) {
-                                        appState.discoveredHosts.push_back(line);
+                                while (std::getline(arpFile, line)) {
+                                    if (!line.empty() && line.find('.') != std::string::npos) {
+                                        liveHosts.push_back(line);
                                     }
                                 }
-                                scanFile.close();
+                                arpFile.close();
                             }
                             
-                            if (appState.discoveredHosts.empty()) {
-                                system("arp -a | grep -oE '([0-9]{1,3}\\.){3}[0-9]{1,3}' > /tmp/fileduper_arp.txt");
-                                std::ifstream arpFile("/tmp/fileduper_arp.txt");
-                                if (arpFile.is_open()) {
-                                    std::string line;
-                                    while (std::getline(arpFile, line)) {
-                                        if (!line.empty()) {
-                                            appState.discoveredHosts.push_back(line);
-                                        }
+                            std::cout << "[Network] Found " << liveHosts.size() << " live hosts via ARP" << std::endl;
+                            
+                            // Step 2: Port scanning for services (21=FTP, 22=SSH, 139/445=SMB, 2049=NFS)
+                            const int ports[] = {21, 22, 139, 445, 2049};
+                            const std::string services[] = {"FTP", "SSH", "SMB-NetBIOS", "SMB-CIFS", "NFS"};
+                            
+                            std::map<std::string, std::vector<std::string>> hostsWithServices;
+                            
+                            for (const auto& host : liveHosts) {
+                                appState.scannedHosts++;
+                                std::vector<std::string> foundServices;
+                                
+                                for (size_t i = 0; i < 5; i++) {
+                                    // Ultra-fast TCP connect test (non-blocking)
+                                    int sock = socket(AF_INET, SOCK_STREAM, 0);
+                                    if (sock < 0) continue;
+                                    
+                                    fcntl(sock, F_SETFL, O_NONBLOCK);
+                                    
+                                    struct sockaddr_in addr;
+                                    addr.sin_family = AF_INET;
+                                    addr.sin_port = htons(ports[i]);
+                                    inet_pton(AF_INET, host.c_str(), &addr.sin_addr);
+                                    
+                                    connect(sock, (struct sockaddr*)&addr, sizeof(addr));
+                                    
+                                    fd_set fdset;
+                                    FD_ZERO(&fdset);
+                                    FD_SET(sock, &fdset);
+                                    
+                                    struct timeval tv;
+                                    tv.tv_sec = 0;
+                                    tv.tv_usec = 500000; // 500ms timeout
+                                    
+                                    if (select(sock + 1, nullptr, &fdset, nullptr, &tv) > 0) {
+                                        foundServices.push_back(services[i]);
+                                        std::cout << "[Service] " << host << ":" << ports[i] << " (" << services[i] << ")" << std::endl;
                                     }
-                                    arpFile.close();
+                                    close(sock);
+                                }
+                                
+                                // Only show hosts with at least one service
+                                if (!foundServices.empty()) {
+                                    std::string serviceStr;
+                                    for (size_t i = 0; i < foundServices.size(); i++) {
+                                        if (i > 0) serviceStr += ", ";
+                                        serviceStr += foundServices[i];
+                                    }
+                                    appState.discoveredHosts.push_back(host + " [" + serviceStr + "]");
+                                    std::cout << "[Found] " << host << " with " << serviceStr << std::endl;
                                 }
                             }
                             
                             appState.scanningNetwork = false;
-                            std::cout << "[Network] Found " << appState.discoveredHosts.size() << " hosts" << std::endl;
+                            std::cout << "[Network] Found " << appState.discoveredHosts.size() << " servers with services" << std::endl;
+                            appState.scanStatus = "Netzwerk-Scan abgeschlossen";
                         }).detach();
                     }
                 }
