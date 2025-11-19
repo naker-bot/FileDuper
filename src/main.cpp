@@ -6957,9 +6957,15 @@ void renderNetworkScanner() {
                         selectedPresetIndex = i;
                         strcpy(subnet, preset.subnet.c_str());
                         
-                        // Double-click: Load and scan
-                        if (ImGui::IsMouseDoubleClicked(0)) {
+                        // Single-click on a preset should start the scan with that preset
+                        if (ImGui::IsItemClicked(0)) {
                             appState.scanningNetwork = true;
+                            // Load preset options into UI
+                            appState.useLightningSpeed = preset.useLightning;
+                            appState.scannerThreads = preset.scannerThreads;
+                            appState.scanTimeout = preset.scanTimeout;
+                            appState.useArpDiscovery = preset.useARP;
+                            std::cout << "[Network] Starting scan for preset: " << preset.name << " (" << preset.subnet << ")" << std::endl;
                             startLightningScan(preset.subnet);
                         }
                     }
@@ -6991,6 +6997,17 @@ void renderNetworkScanner() {
                             appState.showEditSubnetPreset = true;
                             appState.editPresetIndex = i;
                             // We don't call OpenPopup here because this is outside the modal
+                        }
+                        if (ImGui::MenuItem("▶️ Jetzt scannen")) {
+                            // Also provide a context action to scan preset quickly
+                            selectedPresetIndex = i;
+                            strcpy(subnet, preset.subnet.c_str());
+                            appState.useLightningSpeed = preset.useLightning;
+                            appState.scannerThreads = preset.scannerThreads;
+                            appState.scanTimeout = preset.scanTimeout;
+                            appState.useArpDiscovery = preset.useARP;
+                            appState.scanningNetwork = true;
+                            startLightningScan(preset.subnet);
                         }
                         ImGui::Separator();
                         if (ImGui::MenuItem("🗑️ Löschen")) {
@@ -7387,13 +7404,8 @@ void renderNetworkScanner() {
             
             ImGui::Spacing();
             
-            // Add Preset Button: open modal to add or edit preset
-            if (!appState.discoveredHosts.empty() && !appState.scanningNetwork) {
-                ImGui::SameLine();
-                if (ImGui::Button("➕ Preset hinzufügen", ImVec2(160, 0))) {
-                    appState.showAddSubnetPreset = true;
-                }
-            }
+            // Remove bottom Add-Preset button; user requested the Add-Button to be shown only
+            // at the top of the presets list so it's always visible.
             
             // Edit Subnet Preset Modal
             if (appState.showEditSubnetPreset && appState.editPresetIndex >= 0 && appState.editPresetIndex < (int)appState.subnetPresets.size()) {
