@@ -342,6 +342,7 @@ struct AppState {
 static AppState appState;
 static std::thread scanThread;
 static std::atomic<bool> stopScan(false);
+static std::mutex hostsMutex; // Für thread-sichere Host-Discovery
 
 // HASH CACHE: Store computed hashes to avoid recalculating
 // Key: (inode, mtime) - identifies unique file state
@@ -3382,17 +3383,63 @@ bool connectAndFetchDirectories(FtpPreset& preset, int presetIndex = -1) {
     return true;
 }
 
-// Lightning Speed: Ping einzelnen Host (async)
-bool pingHost(const std::string& ip, int timeout) {
-    // FIXED: Check for file services (FTP, SSH, SMB, NFS) not HTTP
-    // Returns true ONLY if at least one relevant service is found
-    const int ports[] = {21, 22, 139, 445, 2049}; // FTP, SSH, SMB-NetBIOS, SMB-CIFS, NFS
+// ARP-basierte Host-Erkennung (viel schneller und genauer)
+std::vector<std::string> getActiveHostsViaARP() {
+    std::vector<std::string> activeHosts;
     
-    for (int port : ports) {
+    // Lese ARP-Tabelle aus /proc/net/arp
+    std::ifstream arpFile("/proc/net/arp");
+    if (!arpFile.is_open()) {
+        std::cerr << "[ARP] Cannot read /proc/net/arp" << std::endl;
+        return activeHosts;
+    }
+    
+    std::string line;
+    std::getline(arpFile, line); // Skip header
+    
+    while (std::getline(arpFile, line)) {
+        std::istringstream iss(line);
+        std::string ip, hw, flags, mac, mask, device;
+        
+        // Format: IP address HW type Flags HW address Mask Device
+        if (iss >> ip >> hw >> flags >> mac >> mask >> device) {
+            // Flag 0x2 = REACHABLE (aktiver Host)
+            // Flag 0x6 = STALE (war aktiv)
+            int flagVal = std::stoi(flags, nullptr, 16);
+            
+            if ((flagVal & 0x2) || (flagVal & 0x6)) { // REACHABLE or STALE
+                activeHosts.push_back(ip);
+                std::cout << "[ARP] Found active host: " << ip << " (MAC: " << mac << ")" << std::endl;
+            }
+        }
+    }
+    arpFile.close();
+    
+    std::cout << "[ARP] Total active hosts found: " << activeHosts.size() << std::endl;
+    return activeHosts;
+}
+
+// Port-Scan für einzelnen Host mit Timeout
+struct PortScanResult {
+    std::string ip;
+    std::vector<int> openPorts;
+    std::string hostIdentifier; // Für GUI-Display
+};
+
+PortScanResult scanHostPorts(const std::string& ip, int timeout_ms) {
+    PortScanResult result;
+    result.ip = ip;
+    
+    // File service ports: FTP, SSH, SMB-NetBIOS, SMB-CIFS, NFS
+    const int ports[] = {21, 22, 139, 445, 2049};
+    const char* serviceNames[] = {"FTP", "SSH", "SMB-NetBIOS", "SMB-CIFS", "NFS"};
+    
+    for (size_t i = 0; i < 5; i++) {
+        int port = ports[i];
         int sock = socket(AF_INET, SOCK_STREAM, 0);
         if (sock < 0) continue;
         
-        // Non-blocking mode für Timeout
+        // Non-blocking mode
         fcntl(sock, F_SETFL, O_NONBLOCK);
         
         struct sockaddr_in addr;
@@ -3402,105 +3449,106 @@ bool pingHost(const std::string& ip, int timeout) {
         
         connect(sock, (struct sockaddr*)&addr, sizeof(addr));
         
-        // Select mit kurzer Timeout (50ms pro Port)
+        // Select mit Timeout
         fd_set fdset;
         FD_ZERO(&fdset);
         FD_SET(sock, &fdset);
         
         struct timeval tv;
         tv.tv_sec = 0;
-        tv.tv_usec = 50000; // 50ms instead of 1-5 seconds for each port
+        tv.tv_usec = timeout_ms * 1000; // Convert ms to microseconds
         
-        int result = select(sock + 1, nullptr, &fdset, nullptr, &tv);
-        close(sock);
+        int selectResult = select(sock + 1, nullptr, &fdset, nullptr, &tv);
         
-        // Found at least one relevant service
-        if (result > 0) {
-            return true;
-        }
-    }
-    
-    return false; // No relevant services found
-}
-
-// Lightning Speed: Asynchroner Netzwerk-Scanner
-std::mutex hostsMutex;
-
-void scanIPRange(const std::string& baseIP, int start, int end, int timeout, 
-                std::vector<std::string>* results) {
-    // Batch-Processing: Mehrere IPs parallel scannen
-    const int BATCH_SIZE = 10;
-    std::vector<std::future<std::pair<std::string, bool>>> futures;
-    
-    for (int i = start; i <= end; i++) {
-        if (!appState.scanThreadRunning) break; // Abbruch wenn gestoppt
-        
-        std::string ip = baseIP + std::to_string(i);
-        
-        // Async batch
-        futures.push_back(std::async(std::launch::async, [ip, timeout]() {
-            return std::make_pair(ip, pingHost(ip, timeout));
-        }));
-        
-        // Batch-Limit erreicht oder letzter Host
-        if (futures.size() >= BATCH_SIZE || i == end) {
-            for (auto& future : futures) {
-                auto result = future.get();
-                if (result.second) {
-                    std::lock_guard<std::mutex> lock(hostsMutex);
-                    results->push_back(result.first);
-                    std::cout << "[Scanner] Found: " << result.first << std::endl;
-                }
-                appState.scannedHosts++;
+        if (selectResult > 0) {
+            // Check if connection actually succeeded
+            int so_error;
+            socklen_t len = sizeof(so_error);
+            if (getsockopt(sock, SOL_SOCKET, SO_ERROR, &so_error, &len) == 0 && so_error == 0) {
+                result.openPorts.push_back(port);
+                std::cout << "[PortScan] " << ip << ":" << port << " (" << serviceNames[i] << ") OPEN" << std::endl;
             }
-            futures.clear();
         }
+        close(sock);
     }
+    
+    // Erstelle Host-Identifier basierend auf offenen Ports
+    if (!result.openPorts.empty()) {
+        result.hostIdentifier = ip + " [";
+        for (size_t i = 0; i < result.openPorts.size(); i++) {
+            if (i > 0) result.hostIdentifier += ", ";
+            result.hostIdentifier += serviceNames[std::distance(ports, std::find(ports, ports + 5, result.openPorts[i]))];
+        }
+        result.hostIdentifier += "]";
+    }
+    
+    return result;
 }
+
+// (removed - replaced by ARP + PortScan approach)
 
 void startLightningScan(const std::string& subnet) {
     appState.scanThreadRunning = true;
     appState.scannedHosts = 0;
     appState.discoveredHosts.clear();
+    appState.scanningNetwork = true;
     
-    // Parse subnet (z.B. "192.168.1.0/24")
-    std::string baseIP = subnet.substr(0, subnet.find_last_of('.') + 1);
-    int rangeSize = 254; // /24 = 1-254
+    std::cout << "[Lightning Scanner] Starting ARP-based host discovery + port scanning" << std::endl;
     
-    if (subnet.find("/24") != std::string::npos) {
-        rangeSize = 254;
-    } else if (subnet.find("/16") != std::string::npos) {
-        rangeSize = 65534; // Warnung: sehr lange!
-    }
-    
-    appState.totalHostsToScan = rangeSize;
-    
-    std::cout << "[Lightning Scanner] Starting scan of " << subnet 
-              << " with " << appState.scannerThreads << " threads" << std::endl;
-    
-    // Teile den IP-Bereich in Chunks für jeden Thread
-    std::vector<std::thread> threads;
-    int hostsPerThread = rangeSize / appState.scannerThreads;
-    
-    for (int t = 0; t < appState.scannerThreads; t++) {
-        int start = 1 + (t * hostsPerThread);
-        int end = (t == appState.scannerThreads - 1) ? rangeSize : start + hostsPerThread - 1;
+    // Starte ARP-Scan in separatem Thread (non-blocking)
+    std::thread([subnet]() {
+        // Phase 1: ARP-basierte aktive Host-Erkennung (sehr schnell!)
+        auto activeHosts = getActiveHostsViaARP();
+        appState.totalHostsToScan = activeHosts.size();
         
-        threads.emplace_back(scanIPRange, baseIP, start, end, 
-                           appState.scanTimeout, &appState.discoveredHosts);
-    }
-    
-    // Warte auf alle Threads (in separatem Thread, um UI nicht zu blocken)
-    std::thread([threads = std::move(threads)]() mutable {
-        for (auto& t : threads) {
-            if (t.joinable()) t.join();
+        std::cout << "[Lightning Scanner] Phase 1 complete: " << activeHosts.size() 
+                  << " active hosts found via ARP" << std::endl;
+        
+        if (activeHosts.empty()) {
+            std::cout << "[Warning] No active hosts found via ARP, scanning anyway..." << std::endl;
+            appState.scanningNetwork = false;
+            appState.scanThreadRunning = false;
+            return;
+        }
+        
+        // Phase 2: Port-Scan auf allen aktiven Hosts (mit Parallelisierung)
+        std::cout << "[Lightning Scanner] Phase 2: Scanning " << activeHosts.size() 
+                  << " hosts for file services..." << std::endl;
+        
+        const int BATCH_SIZE = 10; // Parallel scanning
+        std::vector<std::future<PortScanResult>> futures;
+        
+        for (const auto& ip : activeHosts) {
+            if (!appState.scanThreadRunning) break;
+            
+            // Async port scan
+            futures.push_back(std::async(std::launch::async, 
+                [ip]() { return scanHostPorts(ip, 50); } // 50ms timeout pro Port
+            ));
+            
+            // Batch-Limit erreicht oder letzte IP
+            if (futures.size() >= BATCH_SIZE || ip == activeHosts.back()) {
+                for (auto& future : futures) {
+                    auto result = future.get();
+                    
+                    // Nur Hosts mit offenen Ports speichern
+                    if (!result.openPorts.empty()) {
+                        std::lock_guard<std::mutex> lock(hostsMutex);
+                        appState.discoveredHosts.push_back(result.ip);
+                        std::cout << "[Scanner] " << result.hostIdentifier << std::endl;
+                    }
+                    
+                    appState.scannedHosts++;
+                }
+                futures.clear();
+            }
         }
         
         appState.scanningNetwork = false;
         appState.scanThreadRunning = false;
         
-        std::cout << "[Lightning Scanner] Scan complete! Found " 
-                 << appState.discoveredHosts.size() << " hosts" << std::endl;
+        std::cout << "[Lightning Scanner] ✅ Scan complete! Found " 
+                 << appState.discoveredHosts.size() << " file servers" << std::endl;
     }).detach();
 }
 
@@ -5983,6 +6031,23 @@ void renderNetworkScanner() {
                                     appState.selectedLocalDirs.erase(preset->smbMountPoint);
                                     saveFtpPresets();
                                 }
+                            }
+                            ImGui::Separator();
+                            if (ImGui::MenuItem("➕ Neues Preset hinzufügen")) {
+                                // Clear form for new preset
+                                memset(smbName, 0, sizeof(smbName));
+                                memset(smbServer, 0, sizeof(smbServer));
+                                memset(smbShareName, 0, sizeof(smbShareName));
+                                memset(smbMountPoint, 0, sizeof(smbMountPoint));
+                                memset(smbUsername, 0, sizeof(smbUsername));
+                                memset(smbPassword, 0, sizeof(smbPassword));
+                                memset(smbDomain, 0, sizeof(smbDomain));
+                                memset(smbWorkgroup, 0, sizeof(smbWorkgroup));
+                                memset(smbOptions, 0, sizeof(smbOptions));
+                                smbAutoMount = false;
+                                strcpy(smbMountPoint, "/mnt/smb_");
+                                strcpy(smbOptions, "vers=3.0,uid=1000,gid=1000");
+                                std::cout << "[SMB] Form cleared for new preset" << std::endl;
                             }
                             if (ImGui::MenuItem("🗑️ Preset löschen")) {
                                 // Find actual index in ftpPresets
