@@ -1092,6 +1092,42 @@ void saveScannerSettings() {
               << ", MinSize: " << appState.ftpMinFileSize << " bytes)" << std::endl;
 }
 
+// Save Language Settings
+void saveLanguageSettings() {
+    std::string configPath = std::string(getenv("HOME")) + "/.fileduper_language.cfg";
+    std::ofstream file(configPath, std::ios::out | std::ios::trunc);
+    if (!file.is_open()) {
+        std::cerr << "[Config] ERROR: Could not save language settings to: " << configPath << std::endl;
+        return;
+    }
+    
+    file << appState.currentLanguage << std::endl;  // 0 = Deutsch, 1 = English
+    file << appState.currentTheme << std::endl;
+    file.close();
+    
+    std::cout << "[Config] Language settings saved (Language: " 
+              << (appState.currentLanguage == 0 ? "Deutsch" : "English")
+              << ", Theme: " << appState.themes[appState.currentTheme] << ")" << std::endl;
+}
+
+// Load Language Settings (with Deutsch as default)
+void loadLanguageSettings() {
+    std::ifstream file(std::string(getenv("HOME")) + "/.fileduper_language.cfg");
+    if (file.is_open()) {
+        file >> appState.currentLanguage;
+        file >> appState.currentTheme;
+        file.close();
+        std::cout << "[Config] Language settings loaded (Language: " 
+                  << (appState.currentLanguage == 0 ? "Deutsch" : "English") << ")" << std::endl;
+    } else {
+        // Default: Deutsch
+        appState.currentLanguage = 0;
+        appState.currentTheme = 3;
+        saveLanguageSettings();
+        std::cout << "[Config] No language config found, created with defaults (Deutsch)" << std::endl;
+    }
+}
+
 // Save/Load Search History
 void saveSearchHistory() {
     std::ofstream file(std::string(getenv("HOME")) + "/.fileduper_search_history.cfg");
@@ -7709,9 +7745,11 @@ void renderMainWindow() {
                 if (ImGui::BeginMenu("Sprache")) {
                     if (ImGui::MenuItem("Deutsch", nullptr, appState.currentLanguage == 0)) {
                         appState.currentLanguage = 0;
+                        saveLanguageSettings(); // Speichere Spracheinstellung sofort
                     }
                     if (ImGui::MenuItem("English", nullptr, appState.currentLanguage == 1)) {
                         appState.currentLanguage = 1;
+                        saveLanguageSettings(); // Speichere Spracheinstellung sofort
                     }
                     ImGui::EndMenu();
                 }
@@ -7724,6 +7762,7 @@ void renderMainWindow() {
                         if (ImGui::MenuItem(appState.themes[i], nullptr, appState.currentTheme == i)) {
                             appState.currentTheme = i;
                             applyTheme(i);
+                            saveLanguageSettings(); // Speichere Theme auch
                         }
                     }
                     
@@ -7734,6 +7773,7 @@ void renderMainWindow() {
                         if (ImGui::MenuItem(appState.themes[i], nullptr, appState.currentTheme == i)) {
                             appState.currentTheme = i;
                             applyTheme(i);
+                            saveLanguageSettings(); // Speichere Theme auch
                         }
                     }
                     
@@ -7744,6 +7784,7 @@ void renderMainWindow() {
                         if (ImGui::MenuItem(appState.themes[i], nullptr, appState.currentTheme == i)) {
                             appState.currentTheme = i;
                             applyTheme(i);
+                            saveLanguageSettings(); // Speichere Theme auch
                         }
                     }
                     
@@ -7754,6 +7795,7 @@ void renderMainWindow() {
                         if (ImGui::MenuItem(appState.themes[i], nullptr, appState.currentTheme == i)) {
                             appState.currentTheme = i;
                             applyTheme(i);
+                            saveLanguageSettings(); // Speichere Theme auch
                         }
                     }
                     
@@ -14426,6 +14468,7 @@ int main(int argc, char* argv[]) {
     
     // Load saved settings
     loadThemeSettings();
+    loadLanguageSettings(); // Lade Spracheinstellung (Default: Deutsch)
     loadScannerSettings(); // Lade Scanner-Einstellungen
     
     // ALWAYS create fresh config with all 45 settings after loading
