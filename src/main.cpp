@@ -393,6 +393,43 @@ static std::string treeStateFilePath = "tree_state.dat";
 
 static std::mutex resultsMutex;
 
+// STAT CACHE: Cache file stat() results for NFS acceleration (100-500ms per call)
+// Reduces repeated stat() calls on mounted NFS filesystems
+struct StatCacheEntry {
+    mode_t st_mode;
+    off_t st_size;
+    long st_mtime_sec; // Simplified: use long instead of time_t struct
+    time_t cacheTime;
+};
+static std::unordered_map<std::string, StatCacheEntry> statCache;
+static std::mutex statCacheMutex;
+static const int STAT_CACHE_TTL = 30; // Cache validity: 30 seconds
+
+// Wrapper for stat() with NFS caching
+inline int stat_cached(const std::string& path, struct stat* buf) {
+    auto now = std::time(nullptr);
+    
+    // Fast path: check cache
+    {
+        std::lock_guard<std::mutex> lock(statCacheMutex);
+        auto it = statCache.find(path);
+        if (it != statCache.end() && (now - it->second.cacheTime) < STAT_CACHE_TTL) {
+            buf->st_mode = it->second.st_mode;
+            buf->st_size = it->second.st_size;
+            buf->st_mtime = it->second.st_mtime_sec;
+            return 0; // Cache hit
+        }
+    }
+    
+    // Slow path: actual stat() call
+    int result = stat(path.c_str(), buf);
+    if (result == 0) {
+        std::lock_guard<std::mutex> lock(statCacheMutex);
+        statCache[path] = {buf->st_mode, buf->st_size, buf->st_mtime, now};
+    }
+    return result;
+}
+
 // CURL Connection Pooling für FTP-Performance
 static CURLSH* curlShareHandle = nullptr;
 static std::recursive_mutex curlShareMutex; // CRITICAL: recursive_mutex for CURL re-locking!
@@ -3615,8 +3652,8 @@ std::vector<std::string> scanDirectory(const std::string& path, bool recursive =
         // Handle symlinks
         if (S_ISLNK(st.st_mode)) {
             if (!appState.followSymlinks) continue;
-            // Follow symlink
-            if (stat(fullPath.c_str(), &st) != 0) continue;
+            // Follow symlink - OPTIMIZED: Use cached stat for NFS
+            if (stat_cached(fullPath, &st) != 0) continue;
         }
         
         if (S_ISDIR(st.st_mode)) {
@@ -3661,7 +3698,8 @@ TreeNode* buildDirectoryTree(const std::string& rootPath) {
         
         std::string fullPath = rootPath + "/" + name;
         struct stat st;
-        if (stat(fullPath.c_str(), &st) != 0) continue;
+        // OPTIMIZED: Use cached stat for NFS acceleration
+        if (stat_cached(fullPath, &st) != 0) continue;
         
         TreeNode* node = new TreeNode();
         node->name = name;
