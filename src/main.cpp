@@ -7165,11 +7165,36 @@ void renderNetworkScanner() {
                             std::cout << "[Network] Scanning " << subnet << " with ARP service detection..." << std::endl;
                             
                             // Step 1: Get live hosts using selected discovery method
+                            std::string normalizedSubnet = subnet;
+                            if (normalizedSubnet.find('/') == std::string::npos) {
+                                std::vector<std::string> parts;
+                                std::istringstream iss(normalizedSubnet);
+                                std::string tok;
+                                while (std::getline(iss, tok, '.')) {
+                                    if (!tok.empty()) parts.push_back(tok);
+                                }
+                                if (parts.size() == 2) normalizedSubnet = parts[0] + "." + parts[1] + ".0/24";
+                                else if (parts.size() == 3) normalizedSubnet = parts[0] + "." + parts[1] + "." + parts[2] + ".0/24";
+                            }
                             std::vector<std::string> liveHosts;
                             if (appState.useArpDiscovery) {
                                 liveHosts = getActiveHostsViaARP();
                             }
                             if (appState.usePingDiscovery) {
+                                // Check range size before performing a full ping scan
+                                uint32_t startIpNumeric = 0, endIpNumeric = 0;
+                                if (cidrToRange(normalizedSubnet, startIpNumeric, endIpNumeric)) {
+                                    uint32_t count = endIpNumeric - startIpNumeric + 1;
+                                    if (count > MAX_FALLBACK_CONFIRM && !appState.allowLargeFallback) {
+                                        appState.pendingLargeScanSubnet = normalizedSubnet;
+                                        appState.pendingLargeScanHostCount = count;
+                                        appState.showLargeScanConfirm = true;
+                                        appState.scanningNetwork = false;
+                                        appState.scanThreadRunning = false;
+                                        std::cout << "[Warning] Ping range too large (" << count << ") - asking for confirmation" << std::endl;
+                                        return;
+                                    }
+                                }
                                 // If ping provided, also try a numeric ping scan of the CIDR (short)
                                 uint32_t startIpNumeric = 0, endIpNumeric = 0;
                                 if (cidrToRange(std::string(subnet), startIpNumeric, endIpNumeric)) {
