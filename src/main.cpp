@@ -10989,7 +10989,9 @@ std::string calculateHash(const std::string& filepath, const std::string& algori
         }
     }
     
-    std::stringstream ss;
+    // OPTIMIZATION: Pre-allocate string for hash result (avoid stringstream overhead)
+    std::string hashResult;
+    hashResult.reserve(256); // Typical hash size
     
     if (useMmap && mappedData) {
         // MEMORY MAPPED PATH - faster for large files
@@ -11006,7 +11008,10 @@ std::string calculateHash(const std::string& filepath, const std::string& algori
                 hash = (hash << 13) | (hash >> 51);
             }
             
-            ss << std::hex << std::setw(16) << std::setfill('0') << hash;
+            // OPTIMIZATION: Use snprintf instead of stringstream (10-20x faster)
+            char hexBuffer[32];
+            snprintf(hexBuffer, sizeof(hexBuffer), "%016llx", (unsigned long long)hash);
+            hashResult = hexBuffer;
         }
         else if (algo == "MD5") {
             MD5_CTX md5Context;
@@ -11021,9 +11026,14 @@ std::string calculateHash(const std::string& filepath, const std::string& algori
             unsigned char result[MD5_DIGEST_LENGTH];
             MD5_Final(result, &md5Context);
             
+            // OPTIMIZATION: Use snprintf for hex formatting (faster than stringstream)
+            char hexBuffer[MD5_DIGEST_LENGTH * 2 + 1];
+            char* pos = hexBuffer;
             for (int i = 0; i < MD5_DIGEST_LENGTH; i++) {
-                ss << std::hex << std::setw(2) << std::setfill('0') << (int)result[i];
+                pos += snprintf(pos, 4, "%02x", result[i]);
             }
+            *pos = '\0';
+            hashResult = hexBuffer;
         }
         else {
             // Other algorithms - use MD5 fallback
@@ -11039,10 +11049,14 @@ std::string calculateHash(const std::string& filepath, const std::string& algori
             unsigned char result[MD5_DIGEST_LENGTH];
             MD5_Final(result, &md5Context);
             
-            ss << algo << ":";
+            // OPTIMIZATION: Direct string building instead of stringstream
+            hashResult = algo + ":";
+            char hexBuffer[MD5_DIGEST_LENGTH * 2 + 1];
+            char* pos = hexBuffer;
             for (int i = 0; i < MD5_DIGEST_LENGTH; i++) {
-                ss << std::hex << std::setw(2) << std::setfill('0') << (int)result[i];
+                pos += snprintf(pos, 4, "%02x", result[i]);
             }
+            hashResult += hexBuffer;
         }
         
         // Cleanup mmap
@@ -11074,7 +11088,10 @@ std::string calculateHash(const std::string& filepath, const std::string& algori
                 hash = (hash << 13) | (hash >> 51);
             }
             
-            ss << std::hex << std::setw(16) << std::setfill('0') << hash;
+            // OPTIMIZATION: Use snprintf instead of stringstream
+            char hexBuffer[32];
+            snprintf(hexBuffer, sizeof(hexBuffer), "%016llx", (unsigned long long)hash);
+            hashResult = hexBuffer;
         }
         else if (algo == "MD5") {
             // MD5 - fast, widely used
@@ -11091,9 +11108,14 @@ std::string calculateHash(const std::string& filepath, const std::string& algori
             unsigned char result[MD5_DIGEST_LENGTH];
             MD5_Final(result, &md5Context);
             
+            // OPTIMIZATION: Use snprintf for hex formatting
+            char hexBuffer[MD5_DIGEST_LENGTH * 2 + 1];
+            char* pos = hexBuffer;
             for (int i = 0; i < MD5_DIGEST_LENGTH; i++) {
-                ss << std::hex << std::setw(2) << std::setfill('0') << (int)result[i];
+                pos += snprintf(pos, 4, "%02x", result[i]);
             }
+            *pos = '\0';
+            hashResult = hexBuffer;
         }
         else if (algo == "SHA256" || algo == "SHA512" || algo == "BLAKE2B" || algo == "BLAKE3") {
             // Für produktiven Code würde man hier OpenSSL's SHA256/512, libsodium's BLAKE2/3 nutzen
@@ -11111,10 +11133,15 @@ std::string calculateHash(const std::string& filepath, const std::string& algori
             unsigned char result[MD5_DIGEST_LENGTH];
             MD5_Final(result, &md5Context);
             
-            ss << algo << ":"; // Prefix mit Algorithmus-Name
+            // OPTIMIZATION: Direct string building
+            hashResult = algo + ":";
+            char hexBuffer[MD5_DIGEST_LENGTH * 2 + 1];
+            char* pos = hexBuffer;
             for (int i = 0; i < MD5_DIGEST_LENGTH; i++) {
-                ss << std::hex << std::setw(2) << std::setfill('0') << (int)result[i];
+                pos += snprintf(pos, 4, "%02x", result[i]);
             }
+            *pos = '\0';
+            hashResult += hexBuffer;
         }
         else {
             // Unknown algorithm - fallback to MD5
@@ -11131,15 +11158,18 @@ std::string calculateHash(const std::string& filepath, const std::string& algori
             unsigned char result[MD5_DIGEST_LENGTH];
             MD5_Final(result, &md5Context);
             
+            // OPTIMIZATION: Use snprintf
+            char hexBuffer[MD5_DIGEST_LENGTH * 2 + 1];
+            char* pos = hexBuffer;
             for (int i = 0; i < MD5_DIGEST_LENGTH; i++) {
-                ss << std::hex << std::setw(2) << std::setfill('0') << (int)result[i];
+                pos += snprintf(pos, 4, "%02x", result[i]);
             }
+            *pos = '\0';
+            hashResult = hexBuffer;
         }
         
         fclose(file);
     }
-    
-    std::string hashResult = ss.str();
     
     // OPTIMIZATION: Store hash in hash cache (if enabled)
     if (appState.cacheFileHashes && !hashResult.empty()) {
