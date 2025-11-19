@@ -34,7 +34,9 @@ CMakeFiles/FileDuper.dir/src/ftpclient.cpp.o
  /usr/include/bits/select.h
  /usr/include/bits/setjmp.h
  /usr/include/bits/stdint-intn.h
+ /usr/include/bits/stdio.h
  /usr/include/bits/stdio_lim.h
+ /usr/include/bits/stdlib-bsearch.h
  /usr/include/bits/stdlib-float.h
  /usr/include/bits/struct_mutex.h
  /usr/include/bits/struct_rwlock.h
@@ -255,7 +257,9 @@ CMakeFiles/FileDuper.dir/src/hashengine.cpp.o
  /usr/include/bits/stdint-intn.h
  /usr/include/bits/stdint-least.h
  /usr/include/bits/stdint-uintn.h
+ /usr/include/bits/stdio.h
  /usr/include/bits/stdio_lim.h
+ /usr/include/bits/stdlib-bsearch.h
  /usr/include/bits/stdlib-float.h
  /usr/include/bits/struct_mutex.h
  /usr/include/bits/struct_rwlock.h
@@ -560,7 +564,9 @@ CMakeFiles/FileDuper.dir/src/main.cpp.o
  /usr/include/bits/stdint-intn.h
  /usr/include/bits/stdint-least.h
  /usr/include/bits/stdint-uintn.h
+ /usr/include/bits/stdio.h
  /usr/include/bits/stdio_lim.h
+ /usr/include/bits/stdlib-bsearch.h
  /usr/include/bits/stdlib-float.h
  /usr/include/bits/struct_mutex.h
  /usr/include/bits/struct_rwlock.h
@@ -1152,7 +1158,9 @@ CMakeFiles/FileDuper.dir/src/networkscanner.cpp.o
  /usr/include/bits/stdint-intn.h
  /usr/include/bits/stdint-least.h
  /usr/include/bits/stdint-uintn.h
+ /usr/include/bits/stdio.h
  /usr/include/bits/stdio_lim.h
+ /usr/include/bits/stdlib-bsearch.h
  /usr/include/bits/stdlib-float.h
  /usr/include/bits/struct_mutex.h
  /usr/include/bits/struct_rwlock.h
@@ -1418,7 +1426,9 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o
  /usr/include/bits/stdint-intn.h
  /usr/include/bits/stdint-least.h
  /usr/include/bits/stdint-uintn.h
+ /usr/include/bits/stdio.h
  /usr/include/bits/stdio_lim.h
+ /usr/include/bits/stdlib-bsearch.h
  /usr/include/bits/stdlib-float.h
  /usr/include/bits/struct_mutex.h
  /usr/include/bits/struct_rwlock.h
@@ -1626,7 +1636,9 @@ CMakeFiles/FileDuper.dir/src/nfs_helpers.cpp.o
  /usr/include/bits/stdint-intn.h
  /usr/include/bits/stdint-least.h
  /usr/include/bits/stdint-uintn.h
+ /usr/include/bits/stdio.h
  /usr/include/bits/stdio_lim.h
+ /usr/include/bits/stdlib-bsearch.h
  /usr/include/bits/stdlib-float.h
  /usr/include/bits/struct_mutex.h
  /usr/include/bits/struct_rwlock.h
@@ -1834,7 +1846,9 @@ CMakeFiles/FileDuper.dir/src/nfsclient.cpp.o
  /usr/include/bits/pthreadtypes.h
  /usr/include/bits/select.h
  /usr/include/bits/stdint-intn.h
+ /usr/include/bits/stdio.h
  /usr/include/bits/stdio_lim.h
+ /usr/include/bits/stdlib-bsearch.h
  /usr/include/bits/stdlib-float.h
  /usr/include/bits/struct_mutex.h
  /usr/include/bits/struct_rwlock.h
@@ -1997,7 +2011,9 @@ CMakeFiles/FileDuper.dir/src/scanner.cpp.o
  /usr/include/bits/statx-generic.h
  /usr/include/bits/statx.h
  /usr/include/bits/stdint-intn.h
+ /usr/include/bits/stdio.h
  /usr/include/bits/stdio_lim.h
+ /usr/include/bits/stdlib-bsearch.h
  /usr/include/bits/stdlib-float.h
  /usr/include/bits/struct_mutex.h
  /usr/include/bits/struct_rwlock.h
@@ -2209,7 +2225,9 @@ CMakeFiles/FileDuper.dir/src/sftpclient.cpp.o
  /usr/include/bits/pthreadtypes.h
  /usr/include/bits/select.h
  /usr/include/bits/stdint-intn.h
+ /usr/include/bits/stdio.h
  /usr/include/bits/stdio_lim.h
+ /usr/include/bits/stdlib-bsearch.h
  /usr/include/bits/stdlib-float.h
  /usr/include/bits/struct_mutex.h
  /usr/include/bits/struct_rwlock.h
@@ -2353,7 +2371,9 @@ CMakeFiles/FileDuper.dir/src/smbclient.cpp.o
  /usr/include/bits/pthreadtypes.h
  /usr/include/bits/select.h
  /usr/include/bits/stdint-intn.h
+ /usr/include/bits/stdio.h
  /usr/include/bits/stdio_lim.h
+ /usr/include/bits/stdlib-bsearch.h
  /usr/include/bits/stdlib-float.h
  /usr/include/bits/struct_mutex.h
  /usr/include/bits/struct_rwlock.h
@@ -2519,7 +2539,9 @@ CMakeFiles/FileDuper.dir/src/tree_view.cpp.o
  /usr/include/bits/statx-generic.h
  /usr/include/bits/statx.h
  /usr/include/bits/stdint-intn.h
+ /usr/include/bits/stdio.h
  /usr/include/bits/stdio_lim.h
+ /usr/include/bits/stdlib-bsearch.h
  /usr/include/bits/stdlib-float.h
  /usr/include/bits/struct_mutex.h
  /usr/include/bits/struct_rwlock.h

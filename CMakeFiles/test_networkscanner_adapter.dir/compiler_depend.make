@@ -66,7 +66,9 @@ CMakeFiles/test_networkscanner_adapter.dir/src/networkscanner.cpp.o: src/network
   /usr/include/bits/stdint-intn.h \
   /usr/include/bits/stdint-least.h \
   /usr/include/bits/stdint-uintn.h \
+  /usr/include/bits/stdio.h \
   /usr/include/bits/stdio_lim.h \
+  /usr/include/bits/stdlib-bsearch.h \
   /usr/include/bits/stdlib-float.h \
   /usr/include/bits/struct_mutex.h \
   /usr/include/bits/struct_rwlock.h \
@@ -331,7 +333,9 @@ CMakeFiles/test_networkscanner_adapter.dir/src/networkscanner_adapter.cpp.o: src
   /usr/include/bits/stdint-intn.h \
   /usr/include/bits/stdint-least.h \
   /usr/include/bits/stdint-uintn.h \
+  /usr/include/bits/stdio.h \
   /usr/include/bits/stdio_lim.h \
+  /usr/include/bits/stdlib-bsearch.h \
   /usr/include/bits/stdlib-float.h \
   /usr/include/bits/struct_mutex.h \
   /usr/include/bits/struct_rwlock.h \
@@ -538,7 +542,9 @@ CMakeFiles/test_networkscanner_adapter.dir/tools/test_networkscanner_adapter.cpp
   /usr/include/bits/stdint-intn.h \
   /usr/include/bits/stdint-least.h \
   /usr/include/bits/stdint-uintn.h \
+  /usr/include/bits/stdio.h \
   /usr/include/bits/stdio_lim.h \
+  /usr/include/bits/stdlib-bsearch.h \
   /usr/include/bits/stdlib-float.h \
   /usr/include/bits/struct_mutex.h \
   /usr/include/bits/struct_rwlock.h \
@@ -872,7 +878,9 @@ tools/test_networkscanner_adapter.cpp:
 
 /usr/include/features-time64.h:
 
-/usr/include/bits/types/error_t.h:
+/usr/include/sys/wait.h:
+
+/usr/include/fcntl.h:
 
 CMakeFiles/test_networkscanner_adapter.dir/src/networkscanner_adapter.cpp.o:
 
@@ -962,6 +970,14 @@ include/networkservice_core.h:
 
 /usr/include/asm-generic/int-ll64.h:
 
+/usr/include/bits/stdlib-bsearch.h:
+
+/usr/include/pthread.h:
+
+/usr/include/c++/15.2.1/bits/stl_algo.h:
+
+/usr/include/c++/15.2.1/bits/stl_uninitialized.h:
+
 /usr/include/bits/stdio_lim.h:
 
 /usr/include/bits/types/__mbstate_t.h:
@@ -984,6 +1000,8 @@ include/networkservice_core.h:
 
 /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/atomic_word.h:
 
+/usr/include/bits/types/error_t.h:
+
 /usr/include/bits/sigstksz.h:
 
 /usr/include/asm/socket.h:
@@ -999,6 +1017,16 @@ include/networkservice_core.h:
 /usr/include/bits/confname.h:
 
 src/networkscanner.cpp:
+
+/usr/include/bits/stdio.h:
+
+CMakeFiles/test_networkscanner_adapter.dir/src/networkscanner.cpp.o:
+
+/usr/include/c++/15.2.1/bits/shared_ptr_base.h:
+
+/usr/include/c++/15.2.1/debug/assertions.h:
+
+/usr/include/c++/15.2.1/new:
 
 /usr/include/c++/15.2.1/bits/sstream.tcc:
 
@@ -1108,6 +1136,12 @@ include/networkscanner.h:
 
 /usr/include/arpa/inet.h:
 
+/usr/include/errno.h:
+
+/usr/include/c++/15.2.1/tuple:
+
+/usr/include/bits/getopt_posix.h:
+
 /usr/include/bits/sigaction.h:
 
 /usr/include/c++/15.2.1/bits/vector.tcc:
@@ -1121,10 +1155,6 @@ include/networkscanner.h:
 /usr/include/bits/long-double.h:
 
 /usr/include/bits/pthreadtypes-arch.h:
-
-/usr/include/sys/wait.h:
-
-/usr/include/fcntl.h:
 
 /usr/lib/libc.so:
 
@@ -1310,12 +1340,6 @@ include/networkscanner.h:
 
 /usr/include/c++/15.2.1/bits/stl_iterator_base_types.h:
 
-/usr/include/pthread.h:
-
-/usr/include/c++/15.2.1/bits/stl_algo.h:
-
-/usr/include/c++/15.2.1/bits/stl_uninitialized.h:
-
 /usr/include/asm-generic/errno.h:
 
 /usr/include/c++/15.2.1/bits/stl_vector.h:
@@ -1329,12 +1353,6 @@ include/networkscanner.h:
 /usr/include/c++/15.2.1/exception:
 
 /usr/include/c++/15.2.1/pstl/glue_algorithm_defs.h:
-
-/usr/include/c++/15.2.1/tuple:
-
-/usr/include/bits/getopt_posix.h:
-
-/usr/include/errno.h:
 
 /usr/include/c++/15.2.1/bits/streambuf_iterator.h:
 
@@ -1374,14 +1392,6 @@ include/networkscanner.h:
 
 /usr/include/c++/15.2.1/cstdint:
 
-CMakeFiles/test_networkscanner_adapter.dir/src/networkscanner.cpp.o:
-
-/usr/include/c++/15.2.1/bits/shared_ptr_base.h:
-
-/usr/include/c++/15.2.1/debug/assertions.h:
-
-/usr/include/c++/15.2.1/new:
-
 /usr/include/c++/15.2.1/mutex:
 
 /usr/include/linux/falloc.h:
@@ -1398,9 +1408,9 @@ CMakeFiles/test_networkscanner_adapter.dir/src/networkscanner.cpp.o:
 
 /usr/include/c++/15.2.1/ext/type_traits.h:
 
-/usr/include/c++/15.2.1/bits/atomic_lockfree_defines.h:
-
 /usr/include/bits/types/struct_timeval.h:
+
+/usr/include/c++/15.2.1/bits/atomic_lockfree_defines.h:
 
 /usr/include/c++/15.2.1/iosfwd:
 

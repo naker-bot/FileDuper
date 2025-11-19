@@ -33,7 +33,9 @@ CMakeFiles/FileDuper.dir/src/ftpclient.cpp.o: src/ftpclient.cpp \
   /usr/include/bits/select.h \
   /usr/include/bits/setjmp.h \
   /usr/include/bits/stdint-intn.h \
+  /usr/include/bits/stdio.h \
   /usr/include/bits/stdio_lim.h \
+  /usr/include/bits/stdlib-bsearch.h \
   /usr/include/bits/stdlib-float.h \
   /usr/include/bits/struct_mutex.h \
   /usr/include/bits/struct_rwlock.h \
@@ -250,7 +252,9 @@ CMakeFiles/FileDuper.dir/src/hashengine.cpp.o: src/hashengine.cpp \
   /usr/include/bits/stdint-intn.h \
   /usr/include/bits/stdint-least.h \
   /usr/include/bits/stdint-uintn.h \
+  /usr/include/bits/stdio.h \
   /usr/include/bits/stdio_lim.h \
+  /usr/include/bits/stdlib-bsearch.h \
   /usr/include/bits/stdlib-float.h \
   /usr/include/bits/struct_mutex.h \
   /usr/include/bits/struct_rwlock.h \
@@ -554,7 +558,9 @@ CMakeFiles/FileDuper.dir/src/main.cpp.o: src/main.cpp \
   /usr/include/bits/stdint-intn.h \
   /usr/include/bits/stdint-least.h \
   /usr/include/bits/stdint-uintn.h \
+  /usr/include/bits/stdio.h \
   /usr/include/bits/stdio_lim.h \
+  /usr/include/bits/stdlib-bsearch.h \
   /usr/include/bits/stdlib-float.h \
   /usr/include/bits/struct_mutex.h \
   /usr/include/bits/struct_rwlock.h \
@@ -1145,7 +1151,9 @@ CMakeFiles/FileDuper.dir/src/networkscanner.cpp.o: src/networkscanner.cpp \
   /usr/include/bits/stdint-intn.h \
   /usr/include/bits/stdint-least.h \
   /usr/include/bits/stdint-uintn.h \
+  /usr/include/bits/stdio.h \
   /usr/include/bits/stdio_lim.h \
+  /usr/include/bits/stdlib-bsearch.h \
   /usr/include/bits/stdlib-float.h \
   /usr/include/bits/struct_mutex.h \
   /usr/include/bits/struct_rwlock.h \
@@ -1410,7 +1418,9 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o: src/networkscanner_ad
   /usr/include/bits/stdint-intn.h \
   /usr/include/bits/stdint-least.h \
   /usr/include/bits/stdint-uintn.h \
+  /usr/include/bits/stdio.h \
   /usr/include/bits/stdio_lim.h \
+  /usr/include/bits/stdlib-bsearch.h \
   /usr/include/bits/stdlib-float.h \
   /usr/include/bits/struct_mutex.h \
   /usr/include/bits/struct_rwlock.h \
@@ -1617,7 +1627,9 @@ CMakeFiles/FileDuper.dir/src/nfs_helpers.cpp.o: src/nfs_helpers.cpp \
   /usr/include/bits/stdint-intn.h \
   /usr/include/bits/stdint-least.h \
   /usr/include/bits/stdint-uintn.h \
+  /usr/include/bits/stdio.h \
   /usr/include/bits/stdio_lim.h \
+  /usr/include/bits/stdlib-bsearch.h \
   /usr/include/bits/stdlib-float.h \
   /usr/include/bits/struct_mutex.h \
   /usr/include/bits/struct_rwlock.h \
@@ -1824,7 +1836,9 @@ CMakeFiles/FileDuper.dir/src/nfsclient.cpp.o: src/nfsclient.cpp \
   /usr/include/bits/pthreadtypes.h \
   /usr/include/bits/select.h \
   /usr/include/bits/stdint-intn.h \
+  /usr/include/bits/stdio.h \
   /usr/include/bits/stdio_lim.h \
+  /usr/include/bits/stdlib-bsearch.h \
   /usr/include/bits/stdlib-float.h \
   /usr/include/bits/struct_mutex.h \
   /usr/include/bits/struct_rwlock.h \
@@ -1986,7 +2000,9 @@ CMakeFiles/FileDuper.dir/src/scanner.cpp.o: src/scanner.cpp \
   /usr/include/bits/statx-generic.h \
   /usr/include/bits/statx.h \
   /usr/include/bits/stdint-intn.h \
+  /usr/include/bits/stdio.h \
   /usr/include/bits/stdio_lim.h \
+  /usr/include/bits/stdlib-bsearch.h \
   /usr/include/bits/stdlib-float.h \
   /usr/include/bits/struct_mutex.h \
   /usr/include/bits/struct_rwlock.h \
@@ -2197,7 +2213,9 @@ CMakeFiles/FileDuper.dir/src/sftpclient.cpp.o: src/sftpclient.cpp \
   /usr/include/bits/pthreadtypes.h \
   /usr/include/bits/select.h \
   /usr/include/bits/stdint-intn.h \
+  /usr/include/bits/stdio.h \
   /usr/include/bits/stdio_lim.h \
+  /usr/include/bits/stdlib-bsearch.h \
   /usr/include/bits/stdlib-float.h \
   /usr/include/bits/struct_mutex.h \
   /usr/include/bits/struct_rwlock.h \
@@ -2340,7 +2358,9 @@ CMakeFiles/FileDuper.dir/src/smbclient.cpp.o: src/smbclient.cpp \
   /usr/include/bits/pthreadtypes.h \
   /usr/include/bits/select.h \
   /usr/include/bits/stdint-intn.h \
+  /usr/include/bits/stdio.h \
   /usr/include/bits/stdio_lim.h \
+  /usr/include/bits/stdlib-bsearch.h \
   /usr/include/bits/stdlib-float.h \
   /usr/include/bits/struct_mutex.h \
   /usr/include/bits/struct_rwlock.h \
@@ -2505,7 +2525,9 @@ CMakeFiles/FileDuper.dir/src/tree_view.cpp.o: src/tree_view.cpp \
   /usr/include/bits/statx-generic.h \
   /usr/include/bits/statx.h \
   /usr/include/bits/stdint-intn.h \
+  /usr/include/bits/stdio.h \
   /usr/include/bits/stdio_lim.h \
+  /usr/include/bits/stdlib-bsearch.h \
   /usr/include/bits/stdlib-float.h \
   /usr/include/bits/struct_mutex.h \
   /usr/include/bits/struct_rwlock.h \
@@ -3114,7 +3136,9 @@ include/ultraspeedengine.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/amxfp8intrin.h:
 
-/usr/include/asm-generic/socket.h:
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/amxfp16intrin.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/amxcomplexintrin.h:
 
 /usr/include/c++/15.2.1/version:
 
@@ -3338,16 +3362,6 @@ CMakeFiles/FileDuper.dir/src/nfsclient.cpp.o:
 
 /usr/include/c++/15.2.1/bits/stl_heap.h:
 
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/libgcc.a:
-
-/usr/include/c++/15.2.1/string:
-
-/usr/include/c++/15.2.1/debug/assertions.h:
-
-/usr/lib/libz.so.1:
-
-/usr/include/c++/15.2.1/bits/shared_ptr_base.h:
-
 /usr/include/strings.h:
 
 src/hardwarebenchmark.cpp:
@@ -3400,6 +3414,14 @@ include/nfsclient.h:
 
 /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/cpu_defines.h:
 
+/usr/include/locale.h:
+
+/usr/include/c++/15.2.1/bits/gslice_array.h:
+
+/usr/include/openssl/configuration.h:
+
+/usr/include/bits/typesizes.h:
+
 /usr/include/bits/environments.h:
 
 /usr/include/c++/15.2.1/filesystem:
@@ -3430,8 +3452,6 @@ lib/imgui/libimgui.a:
 
 /usr/include/c++/15.2.1/ios:
 
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/amxfp16intrin.h:
-
 /usr/include/c++/15.2.1/bits/range_access.h:
 
 /usr/include/bits/types/time_t.h:
@@ -3447,6 +3467,20 @@ lib/imgui/libimgui.a:
 /usr/include/bits/sigstksz.h:
 
 /usr/include/alloca.h:
+
+/usr/include/bits/stdlib-bsearch.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/libgcc.a:
+
+/usr/include/c++/15.2.1/string:
+
+/usr/include/c++/15.2.1/debug/assertions.h:
+
+/usr/lib/libz.so.1:
+
+/usr/include/c++/15.2.1/bits/shared_ptr_base.h:
+
+/usr/include/bits/stdio.h:
 
 /usr/include/bits/setjmp.h:
 
@@ -3498,6 +3532,10 @@ CMakeFiles/FileDuper.dir/src/networkscanner_adapter.cpp.o:
 
 /usr/include/bits/types/cookie_io_functions_t.h:
 
+/usr/include/nlohmann/thirdparty/hedley/hedley.hpp:
+
+/usr/include/asm-generic/ioctl.h:
+
 /usr/include/c++/15.2.1/bits/functional_hash.h:
 
 /usr/include/c++/15.2.1/bits/stl_numeric.h:
@@ -3540,6 +3578,10 @@ src/networkscanner.cpp:
 
 /usr/include/c++/15.2.1/bits/stl_vector.h:
 
+/usr/include/c++/15.2.1/bits/string_view.tcc:
+
+/usr/include/bits/types/__fpos_t.h:
+
 /usr/include/bits/types/sig_atomic_t.h:
 
 /usr/include/c++/15.2.1/tr1/riemann_zeta.tcc:
@@ -3559,20 +3601,6 @@ src/networkscanner.cpp:
 /usr/include/c++/15.2.1/bits/valarray_array.h:
 
 /usr/include/bits/pthread_stack_min-dynamic.h:
-
-/usr/include/bits/sched.h:
-
-/usr/include/bits/struct_rwlock.h:
-
-/usr/include/bits/types/struct_itimerspec.h:
-
-/usr/include/c++/15.2.1/bits/predefined_ops.h:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx512fintrin.h:
-
-/usr/include/c++/15.2.1/streambuf:
-
-/usr/include/c++/15.2.1/bits/functexcept.h:
 
 /usr/include/c++/15.2.1/bits/locale_facets.tcc:
 
@@ -3620,14 +3648,6 @@ src/ftpclient.cpp:
 
 /usr/include/c++/15.2.1/limits:
 
-/usr/include/openssl/configuration.h:
-
-/usr/include/bits/typesizes.h:
-
-/usr/include/bits/types/__fpos_t.h:
-
-/usr/include/c++/15.2.1/bits/string_view.tcc:
-
 /usr/lib/libGLX.so:
 
 src/ftplistworker.cpp:
@@ -3659,6 +3679,10 @@ lib/imgui/backends/imgui_impl_glfw.h:
 /usr/include/libintl.h:
 
 /usr/include/bits/uintn-identity.h:
+
+/usr/include/nlohmann/detail/json_pointer.hpp:
+
+lib/imgui/imgui.h:
 
 /usr/include/curl/system.h:
 
@@ -3699,6 +3723,20 @@ lib/imgui/backends/imgui_impl_glfw.h:
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx512vbmi2vlintrin.h:
 
 /usr/include/bits/libc-header-start.h:
+
+/usr/include/bits/sched.h:
+
+/usr/include/bits/struct_rwlock.h:
+
+/usr/include/bits/types/struct_itimerspec.h:
+
+/usr/include/c++/15.2.1/bits/predefined_ops.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx512fintrin.h:
+
+/usr/include/c++/15.2.1/streambuf:
+
+/usr/include/c++/15.2.1/bits/functexcept.h:
 
 /usr/include/c++/15.2.1/bits/exception_defines.h:
 
@@ -3860,10 +3898,6 @@ src/hashengine.cpp:
 
 /usr/include/bits/types/__sigval_t.h:
 
-/usr/include/nlohmann/thirdparty/hedley/hedley.hpp:
-
-/usr/include/asm-generic/ioctl.h:
-
 /usr/include/X11/extensions/Xrender.h:
 
 /usr/include/bits/endian.h:
@@ -3886,9 +3920,7 @@ src/hashengine.cpp:
 
 /usr/include/c++/15.2.1/bits/stl_pair.h:
 
-/usr/include/locale.h:
-
-/usr/include/c++/15.2.1/bits/gslice_array.h:
+/usr/include/asm-generic/socket.h:
 
 include/ftplistworker.h:
 
@@ -4346,10 +4378,6 @@ CMakeFiles/FileDuper.dir/src/networkscanner.cpp.o:
 
 /usr/include/nlohmann/detail/json_custom_base_class.hpp:
 
-lib/imgui/imgui.h:
-
-/usr/include/nlohmann/detail/json_pointer.hpp:
-
 /usr/include/nlohmann/detail/meta/detected.hpp:
 
 /usr/include/nlohmann/detail/meta/identity_tag.hpp:
@@ -4377,5 +4405,3 @@ include/networkscanner.h:
 /usr/include/unistd.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/adxintrin.h:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/amxcomplexintrin.h:

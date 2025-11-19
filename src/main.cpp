@@ -11631,9 +11631,9 @@ void scanFtpDirectory(const std::string& ftpDir, const std::string& baseUrl,
     std::cout << "[FTP Scan] Parsing directory: " << ftpDir << std::endl;
     
     while (std::getline(iss, line) && !stopScan) {
-        // Check for pause
+        // Check for pause - OPTIMIZED: 10ms instead of 100ms for responsive pause
         while (appState.scanPaused && !stopScan) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
         if (stopScan) break;
         
@@ -11820,7 +11820,8 @@ void scanFtpDirectory(const std::string& ftpDir, const std::string& baseUrl,
                     for (size_t i = t; i < subdirs.size() && !stopScan; i += maxThreads) {
                         // Check for pause
                         while (appState.scanPaused && !stopScan) {
-                            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                            // OPTIMIZED: 10ms instead of 100ms for faster pause response
+                            std::this_thread::sleep_for(std::chrono::milliseconds(10));
                         }
                         if (stopScan) break;
                         
@@ -12167,9 +12168,9 @@ void scanFtpDirectoryCached(const std::string& ftpDir, const std::string& baseUr
     for (const auto& subdir : cachedEntry.subdirs) {
         if (stopScan) break;
         
-        // Pause handling
+        // Pause handling - OPTIMIZED: 10ms instead of 100ms for faster pause response
         while (appState.scanPaused && !stopScan) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
         if (stopScan) break;
         
@@ -12366,10 +12367,10 @@ void performScan() {
                 for (int i = t; i < totalDirs; i += numThreads) {
                     if (stopScan) break;
                     
-                    // Pause handling
+                    // Pause handling - OPTIMIZED: 10ms instead of 100ms for faster pause response
                     while (appState.scanPaused && !stopScan) {
                         appState.scanStatus = "⏸ PAUSIERT - Drücke Fortsetzen";
-                        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                        std::this_thread::sleep_for(std::chrono::milliseconds(10));
                     }
                     if (stopScan) break;
                     
@@ -12413,10 +12414,10 @@ void performScan() {
         for (const auto& dir : appState.selectedLocalDirs) {
             if (stopScan) break;
             
-            // Pause handling
+            // Pause handling - OPTIMIZED: 10ms instead of 100ms for faster pause response
             while (appState.scanPaused && !stopScan) {
                 appState.scanStatus = "⏸ PAUSIERT - Drücke Fortsetzen";
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
             if (stopScan) break;
             
@@ -12576,10 +12577,10 @@ void performScan() {
             for (const auto& ftpDir : appState.selectedFtpDirs) {
                 if (stopScan) break;
                 
-                // Pause handling
+                // Pause handling - OPTIMIZED: 10ms instead of 100ms for faster pause response
                 while (appState.scanPaused && !stopScan) {
                     appState.scanStatus = "⏸ PAUSIERT - Drücke Fortsetzen";
-                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                    std::this_thread::sleep_for(std::chrono::milliseconds(10));
                 }
                 if (stopScan) break;
                 
@@ -12596,10 +12597,10 @@ void performScan() {
             for (const auto& ftpDir : appState.selectedFtpDirs) {
                 if (stopScan) break;
                 
-                // Pause handling
+                // Pause handling - OPTIMIZED: 10ms instead of 100ms for faster pause response
                 while (appState.scanPaused && !stopScan) {
                     appState.scanStatus = "⏸ PAUSIERT - Drücke Fortsetzen";
-                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                    std::this_thread::sleep_for(std::chrono::milliseconds(10));
                 }
                 if (stopScan) break;
                 
@@ -12697,10 +12698,10 @@ void performScan() {
     for (const auto& [size, files] : filesBySize) {
         if (stopScan) break;
         
-        // Pause handling in Hash phase
+        // Pause handling in Hash phase - OPTIMIZED: 10ms instead of 100ms for faster pause response
         while (appState.scanPaused && !stopScan) {
             appState.scanStatus = "PAUSE PAUSIERT - Drücke Fortsetzen";
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
         if (stopScan) break;
         
