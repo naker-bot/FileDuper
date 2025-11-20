@@ -5402,23 +5402,27 @@ void renderNfsDirectoryBrowser() {
         // Echtzeit NFS-Suche bis Tiefe 7 (mit Enter bestätigen)
         ImGui::PushItemWidth(400);
         static char searchBuf[256] = "";
+        static std::string lastSearchTerm = "";  // Track last executed search term
         
-        // ImGuiInputTextFlags_EnterReturnsTrue enables Enter key confirmation
-        bool searchTriggered = ImGui::InputText("🔍 Echtzeit-Suche (Enter bestätigen)", searchBuf, 
-                                                sizeof(searchBuf), ImGuiInputTextFlags_EnterReturnsTrue);
-        
+        // Echtzeit-Suche: InputText ohne Enter-Flag ermöglicht automatische Suche bei jedem Buchstaben
+        ImGui::InputText("🔍 Echtzeit-Suche", searchBuf,
+                                                                                                sizeof(searchBuf), ImGuiInputTextFlags_None);
         // Update search term on every keystroke (real-time feedback)
+        std::string currentSearchTerm = searchBuf;
+        bool searchTermChanged = (currentSearchTerm != lastSearchTerm);
         appState.nfsSearchTerm = searchBuf;
         
         ImGui::PopItemWidth();
         
         ImGui::SameLine();
         if (ImGui::Button("Suchen")) {
-            searchTriggered = true;  // Manual trigger via button
+            lastSearchTerm = "";  // Force search on manual button click
         }
         
         // Start search on Enter or Button click
-        if (searchTriggered && !appState.nfsSearchTerm.empty() && !appState.nfsSearchActive.load()) {
+        // Start search automatisch bei Eingabe-Änderung (kein Enter nötig!)
+        if (!appState.nfsSearchTerm.empty() && !appState.nfsSearchActive.load() && searchTermChanged) {
+            lastSearchTerm = appState.nfsSearchTerm;  // Mark this term as executed
             appState.nfsSearchActive = true;
             appState.nfsSearchRootPath = appState.selectedNfsMountPath;
             appState.nfsSearchResults.clear();
@@ -5517,9 +5521,11 @@ void renderNfsDirectoryBrowser() {
                                 isDir = S_ISDIR(st.st_mode);
                             }
                             
+                            // Only add if it's a directory
+                            if (isDir) {
                             results.push_back(fullPath);
-                            std::cout << "[NFS Search] ✅ Match found (" << (isDir ? "DIR" : "FILE") 
-                                      << "): " << name << " -> " << fullPath << std::endl;
+                                std::cout << "[NFS Search] ✅ Match found (DIR): " << name << " -> " << fullPath << std::endl;
+                            }
                         }
                         
                         // Recurse into directories
@@ -5766,11 +5772,12 @@ void renderNetworkScanner() {
                 for (size_t i = 0; i < appState.ftpPresets.size(); i++) {
                     const auto& preset = appState.ftpPresets[i];
                     
-                    // Zeige: [Dienst] Name - IP:Port
-                    std::string displayText = "[" + preset.serviceType + "] " + preset.name + " - " + 
-                                             preset.ip + ":" + std::to_string(preset.port);
+                    // Filter: Nur FTP/SFTP Presets in FTP-Tab anzeigen
+                    if (preset.serviceType != "FTP" && preset.serviceType != "SFTP") continue;
                     
-                    // Farbe basierend auf Service-Typ: NFS=Blau, FTP=Rot, SMB=Gelb, WebDAV=Grün
+                    // Zeige: [Dienst] Name - IP:Port
+                    std::string displayText = "[" + preset.serviceType + "] " + preset.name + " - " +
+                                                preset.ip + ":" + std::to_string(preset.port);                    // Farbe basierend auf Service-Typ: NFS=Blau, FTP=Rot, SMB=Gelb, WebDAV=Grün
                     ImVec4 textColor;
                     if (preset.serviceType == "NFS") {
                         textColor = ImVec4(0.3f, 0.6f, 1.0f, 1.0f); // NFS = BLAU
@@ -7240,7 +7247,7 @@ void renderNetworkScanner() {
             
             // subnet declared above for presets
             // Use EnterReturnsTrue so pressing Enter can start a scan quickly
-            if (ImGui::InputText("Subnetz##scan", subnet, sizeof(subnet), ImGuiInputTextFlags_EnterReturnsTrue)) {
+            if (ImGui::InputText("Subnetz##scan", subnet, sizeof(subnet), ImGuiInputTextFlags_None)) {
                 // Start a scan on Enter if not already scanning
                 if (!appState.scanningNetwork && strlen(subnet) > 0) {
                     appState.scanningNetwork = true;
@@ -7773,7 +7780,7 @@ void renderMainWindow() {
                 ImGui::TextColored(ImVec4(0.0f, 1.0f, 1.0f, 1.0f), "[*] Scanner");
                 ImGui::Separator();
                 
-                if (ImGui::MenuItem("[SCAN] Netzwerk & FTP öffnen")) {
+                if (ImGui::MenuItem("[SCAN] Netzwerkdienste öffnen")) {
                     appState.showNetworkScanner = true;
                 }
                 
@@ -7929,7 +7936,7 @@ void renderMainWindow() {
             appState.showLocalBrowser = true;
         }
         
-        if (ImGui::Button("[NET] Netzwerk & FTP...", ImVec2(-1, 40))) {
+        if (ImGui::Button("[NET] Netzwerkdienste...", ImVec2(-1, 40))) {
             appState.showNetworkScanner = true;
         }
         
@@ -8040,12 +8047,6 @@ void renderMainWindow() {
         if (!appState.scanning && !appState.selectedLocalDirs.empty()) {
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.4f, 0.8f, 1.0f));
             ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.6f, 1.0f, 1.0f));
-            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.8f, 1.0f, 1.0f));
-            
-            if (ImGui::Button("📤 Verzeichnisse übertragen", ImVec2(-1, 40))) {
-                ImGui::OpenPopup("TransferDialog");
-            }
-            ImGui::PopStyleColor(3);
         }
         
         // Scan Button
@@ -8080,100 +8081,6 @@ void renderMainWindow() {
                 appState.scanStatus = "[STOP] Wird abgebrochen...";
             }
             ImGui::PopStyleColor(3);
-            
-            // Transfer Dialog
-            if (ImGui::BeginPopupModal("TransferDialog", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-                ImGui::TextColored(ImVec4(0.0f, 1.0f, 1.0f, 1.0f), "📤 Verzeichnisse übertragen");
-                ImGui::Separator();
-                ImGui::Spacing();
-                
-                ImGui::Text("Ausgewählte Verzeichnisse: %zu", appState.selectedLocalDirs.size());
-                ImGui::Spacing();
-                
-                static int transferTarget = 0;  // 0=NFS, 1=FTP, 2=SMB, 3=WebDAV
-                ImGui::Text("Ziel auswählen:");
-                ImGui::RadioButton("NFS Mount", &transferTarget, 0);
-                ImGui::RadioButton("FTP Server", &transferTarget, 1);
-                ImGui::RadioButton("SMB/CIFS Share", &transferTarget, 2);
-                ImGui::RadioButton("WebDAV Server", &transferTarget, 3);
-                
-                ImGui::Spacing();
-                ImGui::Separator();
-                
-                static char targetPath[512] = "/mnt/nfs_share/backup";
-                ImGui::Text("Ziel-Pfad:");
-                ImGui::InputText("##TargetPath", targetPath, sizeof(targetPath));
-                
-                ImGui::Spacing();
-                static bool preserveStructure = true;
-                ImGui::Checkbox("Verzeichnisstruktur beibehalten", &preserveStructure);
-                
-                ImGui::Spacing();
-                ImGui::Separator();
-                ImGui::Spacing();
-                
-                if (ImGui::Button("🚀 Transfer starten", ImVec2(200, 0))) {
-                    // Start transfer in background thread
-                    std::string target = targetPath;
-                    std::thread([target, preserveStructure, transferTarget]() {
-                        std::cout << "[Transfer] Starting transfer to: " << target << std::endl;
-                        
-                        for (const auto& srcDir : appState.selectedLocalDirs) {
-                            std::string destPath = target;
-                            if (preserveStructure) {
-                                // Keep directory structure
-                                destPath = target + srcDir;
-                            } else {
-                                // Flatten: just copy directory name
-                                size_t lastSlash = srcDir.find_last_of('/');
-                                std::string dirName = (lastSlash != std::string::npos) ? srcDir.substr(lastSlash) : srcDir;
-                                destPath = target + dirName;
-                            }
-                            
-                            // Use rsync for efficient transfer
-                            std::string cmd;
-                            if (transferTarget == 0) {  // NFS
-                                cmd = "rsync -av --progress \"" + srcDir + "/\" \"" + destPath + "/\"";
-                            } else if (transferTarget == 1) {  // FTP
-                                cmd = "lftp -e 'mirror -R \"" + srcDir + "\" \"" + destPath + "\"; quit' " + target;
-                            } else if (transferTarget == 2) {  // SMB
-                                cmd = "rsync -av --progress \"" + srcDir + "/\" \"" + destPath + "/\"";
-                            } else {  // WebDAV
-                                cmd = "rsync -av --progress \"" + srcDir + "/\" \"" + destPath + "/\"";
-                            }
-                            
-                            std::cout << "[Transfer] Executing: " << cmd << std::endl;
-                            // OPTIMIZED: Use popen for rsync instead of system() - allows progress monitoring
-                            FILE *rsynPipe = popen(cmd.c_str(), "r");
-                            int result = -1;
-                            if (rsynPipe) {
-                                char buf[1024];
-                                while (fgets(buf, sizeof(buf), rsynPipe)) {
-                                    std::cout << buf;  // Stream output for progress display
-                                }
-                                result = pclose(rsynPipe);
-                            }
-                            
-                            if (result == 0) {
-                                std::cout << "[Transfer] ✅ Success: " << srcDir << " -> " << destPath << std::endl;
-                            } else {
-                                std::cout << "[Transfer] ❌ Failed: " << srcDir << std::endl;
-                            }
-                        }
-                        
-                        std::cout << "[Transfer] Transfer completed!" << std::endl;
-                    }).detach();
-                    
-                    ImGui::CloseCurrentPopup();
-                }
-                
-                ImGui::SameLine();
-                if (ImGui::Button("Abbrechen", ImVec2(120, 0))) {
-                    ImGui::CloseCurrentPopup();
-                }
-                
-                ImGui::EndPopup();
-            }
             
             // Pause/Resume Button
             if (appState.scanPaused) {
@@ -10127,7 +10034,7 @@ void renderSettings() {
             ImGui::Separator();
             
             // Network/FTP Section
-            ImGui::TextColored(ImVec4(0.0f, 1.0f, 1.0f, 1.0f), "Netzwerk/FTP:");
+            ImGui::TextColored(ImVec4(0.0f, 1.0f, 1.0f, 1.0f), "Netzwerkdienste:");
             if (ImGui::Checkbox("🔄 CURL Connection Pooling", &appState.useCurlPooling)) {
                 saveScannerSettings();
             }
@@ -10960,7 +10867,7 @@ void renderSudoPasswordDialog() {
         }
         
         bool password_submitted = ImGui::InputText("##sudopass", sudoPasswordInput, sizeof(sudoPasswordInput), 
-                                                   ImGuiInputTextFlags_Password | ImGuiInputTextFlags_EnterReturnsTrue);
+                                                   ImGuiInputTextFlags_Password | ImGuiInputTextFlags_None);
         ImGui::PopID();
         
         ImGui::Spacing();
@@ -14739,7 +14646,7 @@ int main(int argc, char* argv[]) {
             
             ImGui::SetNextItemWidth(300);
             bool enterPressed = ImGui::InputText("##SudoPassword", sudoPassword, 
-                sizeof(sudoPassword), ImGuiInputTextFlags_Password | ImGuiInputTextFlags_EnterReturnsTrue);
+                sizeof(sudoPassword), ImGuiInputTextFlags_Password | ImGuiInputTextFlags_None);
             
             ImGui::Spacing();
             
